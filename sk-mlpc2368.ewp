@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.21.4.52945</state>
+          <state>6.21.1.52845</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1006,7 +1006,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.21.4.52945</state>
+          <state>6.21.1.52845</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1512,7 +1512,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>sk_mlpc2368.hex</state>
+          <state>version0_00.hex</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1566,7 +1566,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>sk_mlpc2368.out</state>
+          <state>version0_00.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1925,7 +1925,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.21.4.52945</state>
+          <state>6.21.1.52845</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -3132,6 +3132,12 @@
         <name>$PROJ_DIR$\PROJECT\app\control.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\PROJECT\app\ftp_app.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\PROJECT\app\ftp_app.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\PROJECT\app\host_app.c</name>
         <excluded>
           <configuration>Flash Post</configuration>
@@ -3247,6 +3253,9 @@
         <file>
           <name>$PROJ_DIR$\PROJECT\drivers\lcd\lcd.h</name>
         </file>
+        <file>
+          <name>$PROJ_DIR$\PROJECT\drivers\lcd\symtab.h</name>
+        </file>
       </group>
       <group>
         <name>modem</name>
@@ -3329,6 +3338,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\PROJECT\services\fr.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\PROJECT\services\ftp_client.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\PROJECT\services\ftp_client.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\PROJECT\services\mode.c</name>

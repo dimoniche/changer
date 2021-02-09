@@ -11,11 +11,10 @@
 #define SYMB_GO_UP    0x87
 #define SYMB_GO_DOWN  0x86
 
-#define SYMB_RIGHT_ARROW  0x13
-#define SYMB_DESC_MARK    0x84
-#define SYMB_IND_MARK     0x85
-#define SYMB_POINT_MARK   0xDF
-
+#define SYMB_RIGHT_ARROW  0x3E
+#define SYMB_DESC_MARK    0x3E
+#define SYMB_IND_MARK     0x3C
+#define SYMB_POINT_MARK   0x3E
 
 
 // структура описания пункта меню

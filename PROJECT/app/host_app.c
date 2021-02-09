@@ -271,6 +271,117 @@ int HostWritePulses(CPU_INT32U ip_addr, CPU_INT32U count, CPU_INT32U len_ms)
     return HostWriteParam(ip_addr, CONSOLE_TCP_DEFAULT_PORT, "PULSEOUT", str, HOST_SOCKET_DEFAULT_TIMEOUT);
 }
 
+int HostWriteDataTimeout(NET_SOCK_ID sock, char* str, int len, CPU_INT32U timeout)
+{
+    CPU_INT32U time_stamp = OSTimeGet();
+    int tx_ctr = 0;
+    while (tx_ctr < len)
+    {
+        NET_ERR err;
+        int tx_size = NetSock_TxData(sock, &str[tx_ctr], len - tx_ctr, NET_SOCK_FLAG_NONE, &err);
+        OSTimeDly(10);
+        if (tx_size > 0)
+        {
+            tx_ctr += tx_size;        
+        }
+        else
+        {
+            if ((OSTimeGet() - time_stamp) > timeout)
+            {
+                return -1;
+            }
+        }
+    }
+    return tx_ctr;
+}
+
+int HostReadData(NET_SOCK_ID sock, char *str, CPU_INT32U maxlen, CPU_INT32U timeout, NET_ERR *err)
+{
+    CPU_INT32U time_stamp;
+    char *str_ptr = str;
+    CPU_INT32U len = 0;
+    CPU_INT08U exit_while;
+    
+    time_stamp = OSTimeGet();
+    do
+    {
+        char c;
+        NET_SOCK_RTN_CODE ret_code;
+
+        exit_while = 0;
+        
+        if (NetNIC_ConnStatusGet() != DEF_ON)
+        {
+            *err = NET_SOCK_ERR_FAULT;
+            break;
+        }
+        
+        ret_code = NetSock_RxData(sock, &c, 1, NET_SOCK_FLAG_RX_NO_BLOCK, err);
+        switch (*err)
+        {
+            case NET_SOCK_ERR_NONE:
+                if (ret_code)
+                {
+                    time_stamp = OSTimeGet();
+                    *str_ptr++ = c;
+                    len++;
+                    if (c == '\n')
+                    {
+                        char *ptr = strrchr(str, '\n');
+                        if (ptr) *ptr = 0;
+                        ptr = strrchr(str, '\r');
+                        if (ptr) *ptr = 0;
+                        len = strlen(str);
+                        *err = NET_SOCK_ERR_NONE;
+                        exit_while = 1;
+                    }    
+                }
+                break;
+            case NET_SOCK_ERR_RX_Q_EMPTY:
+                if (OSTimeGet() - time_stamp < timeout)
+                {
+                    OSTimeDly(2);
+                    if (len > 0)
+                    {
+                        exit_while = 1;
+                    }
+                    *err = NET_SOCK_ERR_NONE;
+                }
+                break;
+            case NET_SOCK_ERR_INVALID_DATA_SIZE:
+            case NET_ERR_INIT_INCOMPLETE:
+            case NET_SOCK_ERR_NULL_PTR:
+            case NET_SOCK_ERR_NULL_SIZE:
+            case NET_SOCK_ERR_NOT_USED:
+            case NET_SOCK_ERR_CLOSED:
+            case NET_SOCK_ERR_FAULT:
+            case NET_SOCK_ERR_INVALID_SOCK:
+            case NET_SOCK_ERR_INVALID_FAMILY:
+            case NET_SOCK_ERR_INVALID_PROTOCOL:
+            case NET_SOCK_ERR_INVALID_TYPE:
+            case NET_SOCK_ERR_INVALID_STATE:
+            case NET_SOCK_ERR_INVALID_OP:
+            case NET_SOCK_ERR_INVALID_FLAG:
+            case NET_SOCK_ERR_INVALID_ADDR_LEN:
+            case NET_SOCK_ERR_RX_Q_CLOSED:
+            case NET_ERR_RX:
+            case NET_CONN_ERR_INVALID_CONN:
+            case NET_CONN_ERR_NOT_USED:
+            case NET_CONN_ERR_NULL_PTR:
+            case NET_CONN_ERR_INVALID_ADDR_LEN:
+            case NET_CONN_ERR_ADDR_NOT_USED:
+            case NET_OS_ERR_LOCK:
+                break;
+            default:
+                *err = NET_ERR_RX;
+                break;
+        }
+
+    } while ((*err == NET_SOCK_ERR_NONE) && (!exit_while));
+
+    return len;
+}
+
 /// задача опроса контроллеров постов по сети
 void HostAppTask(void *p_arg)
 {

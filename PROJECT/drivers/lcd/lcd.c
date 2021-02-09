@@ -1,12 +1,31 @@
 #include <includes.h>
 #include <intrinsics.h>
 #include "lcd.h"
+#include "symtab.h"
+
+
+unsigned char lcd_x = 0, lcd_y = 0;
+
+#ifdef CONFIG_LCD_1602A
+    // максимальное число пользовательских знаков в знакогенераторе
+    #define LCD_MAX_CHAR_SYG    8   
+    // список текущих символов в знакогенераторе
+    unsigned char current_rus_syg[LCD_MAX_CHAR_SYG] = {0, 0, 0, 0, 0, 0, 0, 0};
+    unsigned char current_syg_index = 0;
+    unsigned char lcd_lines[2][16];
+    void LCD_putcmd(unsigned char data,unsigned char cmdtype);
+#endif
+
 
 const unsigned char rus_sym_table[64]=
                         { 0x41,0xA0,0x42,0xA1,0xE0,0x45,0xA3,0xA4,
                          0xA5,0x03,0x4B,0xA7,0x4D,0x48,0x4F,0xA8,
                          0x50,0x43,0x54,0xA9,0xAA,0x58,0xE1,0xAB,
+						 #ifdef CONFIG_LCD_1602A
+                         0xAC,0xE2,0xAD,0xAE,'b',0xAF,0xB0,0xB1,
+					 	 #else
                          0xAC,0xE2,0xAD,0xAE,0x02,0xAF,0xB0,0xB1,
+						 #endif
                          0x61,0xB2,0xB3,0xB4,0xE3,0x65,0xB6,0xB7,
                          0xB8,0xB9,0xBA,0xBB,0xBC,0xBD,0x6F,0xBE,
                          0x70,0x63,0xBF,0x79,0xE4,0x78,0xE5,0xC0,
@@ -17,16 +36,15 @@ void us_delay(unsigned long x)
 {
   while (x--)
     {
-      for (int i=0; i<5; i++) __no_operation();
+      for (int i=0; i<10; i++) __no_operation();
     }
 }
 
+#ifdef CONFIG_LCD_1602A
 
-void LCD_putch(unsigned char data)
+//
+void LCD_WriteCGRAM(unsigned char data)
 {
-  if (data >= 0xC0) data = rus_sym_table[data-0xC0];
-        
-  LCD_SET_DATA_OUT();
   // LCD Upper 4 bits data
   LCD_SET_RS_PIN();   // RS = 1, E = 1
   LCD_SET_E_PIN();
@@ -49,7 +67,123 @@ void LCD_putch(unsigned char data)
   // E=0; write data
   LCD_CLR_E_PIN();
   us_delay(100); 
+}
+
+unsigned char LCD_ConvertSymOrient(unsigned int sym_ofst, unsigned char byte)
+{
+    unsigned char data = 0;
+    unsigned char i;
+    for (i = 0; i < 5; i++)
+    {
+        if (symtab[sym_ofst + i] & (1 << byte)) data |= (1 << (4 - i));
+    }
+    return data;
+}
+
+//
+void LCD_CreateChar(unsigned char syg_index, unsigned char data)
+{
+    unsigned int sym_ofst = (data - 0x20) * 5UL;
+    LCD_putcmd(0x40 + syg_index * 8, LCD_2CYCLE);
+    LCD_WriteCGRAM(LCD_ConvertSymOrient(sym_ofst, 0));
+    LCD_WriteCGRAM(LCD_ConvertSymOrient(sym_ofst, 1));
+    LCD_WriteCGRAM(LCD_ConvertSymOrient(sym_ofst, 2));
+    LCD_WriteCGRAM(LCD_ConvertSymOrient(sym_ofst, 3));
+    LCD_WriteCGRAM(LCD_ConvertSymOrient(sym_ofst, 4));
+    LCD_WriteCGRAM(LCD_ConvertSymOrient(sym_ofst, 5));
+    LCD_WriteCGRAM(LCD_ConvertSymOrient(sym_ofst, 6));
+    LCD_WriteCGRAM(LCD_ConvertSymOrient(sym_ofst, 7));
+}
+
+#endif
+
+void LCD_putch(unsigned char data)
+{
+  unsigned char data_out;
+#ifndef CONFIG_LCD_1602A
+  if (data >= 0xC0) data_out = rus_sym_table[data-0xC0];
+  else data_out = data;
+#else
+  if (data >= 0xC0)
+  {
+      if (rus_sym_table[data-0xC0] < 0xA0)
+      {
+          data_out = rus_sym_table[data-0xC0];
+      }
+      else
+      {
+          CPU_INT08U i;
+          CPU_INT08U finded = 0;
+          for (i = 0; i < LCD_MAX_CHAR_SYG; i++)
+          {
+            if (data == current_rus_syg[i])
+            {
+                data_out = i;
+                finded = 1;
+                break;
+            }
+          }
+          if (!finded)
+          {
+              CPU_INT08U n, j;
+              CPU_INT08U *ptr;
+              for (j = 0; j < LCD_MAX_CHAR_SYG; j++)
+              {
+                  if (current_rus_syg[j] == 0) break;
+                  ptr = (CPU_INT08U *)lcd_lines;
+                  for (n = 0; n < 32; n++, ptr++)
+                  {
+                      if (current_rus_syg[j] == *ptr)
+                      {
+                           break;
+                      }
+                  }
+                  if (n == 32)
+                  {
+                    current_rus_syg[j] = 0;
+                    break;
+                  }
+              }
+              if (j < LCD_MAX_CHAR_SYG) current_syg_index = j;
+              LCD_CreateChar(current_syg_index, data);
+              current_rus_syg[current_syg_index] = data;
+              data_out = current_syg_index;
+              LCD_goto(lcd_x, lcd_y);
+          }
+      }
+  }
+  else
+  {
+      data_out = data;
+  }
+  lcd_lines[lcd_y][lcd_x] = data;
+#endif
+      
+  LCD_SET_DATA_OUT();
+  // LCD Upper 4 bits data
+  LCD_SET_RS_PIN();   // RS = 1, E = 1
+  LCD_SET_E_PIN();
+  LCD_CLR_RW_PIN();
+
+  us_delay(1); 
+  LCD_OUT_DATA(data_out >> 4);
+  us_delay(1); 
+
+  // E=0; write data
+  LCD_CLR_E_PIN();
+  us_delay(1);       
+
+  // LCD Lower 4 bits data
+  LCD_SET_E_PIN();    // RS = 1, E = 1 
+  us_delay(1); 
+  LCD_OUT_DATA(data_out);
+  us_delay(1); 
+
+  // E=0; write data
+  LCD_CLR_E_PIN();
+  us_delay(100); 
 //  OSTimeDly(1);     // Wait for busy flag (BF)
+  lcd_x++;
 }
 
 void LCD_putch_table(unsigned char data)
@@ -78,6 +212,7 @@ void LCD_putch_table(unsigned char data)
   LCD_CLR_E_PIN();
   us_delay(100); 
 //  OSTimeDly(1);     // Wait for busy flag (BF)
+  lcd_x++;
 }
 
 unsigned char LCD_getch()
@@ -143,7 +278,8 @@ void LCD_putcmd(unsigned char data,unsigned char cmdtype)
   LCD_CLR_E_PIN();
 
   // cmdtype = 0; One cycle write, cmdtype = 1; Two cycle writes
-  if (cmdtype == LCD_2CYCLE) {
+  if (cmdtype == LCD_2CYCLE) 
+  {
     // LCD Lower 4 bits data
     us_delay(1);       
     LCD_SET_E_PIN();      // RS = 0, E = 1
@@ -156,9 +292,13 @@ void LCD_putcmd(unsigned char data,unsigned char cmdtype)
     us_delay(1); 
     
     //while(LCD_get_status() & 0x80);
-    OSTimeDly(2);    // Wait for busy flag (BF)
+    OSTimeDly(3);    // Wait for busy flag (BF)
     
     //LCD_get_status();
+  }
+  else
+  {
+    OSTimeDly(3);
   }
 }
 
@@ -229,40 +369,36 @@ void InitLcd()
   InitLcdPins();
   
   // Wait for more than 15 ms after VCC rises to 4.5 V
-  OSTimeDly(30);
+  OSTimeDly(100);
   // Send Command 0x30
   LCD_putcmd(0x30,LCD_1CYCLE);
-  us_delay(40); 
   // Send Command 0x30
   LCD_putcmd(0x30,LCD_1CYCLE);
-  us_delay(40); 
   // Send Command 0x30
   LCD_putcmd(0x30,LCD_1CYCLE);
-  us_delay(40); 
   // Function set: Set interface to be 4 bits long (only 1 cycle write).
   LCD_putcmd(0x20,LCD_1CYCLE);
-  us_delay(40); 
   // Function set: DL=0;Interface is 4 bits, N=1; 2 Lines, F=0; 5x8 dots font)
   LCD_putcmd(0x28,LCD_2CYCLE);
   // Display Off: D=0; Display off, C=0; Cursor Off, B=0; Blinking Off
-  LCD_putcmd(0x08,LCD_2CYCLE);
+  //LCD_putcmd(0x08,LCD_2CYCLE);
+  // Display On, Cursor Off
+  LCD_putcmd(0x0C,LCD_2CYCLE);      
   // Display Clear
   LCD_putcmd(0x01,LCD_2CYCLE);
   // Entry Mode Set: I/D=1; Increment, S=0; No shift
   LCD_putcmd(0x06,LCD_2CYCLE);
-  // Display On, Cursor Off
-  LCD_putcmd(0x0C,LCD_2CYCLE);      
-
-  
 }
 
 void LCD_gotoline(unsigned char n)
 {
    switch (n){
-     case 0: LCD_putcmd(LCD_GOTO_LINE_0, LCD_2CYCLE); break;
-     case 1: LCD_putcmd(LCD_GOTO_LINE_1, LCD_2CYCLE); break;
-     case 2: LCD_putcmd(LCD_GOTO_LINE_2, LCD_2CYCLE); break;
-     case 3: LCD_putcmd(LCD_GOTO_LINE_3, LCD_2CYCLE); break;
+     case 0: LCD_putcmd(LCD_GOTO_LINE_0, LCD_2CYCLE); lcd_x = 0; lcd_y = n; break;
+     case 1: LCD_putcmd(LCD_GOTO_LINE_1, LCD_2CYCLE); lcd_x = 0; lcd_y = n; break;
+#ifndef CONFIG_LCD_1602A
+     case 2: LCD_putcmd(LCD_GOTO_LINE_2, LCD_2CYCLE); lcd_x = 0; lcd_y = n; break;
+     case 3: LCD_putcmd(LCD_GOTO_LINE_3, LCD_2CYCLE); lcd_x = 0; lcd_y = n; break;
+#endif
      default: return;
    }
 }
@@ -271,17 +407,26 @@ void LCD_gotoline(unsigned char n)
 void LCD_puts(unsigned char *s, unsigned char n)
 {
    unsigned char i;
+   LCD_putcmd(0x28,LCD_2CYCLE);
    LCD_gotoline(n);
      
    i=0;
+#ifdef CONFIG_LCD_1602A
+   while((*s != 0) && (*s != '\n') && (i<16))
+#else
    while((*s != 0) && (*s != '\n') && (i<20))
+#endif
    {
      LCD_putch(*s);
      s++;
      i++;
    }
    
+#ifdef CONFIG_LCD_1602A
+   while(i<16)
+#else   
    while(i<20)
+#endif
    {
      LCD_putch(' ');
      i++;
@@ -292,10 +437,12 @@ void LCD_puts(unsigned char *s, unsigned char n)
 void LCD_goto(unsigned char m, unsigned char n)
 {
    switch (n){
-     case 0: LCD_putcmd(LCD_GOTO_LINE_0+m, LCD_2CYCLE); break;
-     case 1: LCD_putcmd(LCD_GOTO_LINE_1+m, LCD_2CYCLE); break;
-     case 2: LCD_putcmd(LCD_GOTO_LINE_2+m, LCD_2CYCLE); break;
-     case 3: LCD_putcmd(LCD_GOTO_LINE_3+m, LCD_2CYCLE); break;
+     case 0: LCD_putcmd(LCD_GOTO_LINE_0+m, LCD_2CYCLE); lcd_x = m; lcd_y = n; break;
+     case 1: LCD_putcmd(LCD_GOTO_LINE_1+m, LCD_2CYCLE); lcd_x = m; lcd_y = n; break;
+#ifndef CONFIG_LCD_1602A
+     case 2: LCD_putcmd(LCD_GOTO_LINE_2+m, LCD_2CYCLE); lcd_x = m; lcd_y = n; break;
+     case 3: LCD_putcmd(LCD_GOTO_LINE_3+m, LCD_2CYCLE); lcd_x = m; lcd_y = n; break;
+#endif
      default: return;
    }
 }
@@ -319,6 +466,10 @@ void LCD_clear(void)
 {
   // Display Clear
   LCD_putcmd(0x01,LCD_2CYCLE);
+  lcd_x = 0; lcd_y = 0;
+#ifdef CONFIG_LCD_1602A
+  memset(lcd_lines, 0, sizeof(lcd_lines));
+#endif
 }
 
 void LCD_cursor_on(void)
