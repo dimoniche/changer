@@ -10,7 +10,7 @@
     <Static>
       <Workspace>
         <ColumnWidths>
-          <Column0>210</Column0>
+          <Column0>177</Column0>
           <Column1>27</Column1>
           <Column2>27</Column2>
           <Column3>27</Column3>
@@ -76,75 +76,83 @@
           <Factory>TextEditor</Factory>
           <Filename>$WS_DIR$\PROJECT\app\app_serv.c</Filename>
           <XPos>0</XPos>
-          <YPos>292</YPos>
-          <SelStart>17841</SelStart>
-          <SelEnd>17858</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\services\ftp_client.c</Filename>
-          <XPos>0</XPos>
-          <YPos>735</YPos>
-          <SelStart>21346</SelStart>
-          <SelEnd>21346</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\app\host_app.c</Filename>
-          <XPos>0</XPos>
-          <YPos>272</YPos>
-          <SelStart>7189</SelStart>
-          <SelEnd>7189</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\app\ftp_app.c</Filename>
-          <XPos>0</XPos>
-          <YPos>3</YPos>
-          <SelStart>55</SelStart>
-          <SelEnd>55</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\app\host_app.h</Filename>
-          <XPos>0</XPos>
-          <YPos>0</YPos>
-          <SelStart>776</SelStart>
-          <SelEnd>776</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\drivers\lcd\lcd.c</Filename>
-          <XPos>0</XPos>
-          <YPos>457</YPos>
-          <SelStart>11064</SelStart>
-          <SelEnd>11064</SelEnd>
+          <YPos>566</YPos>
+          <SelStart>18843</SelStart>
+          <SelEnd>18843</SelEnd>
         </Tab>
         <Tab>
           <Factory>TextEditor</Factory>
           <Filename>$WS_DIR$\PROJECT\services\validator.c</Filename>
           <XPos>0</XPos>
-          <YPos>285</YPos>
-          <SelStart>10320</SelStart>
-          <SelEnd>10336</SelEnd>
+          <YPos>338</YPos>
+          <SelStart>8384</SelStart>
+          <SelEnd>8384</SelEnd>
         </Tab>
         <Tab>
           <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\OS\app\app.c</Filename>
+          <Filename>$WS_DIR$\PROJECT\services\coin.c</Filename>
           <XPos>0</XPos>
-          <YPos>33</YPos>
-          <SelStart>1131</SelStart>
-          <SelEnd>1131</SelEnd>
+          <YPos>221</YPos>
+          <SelStart>5327</SelStart>
+          <SelEnd>5327</SelEnd>
         </Tab>
+        <ActiveTab>2</ActiveTab>
         <Tab>
           <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\menu\menu.h</Filename>
+          <Filename>$WS_DIR$\PROJECT\services\coin.h</Filename>
           <XPos>0</XPos>
           <YPos>0</YPos>
-          <SelStart>314</SelStart>
-          <SelEnd>314</SelEnd>
+          <SelStart>741</SelStart>
+          <SelEnd>741</SelEnd>
         </Tab>
-        <ActiveTab>8</ActiveTab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\PROJECT\services\time.c</Filename>
+          <XPos>0</XPos>
+          <YPos>55</YPos>
+          <SelStart>1532</SelStart>
+          <SelEnd>1532</SelEnd>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\PROJECT\drivers\ccnet\CCRSProtocol.h</Filename>
+          <XPos>0</XPos>
+          <YPos>0</YPos>
+          <SelStart>434</SelStart>
+          <SelEnd>434</SelEnd>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\PROJECT\app\app_serv.h</Filename>
+          <XPos>0</XPos>
+          <YPos>27</YPos>
+          <SelStart>1127</SelStart>
+          <SelEnd>1127</SelEnd>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\PROJECT\data\datadesc.h</Filename>
+          <XPos>0</XPos>
+          <YPos>201</YPos>
+          <SelStart>7402</SelStart>
+          <SelEnd>7402</SelEnd>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\PROJECT\data\datadesc.c</Filename>
+          <XPos>0</XPos>
+          <YPos>136</YPos>
+          <SelStart>6348</SelStart>
+          <SelEnd>6348</SelEnd>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\OS\bsp\iolpc2368.h</Filename>
+          <XPos>0</XPos>
+          <YPos>797</YPos>
+          <SelStart>17962</SelStart>
+          <SelEnd>17962</SelEnd>
+        </Tab>
       </Pane>
       <ActivePane>0</ActivePane>
       <Sizes>
@@ -175,16 +183,16 @@
               <Rect>
                 <Top>-2</Top>
                 <Left>-2</Left>
-                <Bottom>498</Bottom>
-                <Right>301</Right>
+                <Bottom>517</Bottom>
+                <Right>268</Right>
                 <x>-2</x>
                 <y>-2</y>
                 <xscreen>200</xscreen>
                 <yscreen>200</yscreen>
                 <sizeHorzCX>146413</sizeHorzCX>
                 <sizeHorzCY>275862</sizeHorzCY>
-                <sizeVertCX>221816</sizeVertCX>
-                <sizeVertCY>689655</sizeVertCY>
+                <sizeVertCX>197657</sizeVertCX>
+                <sizeVertCY>715862</sizeVertCY>
               </Rect>
             </Wnd2>
           </Sizes>
@@ -202,14 +210,14 @@
               <Rect>
                 <Top>-2</Top>
                 <Left>-2</Left>
-                <Bottom>182</Bottom>
+                <Bottom>163</Bottom>
                 <Right>1368</Right>
                 <x>-2</x>
                 <y>-2</y>
                 <xscreen>1370</xscreen>
-                <yscreen>184</yscreen>
+                <yscreen>165</yscreen>
                 <sizeHorzCX>1002928</sizeHorzCX>
-                <sizeHorzCY>253793</sizeHorzCY>
+                <sizeHorzCY>227586</sizeHorzCY>
                 <sizeVertCX>146413</sizeVertCX>
                 <sizeVertCY>275862</sizeVertCY>
               </Rect>

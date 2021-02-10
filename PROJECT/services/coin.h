@@ -19,6 +19,13 @@ extern CPU_INT32U GetCashCount(void);
 extern CPU_INT32U GetResetCashCount(void);
 extern void SetCashPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
 
+#define BIT(bit)          (1UL << (bit))
+
+#define SETBIT(Val,bit)   ((Val) |= BIT(bit))
+#define CLRBIT(Val,bit)   ((Val) &= ~BIT(bit))
+#define XORBIT(Val,bit)   ((Val) ^= BIT(bit))
+#define TSTBIT(Val,bit)   ((Val) & BIT(bit))
+
 #endif //#ifndef _COIN_H_
 
 
