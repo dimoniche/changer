@@ -845,8 +845,9 @@ const TMenuPanel PriceWeekendMenuPanel[] = {arr_PriceMenuArrayWend, OnEnterPanel
 const CPU_INT08U str_DeviceMenu_0[] = "   ОБОРУДОВАНИЕ";
 const CPU_INT08U str_DeviceMenu_1[] = "ФР";
 const CPU_INT08U str_DeviceMenu_2[] = "Монетоприемник";
-const CPU_INT08U str_DeviceMenu_3[] = "Модем";
+const CPU_INT08U str_DeviceMenu_3[] = "Банк.терминал";
 const CPU_INT08U str_DeviceMenu_4[] = "Купюроприемник";
+const CPU_INT08U str_DeviceMenu_5[] = "Хоппер";
 
 const TMenuLine line_DeviceMenu_0 = {
   MENU_LINE_STRING,               // тип пункта меню
@@ -880,11 +881,18 @@ const TMenuLine line_DeviceMenu_4 = {
   MENU_LINE_GOTO_MENU,               // тип пункта меню
   0,                              // доп. флаги  
   (void*)str_DeviceMenu_3,       // указатель на текстовую строку или дескриптор
-  (void*)&ModemSetupPanel                            // панель для перехода
+  (void*)&BankSetupPanel                            // панель для перехода
 };
 
-const TMenuLineArray arr_DeviceMenuArray[] = {&line_DeviceMenu_0, &line_DeviceMenu_1, &line_DeviceMenu_2, &line_DeviceMenu_3, &line_DeviceMenu_4, NULL};
-const TMenuPanel DeviceMenuPanel[] = {arr_DeviceMenuArray, NULL, 5, MENU_PANEL_STANDARD};
+const TMenuLine line_DeviceMenu_5 = {
+  MENU_LINE_GOTO_MENU,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)str_DeviceMenu_5,       // указатель на текстовую строку или дескриптор
+  (void*)&HopperSetupPanel       // панель для перехода
+};
+
+const TMenuLineArray arr_DeviceMenuArray[] = {&line_DeviceMenu_0, &line_DeviceMenu_1, &line_DeviceMenu_2, &line_DeviceMenu_3, &line_DeviceMenu_4, &line_DeviceMenu_5, NULL};
+const TMenuPanel DeviceMenuPanel[] = {arr_DeviceMenuArray, NULL, 6, MENU_PANEL_STANDARD};
 
 
 /***********************************
@@ -1013,8 +1021,29 @@ const TMenuLine line_CoinMenu_2 = {
   NULL                            // панель для перехода
 };
 
-const TMenuLineArray arr_CoinMenuArray[] = {&line_CoinMenu_0, &line_CoinMenu_1, &line_CoinMenu_2, NULL};
-const TMenuPanel CoinSetupPanel[] = {arr_CoinMenuArray, NULL, 3, MENU_PANEL_STANDARD};
+const TMenuLine line_CoinMenu_3 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&CoinPulseLenDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_CoinMenu_4 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&CoinPauseLenDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_CoinMenu_5 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&CoinLevelDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLineArray arr_CoinMenuArray[] = {&line_CoinMenu_0, &line_CoinMenu_1, &line_CoinMenu_2, &line_CoinMenu_3, &line_CoinMenu_4, &line_CoinMenu_5, NULL};
+const TMenuPanel CoinSetupPanel[] = {arr_CoinMenuArray, NULL, 6, MENU_PANEL_STANDARD};
 
 /***********************************
   МЕНЮ НАСТРОЙКА КУПЮРОПРИЕМНИКА
@@ -1065,6 +1094,78 @@ const TMenuLine line_CashMenu_5 = {
 
 const TMenuLineArray arr_ValidatorMenuArray[] = {&line_CashMenu_0, &line_CashMenu_1, &line_CashMenu_2, &line_CashMenu_3, &line_CashMenu_4, &line_CashMenu_5, NULL};
 const TMenuPanel ValidatorSetupPanel[] = {arr_ValidatorMenuArray, NULL, 6, MENU_PANEL_STANDARD};
+
+/***********************************
+  МЕНЮ НАСТРОЙКА БАНКОВСКИХ ТЕРМИНАЛОВ
+***********************************/
+const CPU_INT08U str_BankMenu_0[] = "НАСТР.БАНК.ТЕРМ";
+
+const TMenuLine line_BankMenu_0 = {
+  MENU_LINE_STRING,               // тип пункта меню
+  MENU_FIXED_LINE,                // доп. флаги  
+  (void*)str_CashMenu_0,        // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_BankMenu_1 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&EnableBankDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_BankMenu_3 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&BankPerPulseDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_BankMenu_4 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&BankPulseLenDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_BankMenu_5 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&BankPauseLenDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_BankMenu_6 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&BankLevelDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLineArray arr_BankMenuArray[] = {&line_BankMenu_0, &line_BankMenu_1, &line_BankMenu_3, &line_BankMenu_4, &line_BankMenu_5, &line_BankMenu_6, NULL};
+const TMenuPanel BankSetupPanel[] = {arr_BankMenuArray, NULL, 6, MENU_PANEL_STANDARD};
+
+/***********************************
+ МЕНЮ НАСТРОЙКА ХОППЕРА
+***********************************/
+const CPU_INT08U str_HopperMenu_0[] = "НАСТРОйКИ ХОППЕРА";
+
+const TMenuLine line_HopperMenu_0 = {
+  MENU_LINE_STRING,               // тип пункта меню
+  MENU_FIXED_LINE,                // доп. флаги  
+  (void*)str_HopperMenu_0,        // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_HopperMenu_1 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&HopperCostDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLineArray arr_HopperMenuArray[] = {&line_HopperMenu_0, &line_HopperMenu_1, NULL};
+const TMenuPanel HopperSetupPanel[] = {arr_HopperMenuArray, NULL, 2, MENU_PANEL_STANDARD};
 
 /***********************************
   МЕНЮ НАСТРОЙКА МОДЕМА

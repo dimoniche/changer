@@ -56,11 +56,12 @@ typedef struct{
 }TChannelConfig;
 
 
-
 // структура конфигурации аппаратуры
 typedef struct{
   CPU_INT32U  EnableValidator;
   CPU_INT32U  EnableCoinAcceptor;
+  CPU_INT32U  EnableBank;
+  
   CPU_INT32U  EnableModem;
   CPU_INT32U  EnableFiscal;
   CPU_INT32U  EnableFiscalDayClear;
@@ -79,6 +80,13 @@ typedef struct{
 
   CPU_INT32U  CashMode;
   CPU_INT32U  CashPerPulse; // цена импульса купюрника
+
+  CPU_INT32U  BankPerPulse; // цена импульса банковского терминала
+  
+  CPU_INT32U  CoinLevel;   // уровень сигнала монетника
+  CPU_INT32U  CashLevel;   // уровень сигнала купюрника
+  CPU_INT32U  BankLevel;   // уровень сигнала банковского терминала
+  
   CPU_INT32U  PrintTimeout;
   CPU_INT32U  PrintTimeoutAfter;
 
@@ -86,8 +94,14 @@ typedef struct{
 
   CPU_INT32U  DeviceId;
 
+  // настройки хоппера
+  CPU_INT32U  hopperCost;
+  
 }TDeviceConfig;
 
+extern void OnChangeCashPulseLen();
+extern void OnChangeCoinPulseLen();
+extern void OnChangeSinalPulseLen();
 
 extern CPU_INT32U PeriodIndex;
 extern CPU_INT32U  ChannelIndex;
@@ -226,5 +240,22 @@ extern TDataDescStruct const TaxFormatDesc;
 extern TDataDescStruct const SubjSellDesc;
 extern TDataDescStruct const CommandV2Desc;
 extern TDataDescStruct const TaxSystemDesc;
+
+extern void OnChangeBankPulseLen();
+
+extern TDataDescStruct const BankPerPulseDesc;
+extern TDataDescStruct const BankPulseLenDesc;
+extern TDataDescStruct const BankPauseLenDesc;
+extern TDataDescStruct const BankLevelDesc;
+
+extern TDataDescStruct const CashLevelDesc;
+extern TDataDescStruct const CoinLevelDesc;
+
+extern TDataDescStruct const EnableBankDesc;
+
+extern TDataDescStruct const CoinPulseLenDesc;
+extern TDataDescStruct const CoinPauseLenDesc;
+
+extern TDataDescStruct const HopperCostDesc;
 
 #endif //#ifndef _DATADESC_H_

@@ -12,7 +12,7 @@ extern CPU_INT32U incas_common_bill_counter;
 #define   KBRD_TASK_STK_SIZE        128
 #define   USER_TASK_STK_SIZE        384
 #define   MENU_TASK_STK_SIZE        384
-#define   COIN_TASK_STK_SIZE        128
+#define   COIN_TASK_STK_SIZE        384
 #define   VALIDATOR_TASK_STK_SIZE   384
 #define   FISCAL_TASK_STK_SIZE      384
 #define   MODEM_TASK_STK_SIZE       768

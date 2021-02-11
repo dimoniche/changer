@@ -50,9 +50,18 @@ typedef struct
   CPU_INT08U manual_service_flag[4];
   char manual_service_name[32];
 
+  // настройки монетника
+  CPU_INT32U  coin_pulse_len;
+  CPU_INT32U  coin_pause_len;
+  
+  // настройки купюрника
   CPU_INT32U  cash_pulse_len;
   CPU_INT32U  cash_pause_len;
-
+  
+  // настройки банковского терминала
+  CPU_INT32U  bank_pulse_len;
+  CPU_INT32U  bank_pause_len;
+  
   CPU_INT32U  TaxFormat;
   CPU_INT32U  SubjSell;
   CPU_INT32U  CommandV2;

@@ -2,57 +2,47 @@
 
 <Workspace>
   <ConfigDictionary>
-    <CurrentConfigs>
-      <Project>sk-mlpc2368/Flash Central</Project>
-    </CurrentConfigs>
-  </ConfigDictionary>
+    
+  <CurrentConfigs><Project>sk-mlpc2368/Flash Central</Project></CurrentConfigs></ConfigDictionary>
   <Desktop>
     <Static>
       <Workspace>
         <ColumnWidths>
-          <Column0>177</Column0>
-          <Column1>27</Column1>
-          <Column2>27</Column2>
-          <Column3>27</Column3>
-        </ColumnWidths>
+          
+          
+          
+          
+        <Column0>177</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
       </Workspace>
       <Build>
-        <ColumnWidth0>20</ColumnWidth0>
-        <ColumnWidth1>980</ColumnWidth1>
-        <ColumnWidth2>261</ColumnWidth2>
-        <ColumnWidth3>65</ColumnWidth3>
-      </Build>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>980</ColumnWidth1><ColumnWidth2>261</ColumnWidth2><ColumnWidth3>65</ColumnWidth3></Build>
       <Find-in-Files>
-        <ColumnWidth0>470</ColumnWidth0>
-        <ColumnWidth1>67</ColumnWidth1>
-        <ColumnWidth2>806</ColumnWidth2>
-      </Find-in-Files>
+        
+        
+        
+      <ColumnWidth0>470</ColumnWidth0><ColumnWidth1>67</ColumnWidth1><ColumnWidth2>806</ColumnWidth2></Find-in-Files>
       <TerminalIO/>
     </Static>
     <Windows>
-      <Wnd2>
+      
+      
+    <Wnd0>
         <Tabs>
           <Tab>
             <Identity>TabID-22094-17165</Identity>
             <TabName>Workspace</TabName>
             <Factory>Workspace</Factory>
             <Session>
-              <NodeDict>
-                <ExpandedNode>sk-mlpc2368</ExpandedNode>
-                <ExpandedNode>sk-mlpc2368/PROJECT</ExpandedNode>
-                <ExpandedNode>sk-mlpc2368/PROJECT/app</ExpandedNode>
-                <ExpandedNode>sk-mlpc2368/PROJECT/drivers</ExpandedNode>
-                <ExpandedNode>sk-mlpc2368/PROJECT/drivers/ccnet</ExpandedNode>
-                <ExpandedNode>sk-mlpc2368/PROJECT/drivers/lcd</ExpandedNode>
-                <ExpandedNode>sk-mlpc2368/PROJECT/menu</ExpandedNode>
-                <ExpandedNode>sk-mlpc2368/PROJECT/services</ExpandedNode>
-              </NodeDict>
-            </Session>
+              
+            <NodeDict><ExpandedNode>sk-mlpc2368</ExpandedNode><ExpandedNode>sk-mlpc2368/PROJECT</ExpandedNode><ExpandedNode>sk-mlpc2368/PROJECT/app</ExpandedNode><ExpandedNode>sk-mlpc2368/PROJECT/data</ExpandedNode><ExpandedNode>sk-mlpc2368/PROJECT/drivers</ExpandedNode><ExpandedNode>sk-mlpc2368/PROJECT/drivers/ccnet</ExpandedNode><ExpandedNode>sk-mlpc2368/PROJECT/drivers/lcd</ExpandedNode><ExpandedNode>sk-mlpc2368/PROJECT/menu</ExpandedNode><ExpandedNode>sk-mlpc2368/PROJECT/services</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
-        <SelectedTab>0</SelectedTab>
-      </Wnd2>
-      <Wnd3>
+        
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
         <Tabs>
           <Tab>
             <Identity>TabID-15821-17283</Identity>
@@ -67,168 +57,21 @@
             <Session/>
           </Tab>
         </Tabs>
-        <SelectedTab>0</SelectedTab>
-      </Wnd3>
-    </Windows>
+        
+      <SelectedTab>0</SelectedTab></Wnd1></Windows>
     <Editor>
-      <Pane>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\app\app_serv.c</Filename>
-          <XPos>0</XPos>
-          <YPos>566</YPos>
-          <SelStart>18843</SelStart>
-          <SelEnd>18843</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\services\validator.c</Filename>
-          <XPos>0</XPos>
-          <YPos>338</YPos>
-          <SelStart>8384</SelStart>
-          <SelEnd>8384</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\services\coin.c</Filename>
-          <XPos>0</XPos>
-          <YPos>221</YPos>
-          <SelStart>5327</SelStart>
-          <SelEnd>5327</SelEnd>
-        </Tab>
-        <ActiveTab>2</ActiveTab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\services\coin.h</Filename>
-          <XPos>0</XPos>
-          <YPos>0</YPos>
-          <SelStart>741</SelStart>
-          <SelEnd>741</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\services\time.c</Filename>
-          <XPos>0</XPos>
-          <YPos>55</YPos>
-          <SelStart>1532</SelStart>
-          <SelEnd>1532</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\drivers\ccnet\CCRSProtocol.h</Filename>
-          <XPos>0</XPos>
-          <YPos>0</YPos>
-          <SelStart>434</SelStart>
-          <SelEnd>434</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\app\app_serv.h</Filename>
-          <XPos>0</XPos>
-          <YPos>27</YPos>
-          <SelStart>1127</SelStart>
-          <SelEnd>1127</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\data\datadesc.h</Filename>
-          <XPos>0</XPos>
-          <YPos>201</YPos>
-          <SelStart>7402</SelStart>
-          <SelEnd>7402</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\PROJECT\data\datadesc.c</Filename>
-          <XPos>0</XPos>
-          <YPos>136</YPos>
-          <SelStart>6348</SelStart>
-          <SelEnd>6348</SelEnd>
-        </Tab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\OS\bsp\iolpc2368.h</Filename>
-          <XPos>0</XPos>
-          <YPos>797</YPos>
-          <SelStart>17962</SelStart>
-          <SelEnd>17962</SelEnd>
-        </Tab>
-      </Pane>
-      <ActivePane>0</ActivePane>
-      <Sizes>
-        <Pane>
-          <X>1000000</X>
-          <Y>1000000</Y>
-        </Pane>
-      </Sizes>
-      <SplitMode>1</SplitMode>
-    </Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\app\app_serv.c</Filename><XPos>0</XPos><YPos>532</YPos><SelStart>18305</SelStart><SelEnd>18305</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\services\validator.c</Filename><XPos>0</XPos><YPos>338</YPos><SelStart>8384</SelStart><SelEnd>8384</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\services\coin.c</Filename><XPos>0</XPos><YPos>511</YPos><SelStart>11916</SelStart><SelEnd>11916</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\services\coin.h</Filename><XPos>0</XPos><YPos>3</YPos><SelStart>485</SelStart><SelEnd>485</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\services\time.c</Filename><XPos>0</XPos><YPos>55</YPos><SelStart>1532</SelStart><SelEnd>1532</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\drivers\ccnet\CCRSProtocol.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>434</SelStart><SelEnd>434</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\app\app_serv.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>360</SelStart><SelEnd>360</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\data\datadesc.h</Filename><XPos>0</XPos><YPos>73</YPos><SelStart>2838</SelStart><SelEnd>2838</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\data\datadesc.c</Filename><XPos>0</XPos><YPos>3399</YPos><SelStart>157293</SelStart><SelEnd>157293</SelEnd></Tab><ActiveTab>8</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\OS\bsp\iolpc2368.h</Filename><XPos>0</XPos><YPos>797</YPos><SelStart>17962</SelStart><SelEnd>17962</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\data\fram_map.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>176</SelStart><SelEnd>176</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\menu\menudesc.c</Filename><XPos>0</XPos><YPos>879</YPos><SelStart>37022</SelStart><SelEnd>37022</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\PROJECT\menu\menudesc.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>779</SelStart><SelEnd>779</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\OS\app\app.c</Filename><XPos>0</XPos><YPos>33</YPos><SelStart>1131</SelStart><SelEnd>1131</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\OS\bsp\bsp.c</Filename><XPos>0</XPos><YPos>278</YPos><SelStart>11612</SelStart><SelEnd>11612</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
-      <Top>
-        <Row0>
-          <Sizes>
-            <Toolbar-04b829c8>
-              <key>iaridepm.enu1</key>
-            </Toolbar-04b829c8>
-          </Sizes>
-        </Row0>
-        <Row1>
-          <Sizes/>
-        </Row1>
-      </Top>
-      <Left>
-        <Row0>
-          <Sizes>
-            <Wnd2>
-              <Rect>
-                <Top>-2</Top>
-                <Left>-2</Left>
-                <Bottom>517</Bottom>
-                <Right>268</Right>
-                <x>-2</x>
-                <y>-2</y>
-                <xscreen>200</xscreen>
-                <yscreen>200</yscreen>
-                <sizeHorzCX>146413</sizeHorzCX>
-                <sizeHorzCY>275862</sizeHorzCY>
-                <sizeVertCX>197657</sizeVertCX>
-                <sizeVertCY>715862</sizeVertCY>
-              </Rect>
-            </Wnd2>
-          </Sizes>
-        </Row0>
-      </Left>
-      <Right>
-        <Row0>
-          <Sizes/>
-        </Row0>
-      </Right>
-      <Bottom>
-        <Row0>
-          <Sizes>
-            <Wnd3>
-              <Rect>
-                <Top>-2</Top>
-                <Left>-2</Left>
-                <Bottom>163</Bottom>
-                <Right>1368</Right>
-                <x>-2</x>
-                <y>-2</y>
-                <xscreen>1370</xscreen>
-                <yscreen>165</yscreen>
-                <sizeHorzCX>1002928</sizeHorzCX>
-                <sizeHorzCY>227586</sizeHorzCY>
-                <sizeVertCX>146413</sizeVertCX>
-                <sizeVertCY>275862</sizeVertCY>
-              </Rect>
-            </Wnd3>
-          </Sizes>
-        </Row0>
-      </Bottom>
-      <Float>
-        <Sizes/>
-      </Float>
-    </Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-049429c8><key>iaridepm.enu1</key></Toolbar-049429c8></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>517</Bottom><Right>268</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>146413</sizeHorzCX><sizeHorzCY>275862</sizeHorzCY><sizeVertCX>197657</sizeVertCX><sizeVertCY>715862</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>163</Bottom><Right>1368</Right><x>-2</x><y>-2</y><xscreen>1370</xscreen><yscreen>165</yscreen><sizeHorzCX>1002928</sizeHorzCX><sizeHorzCY>227586</sizeHorzCY><sizeVertCX>146413</sizeVertCX><sizeVertCY>275862</sizeVertCY></Rect></Wnd1></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 

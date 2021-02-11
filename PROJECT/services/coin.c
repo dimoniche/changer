@@ -59,14 +59,50 @@ CPU_INT32U period_bank;
 CPU_INT32U period_signal;
 CPU_INT32U period_hopper;
 
+void SetCoinPulseParam(CPU_INT32U pulse, CPU_INT32U pause)
+{
+  #if OS_CRITICAL_METHOD == 3
+  OS_CPU_SR  cpu_sr = 0;
+  #endif
+  OS_ENTER_CRITICAL();
+  coin_pulse = pulse * 1;
+  coin_pause = pause;
+  OS_EXIT_CRITICAL();
+}
+
 void SetCashPulseParam(CPU_INT32U pulse, CPU_INT32U pause)
 {
   #if OS_CRITICAL_METHOD == 3
   OS_CPU_SR  cpu_sr = 0;
   #endif
   OS_ENTER_CRITICAL();
-  cash_pulse = pulse * 100;
+  cash_pulse = pulse * 1;
   cash_pause = pause;
+  OS_EXIT_CRITICAL();
+}
+
+void SetBankPulseParam(CPU_INT32U pulse, CPU_INT32U pause)
+{
+  #if OS_CRITICAL_METHOD == 3
+  OS_CPU_SR  cpu_sr = 0;
+  #endif
+  OS_ENTER_CRITICAL();
+  bank_pulse = pulse * 1;
+  bank_pause = pause;
+  OS_EXIT_CRITICAL();
+}
+
+void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3)
+{
+  #if OS_CRITICAL_METHOD == 3
+  OS_CPU_SR  cpu_sr = 0;
+  #endif
+  OS_ENTER_CRITICAL();
+ 
+  cashLevel = level1;
+  bankLevel = level2;
+  coinLevel = level3;
+  
   OS_EXIT_CRITICAL();
 }
 
@@ -486,7 +522,7 @@ void  InitImpInput (void)
     OnChangeCoinPulseLen();
     OnChangeCashPulseLen();
     OnChangeBankPulseLen();
-    OnChangeHopperPulseLen();
+    //OnChangeHopperPulseLen();
      
     OS_ENTER_CRITICAL();
     

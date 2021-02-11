@@ -15,9 +15,14 @@ extern CPU_INT32U GetCoinCount(void);
 extern CPU_INT32U GetResetCoinCount(void);
 extern void CoinDisable(void);
 extern void CoinEnable(void);
+extern void InitInputPorts();
 extern CPU_INT32U GetCashCount(void);
 extern CPU_INT32U GetResetCashCount(void);
+
+extern void SetCoinPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
 extern void SetCashPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
+extern void SetBankPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
+extern void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3);
 
 #define BIT(bit)          (1UL << (bit))
 
