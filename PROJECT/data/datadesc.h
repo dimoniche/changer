@@ -86,6 +86,7 @@ typedef struct{
   CPU_INT32U  CoinLevel;   // уровень сигнала монетника
   CPU_INT32U  CashLevel;   // уровень сигнала купюрника
   CPU_INT32U  BankLevel;   // уровень сигнала банковского терминала
+  CPU_INT32U  HopperLevel; // уровень хоппера в режиме Cube
   
   CPU_INT32U  PrintTimeout;
   CPU_INT32U  PrintTimeoutAfter;
@@ -95,7 +96,11 @@ typedef struct{
   CPU_INT32U  DeviceId;
 
   // настройки хоппера
+  CPU_INT32U  hopperRegime;
   CPU_INT32U  hopperCost;
+  CPU_INT32U  hopperStopEngine;
+  CPU_INT32U  hopperSaveCredit;
+  CPU_INT32U  hopperButtonStart;
   
 }TDeviceConfig;
 
@@ -242,6 +247,7 @@ extern TDataDescStruct const CommandV2Desc;
 extern TDataDescStruct const TaxSystemDesc;
 
 extern void OnChangeBankPulseLen();
+extern void OnChangeHopperPulseLen();
 
 extern TDataDescStruct const BankPerPulseDesc;
 extern TDataDescStruct const BankPulseLenDesc;
@@ -257,5 +263,12 @@ extern TDataDescStruct const CoinPulseLenDesc;
 extern TDataDescStruct const CoinPauseLenDesc;
 
 extern TDataDescStruct const HopperCostDesc;
+extern TDataDescStruct const HopperStopEngineDesc;
+extern TDataDescStruct const HopperSaveCreditDesc;
+extern TDataDescStruct const HopperButtonStartDesc;
+extern TDataDescStruct const HopperPulseLenDesc;
+extern TDataDescStruct const HopperPauseLenDesc;
+extern TDataDescStruct const HopperLevelDesc;
+extern TDataDescStruct const RegimeHopperDesc;
 
 #endif //#ifndef _DATADESC_H_

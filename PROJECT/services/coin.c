@@ -51,10 +51,8 @@ static CPU_INT32U cashLevel;
 static CPU_INT32U coinLevel;
 static CPU_INT32U bankLevel;
 static CPU_INT32U hopperLevel;
-static CPU_INT32U SignalHopperLevel;
 
-CPU_INT32U period;
-CPU_INT32U period_cash;
+CPU_INT32U period_coin;
 CPU_INT32U period_bank;
 CPU_INT32U period_signal;
 CPU_INT32U period_hopper;
@@ -92,7 +90,18 @@ void SetBankPulseParam(CPU_INT32U pulse, CPU_INT32U pause)
   OS_EXIT_CRITICAL();
 }
 
-void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3)
+void SetHopperPulseParam(CPU_INT32U pulse, CPU_INT32U pause)
+{
+  #if OS_CRITICAL_METHOD == 3
+  OS_CPU_SR  cpu_sr = 0;
+  #endif
+  OS_ENTER_CRITICAL();
+  bank_pulse = pulse * 1;
+  bank_pause = pause;
+  OS_EXIT_CRITICAL();
+}
+
+void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3,  CPU_INT32U level4)
 {
   #if OS_CRITICAL_METHOD == 3
   OS_CPU_SR  cpu_sr = 0;
@@ -102,6 +111,7 @@ void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3)
   cashLevel = level1;
   bankLevel = level2;
   coinLevel = level3;
+  hopperLevel = level4;
   
   OS_EXIT_CRITICAL();
 }
@@ -109,87 +119,219 @@ void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3)
 void CoinTask(void *p_arg)
 {
   CPU_INT32U enable_coin;
-  CPU_INT32U cash_mode;
-  CPU_INT32U cash_enable;
-  CPU_INT32U last_cash_count = GetCashCount();
-  CPU_INT32U last_cash_time = OSTimeGet();
+  CPU_INT32U bank_enable;
+  CPU_INT32U regime_hopper;
+  
+  CPU_INT32U last_coin_count = GetCoinCount();
+  CPU_INT32U last_coin_time = OSTimeGet();
+
+  CPU_INT32U last_bank_count = GetbankCount();
+  CPU_INT32U last_bank_time = OSTimeGet();
+
+  CPU_INT32U last_hopper_count = GetHopperCount();
+  CPU_INT32U last_hopper_time = OSTimeGet();
+
   CPU_INT32U last_settings_time = OSTimeGet();
 
   GetData(&EnableCoinDesc, &enable_coin, 0, DATA_FLAG_SYSTEM_INDEX);  
-  GetData(&CashModeDesc, &cash_mode, 0, DATA_FLAG_SYSTEM_INDEX);  
-  GetData(&EnableValidatorDesc, &cash_enable, 0, DATA_FLAG_SYSTEM_INDEX);
-
+  GetData(&EnableBankDesc, &bank_enable, 0, DATA_FLAG_SYSTEM_INDEX);
+  GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
+ 
   while(1)
     {
       if (OSTimeGet() - last_settings_time > 1000)
       {
           last_settings_time = OSTimeGet();
-          GetData(&EnableCoinDesc, &enable_coin, 0, DATA_FLAG_SYSTEM_INDEX);  
-          GetData(&CashModeDesc, &cash_mode, 0, DATA_FLAG_SYSTEM_INDEX);  
-          GetData(&EnableValidatorDesc, &cash_enable, 0, DATA_FLAG_SYSTEM_INDEX);
+          GetData(&EnableCoinDesc, &enable_coin, 0, DATA_FLAG_SYSTEM_INDEX);
+          GetData(&EnableBankDesc, &bank_enable, 0, DATA_FLAG_SYSTEM_INDEX);
+          GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
       }
             
       OSTimeDly(1);
       
-      if (enable_coin)
-        {
-          if (GetCoinCount())
-          {
-            PostUserEvent(EVENT_COIN_INSERTED);
-          }
-        }
-      else
-       {
-          CoinDisable();
-          GetResetCoinCount();
-        }
-
-      if (!cash_enable) {GetResetCashCount(); continue;}
-
       #if OS_CRITICAL_METHOD == 3
       OS_CPU_SR  cpu_sr = 0;
       #endif
-      OS_ENTER_CRITICAL();
-      if (pend_cash_counter)
+
+      if (enable_coin)
       {
-          // импульсы инкрементируем только после выдержки паузы
-          if (OSTimeGet() - pend_cash_timestamp > cash_pause)
-          {
-            pend_cash_counter = 0;
-            CashImpCounter++;
-          }
-      }
-      OS_EXIT_CRITICAL();
-            
-      if (cash_mode == 1)
+        OS_ENTER_CRITICAL();
+        if (pend_coin_counter)
         {
-          if (GetCashCount())
+          // импульсы инкрементируем только после выдержки паузы
+          if (OSTimeGet() - pend_coin_timestamp > coin_pause)
           {
-            if (last_cash_count == GetCashCount())
-            {
-                if (labs(OSTimeGet() - last_cash_time) > 500)
-                {
-                  PostUserEvent(EVENT_CASH_INSERTED);
-                }
-            }
-            else
-            {
-                last_cash_count = GetCashCount();
-                last_cash_time = OSTimeGet();
-            }
+            pend_coin_counter = 0;
+            CoinImpCounter++;
+          }
+        }
+        OS_EXIT_CRITICAL();
+            
+        if (GetCoinCount())
+        {
+          if (last_coin_count == GetCoinCount())
+          {
+              if (labs(OSTimeGet() - last_coin_time) > 500)
+              {
+                PostUserEvent(EVENT_COIN_INSERTED);
+              }
           }
           else
           {
-            last_cash_time = OSTimeGet();
+              last_coin_count = GetCoinCount();
+              last_coin_time = OSTimeGet();
           }
         }
+        else
+        {
+          last_coin_time = OSTimeGet();
+        }
+      }
       else
-       {
-          GetResetCashCount();
-       }
+      {
+          CoinDisable();
+          GetResetCoinCount();
+          
+          OS_ENTER_CRITICAL();
+          pend_coin_counter = 0;
+          pend_coin_timestamp = 0;
+          OS_EXIT_CRITICAL();
+      }
+      
+      if (bank_enable)
+      {
+        OS_ENTER_CRITICAL();
+        if (pend_bank_counter)
+        {
+          // импульсы инкрементируем только после выдержки паузы
+          if (OSTimeGet() - pend_bank_timestamp > bank_pause)
+          {
+            pend_bank_counter = 0;
+            BankImpCounter++;
+          }
+        }
+        OS_EXIT_CRITICAL();
+            
+        if (GetbankCount())
+        {
+          if (last_bank_count == GetbankCount())
+          {
+              if (labs(OSTimeGet() - last_bank_time) > 500)
+              {
+                PostUserEvent(EVENT_BANK_INSERTED);
+              }
+          }
+          else
+          {
+              last_bank_count = GetbankCount();
+              last_bank_time = OSTimeGet();
+          }
+        }
+        else
+        {
+          last_bank_time = OSTimeGet();
+        }
+      }
+      else
+      {
+          BankDisable();
+          GetResetbankCount();
+          
+          OS_ENTER_CRITICAL();
+          pend_bank_counter = 0;
+          pend_bank_timestamp = 0;
+          OS_EXIT_CRITICAL();
+      }
+      
+      if (regime_hopper)
+      {
+        OS_ENTER_CRITICAL();
+        if (pend_hopper_counter)
+        {
+          // импульсы инкрементируем только после выдержки паузы
+          if (OSTimeGet() - pend_hopper_timestamp > hopper_pause)
+          {
+            pend_hopper_counter = 0;
+            HopperImpCounter++;
+          }
+        }
+        OS_EXIT_CRITICAL();
+            
+        if (GetHopperCount())
+        {
+          if (last_hopper_count == GetHopperCount())
+          {
+              if (labs(OSTimeGet() - last_hopper_time) > 500)
+              {
+                PostUserEvent(EVENT_HOPPER_EXTRACTED);
+              }
+          }
+          else
+          {
+              last_hopper_count = GetHopperCount();
+              last_hopper_time = OSTimeGet();
+          }
+        }
+        else
+        {
+          last_bank_time = OSTimeGet();
+        }
+      }
+      else
+      {
+          HopperDisable();
+          GetResetHopperCount();
+          
+          OS_ENTER_CRITICAL();
+          pend_hopper_counter = 0;
+          pend_hopper_timestamp = 0;
+          OS_EXIT_CRITICAL();
+      }
+      
+      OS_ENTER_CRITICAL();
 
+      if (pend_upsignal_error_hopper_counter)
+      {
+        if (OSTimeGet() - pend_signal_error_hopper_timestamp > signal_error_hopper_pulse)
+        {
+          // сигнал ошибки снят
+          PostUserEvent(EVENT_ERROR_HOPPER_ON);
+          pend_upsignal_error_hopper_counter = 0;
+        }
+      }
+      
+      if (pend_downsignal_error_hopper_counter)
+      {
+        if (OSTimeGet() - pend_signal_error_hopper_timestamp > signal_error_hopper_pulse)
+        {
+          // сигнал ошибки появился
+          PostUserEvent(EVENT_ERROR_HOPPER_OFF);
+          pend_downsignal_error_hopper_counter = 0;
+        }
+      }
+
+      if (pend_upsignal_nomoney_hopper_counter)
+      {
+        if (OSTimeGet() - pend_signal_nomoney_hopper_timestamp > signal_nomoney_hopper_pulse)
+        {
+          // деньги в хоппере есть
+          PostUserEvent(EVENT_NOMONEY_HOPPER_ON);
+          pend_upsignal_nomoney_hopper_counter = 0;
+        }
+      }
+      
+      if (pend_downsignal_nomoney_hopper_counter)
+      {
+        if (OSTimeGet() - pend_signal_nomoney_hopper_timestamp > signal_nomoney_hopper_pulse)
+        {
+          // деньги в хоппере кончились
+          PostUserEvent(EVENT_NOMONEY_HOPPER_OFF);
+          pend_downsignal_nomoney_hopper_counter = 0;
+        }
+      }
+
+      OS_EXIT_CRITICAL();
     }
-
 }
 
 void CoinDisable(void)
@@ -198,6 +340,26 @@ void CoinDisable(void)
 }
 
 void CoinEnable(void)
+{
+
+}
+
+void BankDisable(void)
+{
+
+}
+
+void BankEnable(void)
+{
+
+}
+
+void HopperDisable(void)
+{
+
+}
+
+void HopperEnable(void)
 {
 
 }
@@ -290,7 +452,7 @@ CPU_INT32U GetHopperCount()
 }
 
 // получить число импульсов от хоппера и сбросить счетчик
-CPU_INT32U GetHopperbankCount()
+CPU_INT32U GetResetHopperCount()
 {
   #if OS_CRITICAL_METHOD == 3
   OS_CPU_SR  cpu_sr = 0;
@@ -307,6 +469,9 @@ void InitCoin(void)
 {
   CoinImpCounter = 0;
   CashImpCounter = 0;
+  BankImpCounter = 0;
+  HopperImpCounter = 0;
+  
   InitImpInput();
   OSTaskCreate(CoinTask, (void *)0, (OS_STK *)&CoinTaskStk[COIN_TASK_STK_SIZE-1], COIN_TASK_PRIO);
 }
@@ -364,21 +529,21 @@ void InputCapture_ISR(void)
   // монетоприемник
   if(TSTBIT(input_event, 0))
   {
-    if ((!FIO0PIN_bit.P0_23 && cashLevel) || (FIO0PIN_bit.P0_23 && !cashLevel))
+    if ((!FIO0PIN_bit.P0_23 && coinLevel) || (FIO0PIN_bit.P0_23 && !coinLevel))
       { // пришел задний фронт
         CPU_INT32U cr=T3CR;
-        cr -= period_cash;
+        cr -= period_coin;
         
-        if (cr > (cash_pulse - COIN_IMP_SPAN))
+        if (cr > (coin_pulse - COIN_IMP_SPAN))
         {
-            pend_cash_counter = 1;
-            pend_cash_timestamp = OSTimeGet();
+            pend_coin_counter = 1;
+            pend_coin_timestamp = OSTimeGet();
         }
       }
     else
       { // пришел передний фронт
-        period_cash = T3CR;
-        pend_cash_counter = 0;
+        period_coin = T3CR;
+        pend_coin_counter = 0;
       }
   }
 
@@ -429,7 +594,7 @@ void InputCapture_ISR(void)
   {
     pend_signal_error_hopper_timestamp = OSTimeGet();
     
-    if ((FIO1PIN_bit.P1_23 && SignalHopperLevel) || (!FIO1PIN_bit.P1_23 && !SignalHopperLevel))
+    if ((FIO1PIN_bit.P1_23 && hopperLevel) || (!FIO1PIN_bit.P1_23 && !hopperLevel))
       {
           pend_upsignal_error_hopper_counter = 1;
           pend_downsignal_error_hopper_counter = 0;
@@ -446,7 +611,7 @@ void InputCapture_ISR(void)
   {
     pend_signal_nomoney_hopper_timestamp = OSTimeGet();
     
-    if ((FIO1PIN_bit.P1_24 && SignalHopperLevel) || (!FIO1PIN_bit.P1_24 && !SignalHopperLevel))
+    if ((FIO1PIN_bit.P1_24 && hopperLevel) || (!FIO1PIN_bit.P1_24 && !hopperLevel))
       {
           pend_upsignal_nomoney_hopper_counter = 1;
           pend_downsignal_nomoney_hopper_counter = 0;
@@ -472,14 +637,14 @@ void InitInputPorts()
     
     // банковский терминал
     PINSEL1_bit.P0_26 = 0;
-    if(cashLevel)PINMODE1_bit.P0_26 = 3;
+    if(bankLevel)PINMODE1_bit.P0_26 = 3;
     else PINMODE1_bit.P0_26 = 0;
     FIO0DIR_bit.P0_26  = 0;
     FIO0MASK_bit.P0_26 = 0;
     
     // хоппер в режиме импульсов
     PINSEL3_bit.P1_25 = 0;
-    if(bankLevel)PINMODE3_bit.P1_25 = 3;
+    if(hopperLevel)PINMODE3_bit.P1_25 = 3;
     else PINMODE3_bit.P1_25 = 0;
     FIO1DIR_bit.P1_25  = 0;
     FIO1MASK_bit.P1_25 = 0;
@@ -522,7 +687,7 @@ void  InitImpInput (void)
     OnChangeCoinPulseLen();
     OnChangeCashPulseLen();
     OnChangeBankPulseLen();
-    //OnChangeHopperPulseLen();
+    OnChangeHopperPulseLen();
      
     OS_ENTER_CRITICAL();
     

@@ -15,14 +15,24 @@ extern CPU_INT32U GetCoinCount(void);
 extern CPU_INT32U GetResetCoinCount(void);
 extern void CoinDisable(void);
 extern void CoinEnable(void);
+extern void BankDisable(void);
+extern void BankEnable(void);
+extern void HopperDisable(void);
+extern void HopperEnable(void);
+
 extern void InitInputPorts();
 extern CPU_INT32U GetCashCount(void);
 extern CPU_INT32U GetResetCashCount(void);
+extern CPU_INT32U GetbankCount(void);
+extern CPU_INT32U GetResetbankCount(void);
+extern CPU_INT32U GetHopperCount();
+extern CPU_INT32U GetResetHopperCount(void);
 
 extern void SetCoinPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
 extern void SetCashPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
 extern void SetBankPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
-extern void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3);
+extern void SetHopperPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
+extern void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3, CPU_INT32U level4);
 
 #define BIT(bit)          (1UL << (bit))
 

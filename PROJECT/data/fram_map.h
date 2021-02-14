@@ -62,6 +62,10 @@ typedef struct
   CPU_INT32U  bank_pulse_len;
   CPU_INT32U  bank_pause_len;
   
+  // настройки хоппера в режиме Cube
+  CPU_INT32U  hopper_pulse_len;
+  CPU_INT32U  hopper_pause_len;
+  
   CPU_INT32U  TaxFormat;
   CPU_INT32U  SubjSell;
   CPU_INT32U  CommandV2;

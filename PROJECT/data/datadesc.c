@@ -339,13 +339,14 @@ TDataDescStruct const BankPerPulseDesc = {
 
 void OnChangeLevel()
 {
-    CPU_INT32U level1, level2, level3;
+    CPU_INT32U level1, level2, level3, level4;
  
     GetData(&CashLevelDesc, &level1, 0, DATA_FLAG_SYSTEM_INDEX);
     GetData(&BankLevelDesc, &level2, 0, DATA_FLAG_SYSTEM_INDEX);
     GetData(&CoinLevelDesc, &level3, 0, DATA_FLAG_SYSTEM_INDEX);
-
-    SetLevelParam(level1, level2, level3);
+    GetData(&CoinLevelDesc, &level4, 0, DATA_FLAG_SYSTEM_INDEX);
+    
+    SetLevelParam(level1, level2, level3, level4);
  
     #if OS_CRITICAL_METHOD == 3
     OS_CPU_SR  cpu_sr = 0;
@@ -357,13 +358,14 @@ void OnChangeLevel()
 
 void OnChangeLevelWithoutInit()
 {
-    CPU_INT32U level1, level2, level3;
+    CPU_INT32U level1, level2, level3, level4;
 
     GetData(&CashLevelDesc, &level1, 0, DATA_FLAG_SYSTEM_INDEX);
     GetData(&BankLevelDesc, &level2, 0, DATA_FLAG_SYSTEM_INDEX);
     GetData(&CoinLevelDesc, &level3, 0, DATA_FLAG_SYSTEM_INDEX);
-
-    SetLevelParam(level1, level2, level3);
+    GetData(&CoinLevelDesc, &level4, 0, DATA_FLAG_SYSTEM_INDEX);
+    
+    SetLevelParam(level1, level2, level3, level4);
 }
 
 /*************************************
@@ -426,6 +428,27 @@ TDataDescStruct const BankLevelDesc = {
   0,                        // размер массива
   NULL,                     // указатель на десриптор индекса массива
   (void*)offsetof(TFramMap, DeviceConfig.BankLevel),            // указатель на переменную или адрес FRAM
+  (void*)&LevelRange,     // указатель на границы параметра
+  OnChangeLevel,                     // функция по изменению
+  sizeof(CPU_INT32U),       // смещение между элементами в массиве
+  LevelName,       // указатель на строку названия параметра
+  DATA_IS_INDEX,            // признак индексного параметра (список строк)
+  LevelList,                  // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                          // значение по умолчанию
+};
+
+/*************************************
+  Уровень сигнала хоппера в режиме Cube
+*************************************/
+TDataDescStruct const HopperLevelDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, DeviceConfig.HopperLevel),            // указатель на переменную или адрес FRAM
   (void*)&LevelRange,     // указатель на границы параметра
   OnChangeLevel,                     // функция по изменению
   sizeof(CPU_INT32U),       // смещение между элементами в массиве
@@ -910,7 +933,7 @@ TDataDescStruct const CashModeDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   CashModeList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  1                           
+  0                           
 };
 
 /*************************************
@@ -3420,6 +3443,165 @@ TDataDescStruct const HopperCostDesc = {
   10                          
 };
 
+/*************************************
+  остановка мотора хоппера, сек
+*************************************/
+CPU_INT08U const HopperStopEngineName[] = "Останов, сек";
+TRangeValueULONG const HopperStopEngineRange = {1, 20};
+
+TDataDescStruct const HopperStopEngineDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, DeviceConfig.hopperStopEngine),            // указатель на переменную или адрес FRAM
+  (void*)&HopperStopEngineRange,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  HopperStopEngineName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  5                          
+};
+
+/*************************************
+  Хранить кредит, мин
+*************************************/
+CPU_INT08U const HopperSaveCreditName[] = "Кредит, мин";
+TRangeValueULONG const HopperSaveCreditRange = {0, 60};
+
+TDataDescStruct const HopperSaveCreditDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, DeviceConfig.hopperSaveCredit),            // указатель на переменную или адрес FRAM
+  (void*)&HopperSaveCreditRange,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  HopperSaveCreditName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                          
+};
+
+/*************************************
+  Кнопка старт - да/нет
+*************************************/
+CPU_INT08U const HopperButtonStartName[] = "Кнопка";
+TRangeValueULONG const HopperButtonStartRange = {0, 1};
+
+CPU_INT08U const ButtonStartList_str0[] = "Нет";
+CPU_INT08U const ButtonStartList_str1[] = "Да";
+CPU_INT08U const *ButtonStartList[] = {ButtonStartList_str0, ButtonStartList_str1};
+
+TDataDescStruct const HopperButtonStartDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, DeviceConfig.hopperButtonStart),            // указатель на переменную или адрес FRAM
+  (void*)&HopperButtonStartRange,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  HopperButtonStartName,       // указатель на строку названия параметра
+  DATA_IS_INDEX,            // признак индексного параметра (список строк)
+  ButtonStartList,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                          
+};
+
+/*************************************
+  Длина импульса входа хоппера в режиме Cube, мс
+*************************************/
+TRangeValueULONG const HopperPulseLenRange = {20, 250};
+CPU_INT08U const HopperPulseLenName[] = "Длина имп.,мс";
+
+void OnChangeHopperPulseLen()
+{
+    CPU_INT32U pulse, pause;
+    GetData(&HopperPulseLenDesc, &pulse, 0, DATA_FLAG_SYSTEM_INDEX);
+    GetData(&HopperPauseLenDesc, &pause, 0, DATA_FLAG_SYSTEM_INDEX);
+    SetHopperPulseParam(pulse, pause);
+}
+
+TDataDescStruct const HopperPulseLenDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  NULL,        // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, hopper_pulse_len),            // указатель на переменную или адрес FRAM
+  (void*)&HopperPulseLenRange,     // указатель на границы параметра
+  OnChangeHopperPulseLen,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  HopperPulseLenName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  50                           
+};
+
+/*************************************
+  Длина паузы входа хоппера в режиме Cube, мс
+*************************************/
+TRangeValueULONG const HopperPauseLenRange = {20, 250};
+CPU_INT08U const HopperPauseLenName[] = "Пауза имп.,мс";
+
+TDataDescStruct const HopperPauseLenDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  NULL,        // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, hopper_pause_len),            // указатель на переменную или адрес FRAM
+  (void*)&HopperPauseLenRange,     // указатель на границы параметра
+  OnChangeHopperPulseLen,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  HopperPauseLenName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  20                           
+};
+
+/*************************************
+  режим хоппера
+*************************************/
+TRangeValueULONG const RegimeHopperRange = {0, 1};
+CPU_INT08U const RegimeHopperName[] = "Режим";
+CPU_INT08U const RegimeHopper_str0[] = "Elolution";
+CPU_INT08U const RegimeHopper_str1[] = "Cube";
+CPU_INT08U const *RegimeHopperList[] = {RegimeHopper_str0, RegimeHopper_str1};
+
+TDataDescStruct const RegimeHopperDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  0,        // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, DeviceConfig.hopperRegime),            // указатель на переменную или адрес FRAM
+  (void*)&RegimeHopperRange,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  sizeof(CPU_INT32U),       // смещение между элементами в массиве
+  RegimeHopperName,       // указатель на строку названия параметра
+  DATA_IS_INDEX,            // признак индексного параметра (список строк)
+  RegimeHopperList,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           // значение по умолчанию
+};
+
 //**************************************************
 //**************************************************
 //**************************************************
@@ -3506,8 +3688,14 @@ const TDataDescArrayStruct AllDataArray[] =
     
     {&CoinPulseLenDesc, "CoinPulseLenDesc"},
     {&CoinPauseLenDesc, "CoinPauseLenDesc"},
-    
+ 
     {&HopperCostDesc, "HopperCostDesc"},
+    {&HopperStopEngineDesc, "HopperStopEngineDesc"},
+    {&HopperSaveCreditDesc, "HopperSaveCreditDesc"},
+    {&HopperButtonStartDesc, "HopperButtonStartDesc"},
+    {&HopperPauseLenDesc, "HopperPauseLenDesc"},
+    {&HopperPulseLenDesc, "HopperPulseLenDesc"},
+    {&RegimeHopperDesc, "RegimeHopperDesc"},
     
     {NULL, ""}
 };
