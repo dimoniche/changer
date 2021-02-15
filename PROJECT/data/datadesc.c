@@ -314,7 +314,7 @@ TDataDescStruct const BankPauseLenDesc = {
 };
 
 /*************************************
-  Цена импульса банковского терминала в импульсном режиме
+  Цена импульса банковского терминала
 *************************************/
 TRangeValueULONG const BankPerPulseRange = {1, 9999};
 CPU_INT08U const BankPerPulseName[] = "Руб./имп.";
@@ -960,7 +960,7 @@ TDataDescStruct const PrintModeDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   PrintModeList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  0                           
+  1                           
 };
 
 /*************************************
@@ -1876,7 +1876,9 @@ CPU_INT08U const *ErrorNumberList0[JOURNAL_EVENTS_COUNT] = {"нет", "", "", "",
                                       "ФР:C2h-Превышение", 
                                       "ФР:C4h-Несовпадение", 
                                       "ФР:C7h-Поле не", 
-                                      "ФР:С8h-Отсутствуют"
+                                      "ФР:С8h-Отсутствуют",
+                                      "",
+                                      ""
 
 };
 
@@ -2037,7 +2039,9 @@ CPU_INT08U const *ErrorNumberList1[JOURNAL_EVENTS_COUNT] = {"", "", "", "",
                                         "напряжения",
                                         "номеров смен",
                                         "редактируется",
-                                        "импульсы тахо."
+                                        "импульсы тахо.",
+                                        "",
+                                        ""
 };
 
 TDataDescStruct const JournalErrorNumberDesc1 = {
@@ -2203,7 +2207,9 @@ CPU_INT08U const *ErrorNumberListEng[JOURNAL_EVENTS_COUNT] =
   "Oshibka FR 0xC2",
   "Oshibka FR 0xC4",
   "Oshibka FR 0xC7",
-  "Oshibka FR 0xC8"
+  "Oshibka FR 0xC8",
+  "",
+  ""
 };
   
 TDataDescStruct const JournalErrorNumberDescEng = {
@@ -2913,6 +2919,44 @@ TDataDescStruct const AcceptedMoneyCRC16Desc = {
   0                           
 };
 
+TDataDescStruct const AcceptedBankMoneyDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, FRAM_AcceptedBankMoney),            // указатель на переменную или адрес FRAM
+  NULL,                     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  NULL,           // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0         
+};
+
+/*************************************
+  Дескриптор Crc16 энергонезависимого сохранения текущих денег
+*************************************/
+TDataDescStruct const AcceptedBankMoneyCRC16Desc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, crc_AcceptedBankMoney),            // указатель на переменную или адрес FRAM
+   NULL,                     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  NULL,           // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0         
+};
 
 /*************************************
   Дескриптор пароля
@@ -3696,6 +3740,8 @@ const TDataDescArrayStruct AllDataArray[] =
     {&HopperPauseLenDesc, "HopperPauseLenDesc"},
     {&HopperPulseLenDesc, "HopperPulseLenDesc"},
     {&RegimeHopperDesc, "RegimeHopperDesc"},
+    
+    {&PrintModeDesc, "PrintModeDesc"},
     
     {NULL, ""}
 };

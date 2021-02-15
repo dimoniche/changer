@@ -624,7 +624,7 @@ void ClrFiscalErrorByCode(CPU_INT08U err)
 
 // печать чека на ФР
 // ext - расширенный формат команды (Операция V2  расширенное закрытие чека)
-int PrintFiscalBill(CPU_INT32U money)
+int PrintFiscalBill(CPU_INT32U money, CPU_INT32U online)
 {
     CPU_INT08U err;
     CPU_INT64U count = 1000;
@@ -737,7 +737,7 @@ repeat_sell1:
             else
             {
                 GetDataStr(&ServiceNameDesc, (CPU_INT08U*)service_name, 0, DATA_FLAG_SYSTEM_INDEX);
-            }      
+            }
         }
         
         GetData(&PriceDesc, &price, 0, DATA_FLAG_SYSTEM_INDEX);
@@ -881,28 +881,54 @@ repeat_close:
         GetData(&TaxSystemDesc, &tax1, 0, DATA_FLAG_SYSTEM_INDEX);
         tax[0] = (CPU_INT08U)tax1;
     }
-        
-    if (((ext == 0) && (FiscCloseBill(DEFAULT_PASS, &cash, &tax[0], "Спасибо за покупку!!!", &err) != FISC_OK))
-        || ((ext) && (FiscCloseBillV2(DEFAULT_PASS, &cash, tax[0], "Спасибо за покупку!!!", &err) != FISC_OK))
-       )
+
+    if(online)
     {
-        if (err)
-        {
-            SetFiscalErrorByCode(err);
-        }
-        else
-        {
-            // нет соединения
-            ClearFiscalErrors();
-            FiscalConnState = FISCAL_NOCONN;
-            SetErrorFlag(ERROR_FR_CONN);
-        }
-        if (repeat)
-        {
-            FPost();
-            return -4;
-        }
-        repeat++;
+     if(((ext) && (FiscCloseBillV2Online(DEFAULT_PASS, &cash, tax[0], "Спасибо за покупку!!!", &err) != FISC_OK)))
+      {
+          if (err)
+          {
+              SetFiscalErrorByCode(err);
+          }
+          else
+          {
+              // нет соединения
+              ClearFiscalErrors();
+              FiscalConnState = FISCAL_NOCONN;
+              SetErrorFlag(ERROR_FR_CONN);
+          }
+          if (repeat)
+          {
+              FPost();
+              return -4;
+          }
+          repeat++;
+      }
+    }
+    else
+    {
+      if (((ext == 0) && (FiscCloseBill(DEFAULT_PASS, &cash, &tax[0], "Спасибо за покупку!!!", &err) != FISC_OK))
+          || ((ext) && (FiscCloseBillV2(DEFAULT_PASS, &cash, tax[0], "Спасибо за покупку!!!", &err) != FISC_OK))
+         )
+      {
+          if (err)
+          {
+              SetFiscalErrorByCode(err);
+          }
+          else
+          {
+              // нет соединения
+              ClearFiscalErrors();
+              FiscalConnState = FISCAL_NOCONN;
+              SetErrorFlag(ERROR_FR_CONN);
+          }
+          if (repeat)
+          {
+              FPost();
+              return -4;
+          }
+          repeat++;
+      }
     }
     
     if (repeat)

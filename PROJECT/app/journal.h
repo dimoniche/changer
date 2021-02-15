@@ -89,9 +89,12 @@ typedef struct{
 
     // ВСЕ ОШИБКИ ФР ФАТАЛЬНЫЕ
     #define ERROR_FR                        42
-  
-    #define JOURNAL_EVENTS_COUNT             (ERROR_FR+FR_ERROR_NUMBER)  // число событий
 
+    #define JOURNAL_EVENT_MONEY_BANK            (ERROR_FR+FR_ERROR_NUMBER) + 1  // событие получения денег с банковского терминала (кол-во рублей)
+    #define JOURNAL_EVENT_PRINT_BILL_ONLINE      JOURNAL_EVENT_MONEY_BANK + 1   // печать чека с деньгами с банковского терминала
+
+    #define JOURNAL_EVENTS_COUNT            JOURNAL_EVENT_PRINT_BILL_ONLINE     // число событий
+  
   // канал
   CPU_INT08U channel;
   

@@ -884,6 +884,45 @@ int FiscCloseBillV2(CPU_INT32U pass, CPU_INT64U *cash, CPU_INT08U taxsys, char* 
   return FISC_OK;
 }
 
+int FiscCloseBillV2Online(CPU_INT32U pass, CPU_INT64U *cash, CPU_INT08U taxsys, char* text, CPU_INT08U* err)
+{
+  CPU_INT08U* rxdat;
+  CPU_INT08U len;
+
+  fisc_buf[0] = 0x45;
+  memcpy(&fisc_buf[1], (CPU_INT08U*)&pass, 4);
+  
+  memset(&fisc_buf[5], 0, 5);
+  
+  memcpy(&fisc_buf[10], cash, 5); // online платеж
+  
+  memset(&fisc_buf[15], 0, 70);
+  fisc_buf[85] = 0x00; // округление до рубля в копейках
+  memset(&fisc_buf[86], 0, 5); // налог 1
+  memset(&fisc_buf[91], 0, 5); // налог 2
+  memset(&fisc_buf[96], 0, 5); // налог 3
+  memset(&fisc_buf[101], 0, 5); // налог 4
+  memset(&fisc_buf[106], 0, 5); // налог 5
+  memset(&fisc_buf[111], 0, 5); // налог 6
+  fisc_buf[116] = (1 << taxsys);
+  memset(&fisc_buf[117], 0, 40);
+  strcpy((char*)&fisc_buf[117], text);
+  
+  if (FiscSendCommand(FISC_EXTENDED_CMD, fisc_buf, 157) != FISC_OK) {return FISC_ERR;}
+  
+  memset(fisc_buf, 0, 256);
+      
+  if (FiscReceiveAnswer(&rxdat, &len, FISC_ANSWER_TIMEOUT) != FISC_OK) {return FISC_ERR;}
+
+  *err = rxdat[2];
+    
+  //if (8 != len) {return FISC_ERR;}
+  
+  if ((rxdat[0] != FISC_EXTENDED_CMD) || (rxdat[1] != 0x45) || (rxdat[2] != 0)) {return FISC_ERR;}
+  
+  return FISC_OK;
+}
+
 // продолжение печати (после отсутствия бумаги)
 int FiscPrintContinue(CPU_INT32U pass, CPU_INT08U* err)
 {

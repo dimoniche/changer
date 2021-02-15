@@ -14,7 +14,7 @@ extern void InitFiscal(void);
 extern int IsFiscalConnected(void);
 extern void FPend(void);
 extern void FPost(void);
-extern int PrintFiscalBill(CPU_INT32U money);
+extern int PrintFiscalBill(CPU_INT32U money, CPU_INT32U online);
 extern int PrintFiscalBillRepeated(CPU_INT32U money, CPU_INT32U time);
 extern void SetFiscalErrorByCode(CPU_INT08U err);
 extern void ClearFiscalErrors(void);

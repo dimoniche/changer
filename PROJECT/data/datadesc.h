@@ -271,4 +271,7 @@ extern TDataDescStruct const HopperPauseLenDesc;
 extern TDataDescStruct const HopperLevelDesc;
 extern TDataDescStruct const RegimeHopperDesc;
 
+extern TDataDescStruct const AcceptedBankMoneyDesc;
+extern TDataDescStruct const AcceptedBankMoneyCRC16Desc;
+
 #endif //#ifndef _DATADESC_H_

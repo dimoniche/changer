@@ -47,6 +47,11 @@ static char pend_upsignal_nomoney_hopper_counter;
 static char pend_downsignal_nomoney_hopper_counter;
 static CPU_INT32U pend_signal_nomoney_hopper_timestamp;
 
+static CPU_INT32U signal_button_pulse = 1000;
+static char pend_upsignal_button_counter;
+static char pend_downsignal_button_counter;
+static CPU_INT32U pend_signal_button_timestamp;
+
 static CPU_INT32U cashLevel;
 static CPU_INT32U coinLevel;
 static CPU_INT32U bankLevel;
@@ -320,16 +325,16 @@ void CoinTask(void *p_arg)
         }
       }
       
-      if (pend_downsignal_nomoney_hopper_counter)
+      if (pend_upsignal_button_counter)
       {
-        if (OSTimeGet() - pend_signal_nomoney_hopper_timestamp > signal_nomoney_hopper_pulse)
+        if (OSTimeGet() - pend_signal_button_timestamp > signal_button_pulse)
         {
-          // деньги в хоппере кончились
-          PostUserEvent(EVENT_NOMONEY_HOPPER_OFF);
-          pend_downsignal_nomoney_hopper_counter = 0;
+          // кнопку нажали
+          PostUserEvent(EVENT_BUTTON_PRESS);
+          pend_upsignal_button_counter = 0;
         }
       }
-
+      
       OS_EXIT_CRITICAL();
     }
 }
@@ -505,7 +510,12 @@ CPU_INT32U input_register()
   {
      SETBIT(input, 3);
   }
-
+  // 5 бит
+  if (FIO1PIN_bit.P1_20)
+  {
+     SETBIT(input, 3);
+  }
+  
   return input;
 }
 
@@ -622,6 +632,23 @@ void InputCapture_ISR(void)
           pend_downsignal_nomoney_hopper_counter = 1;
       }
   }
+  
+  // сигнал нажатия кнопки
+  if(TSTBIT(input_event, 5))
+  {
+    pend_signal_button_timestamp = OSTimeGet();
+    
+    if (FIO1PIN_bit.P1_20)
+      {
+          pend_upsignal_button_counter = 1;
+          pend_downsignal_button_counter = 0;
+      }
+    else
+      {
+          pend_upsignal_button_counter = 0;
+          pend_downsignal_button_counter = 1;
+      }
+  }
 }
 
 extern CPU_INT32U  BSP_CPU_PclkFreq (CPU_INT08U  pclk);
@@ -660,6 +687,12 @@ void InitInputPorts()
     PINMODE3_bit.P1_24 = 0;
     FIO1DIR_bit.P1_24  = 0;
     FIO1MASK_bit.P1_24 = 0;
+    
+    // сигнал наличия монет в хоппере
+    PINSEL3_bit.P1_20 = 0;
+    PINMODE3_bit.P1_20 = 0;
+    FIO1DIR_bit.P1_20  = 0;
+    FIO1MASK_bit.P1_20 = 0;
 }
 
 /*
@@ -669,6 +702,8 @@ P1.25   MK_P39  импульсный выход хоппера
 
 P1.23   MK_P37  Security Output с хоппером все в порядке - LOW
 P1.24   MK_P38  Низкий уровень монет. Есть монеты - сигнал LOW.
+
+P1.20   MK_P34  Сигнал от кнопки
 */
 
 // инициализация импульсного входа

@@ -23,6 +23,9 @@ typedef struct
   CPU_INT32U FRAM_AcceptedMoney;
   CPU_INT32U crc_AcceptedMoney;
   
+  CPU_INT32U FRAM_AcceptedBankMoney;
+  CPU_INT32U crc_AcceptedBankMoney;
+  
   // журнал событий+ошибок
   TEventRecord EventRecords[EVENT_RECORDS_COUNT];
 
