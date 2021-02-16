@@ -68,6 +68,7 @@ int TstCriticalErrors(void)
   }
   
   errors |= TstErrorFlag(ERROR_VALIDATOR_CONN);
+  errors |= TstErrorFlag(ERROR_HOPPER) || TstErrorFlag(ERROR_NO_MONEY_HOPPER);
   
   OS_EXIT_CRITICAL();
   if (errors) return 1;
@@ -173,7 +174,13 @@ void GetEventStr(char* str, char event)
       break;  
     case JOURNAL_EVENT_EMAIL_OK:
       sprintf(str, "E-mail отпр.успешно");
-      break;  
+      break;
+    case JOURNAL_EVENT_MONEY_BANK:
+      sprintf(str, "Вн.безнал ");
+      break;
+    case JOURNAL_EVENT_PRINT_BILL_ONLINE:
+      sprintf(str, "Печать чека безнал");
+      break;
     default:
       sprintf(str, "нет");
       break;
@@ -224,7 +231,13 @@ void GetEventStrEng(char* str, char event)
       break;  
     case JOURNAL_EVENT_EMAIL_OK:
       sprintf(str, " |  E-mail otpravleno uspeshno ");
-      break;  
+      break; 
+    case JOURNAL_EVENT_MONEY_BANK:
+      sprintf(str, "Вн.безнал ");
+      break;
+    case JOURNAL_EVENT_PRINT_BILL_ONLINE:
+      sprintf(str, "Печать чека безнал");
+      break;
     default:
       sprintf(str, " |  Net sobytiya ");
       break;
@@ -305,21 +318,10 @@ void PrintEventJournalRecordEng(char* str, TEventRecord *record)
     }
 }
 
-void IncCounter(CPU_INT08U ch, CPU_INT32U time, CPU_INT32U money)
+void IncCounter(CPU_INT32U time, CPU_INT32U money)
 {
   CPU_INT32U r, t, m;
   TCountersLong long_ctrs;
-
-  // увеличим канальные счетчики
-  ReadArrayFram(offsetof(TFramMap, Counters.CounterChannelRun)+sizeof(CPU_INT32U)*ch, sizeof(CPU_INT32U), (unsigned char*)&r);
-  ReadArrayFram(offsetof(TFramMap, Counters.CounterChannelTime)+sizeof(CPU_INT32U)*ch, sizeof(CPU_INT32U), (unsigned char*)&t);
-  ReadArrayFram(offsetof(TFramMap, Counters.CounterChannelMoney)+sizeof(CPU_INT32U)*ch, sizeof(CPU_INT32U), (unsigned char*)&m);
-  r++;
-  t+=time;
-  m+=money;
-  WriteArrayFram(offsetof(TFramMap, Counters.CounterChannelRun)+sizeof(CPU_INT32U)*ch, sizeof(CPU_INT32U), (unsigned char*)&r);
-  WriteArrayFram(offsetof(TFramMap, Counters.CounterChannelTime)+sizeof(CPU_INT32U)*ch, sizeof(CPU_INT32U), (unsigned char*)&t);
-  WriteArrayFram(offsetof(TFramMap, Counters.CounterChannelMoney)+sizeof(CPU_INT32U)*ch, sizeof(CPU_INT32U), (unsigned char*)&m);
   
   // увеличим общие счетчики
   ReadArrayFram(offsetof(TFramMap, Counters.CounterRun), sizeof(CPU_INT32U), (unsigned char*)&r);
@@ -334,9 +336,6 @@ void IncCounter(CPU_INT08U ch, CPU_INT32U time, CPU_INT32U money)
 
   // увеличим длинные счетчики
   ReadArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
-  long_ctrs.CounterChannelRunLong[ch]++;
-  long_ctrs.CounterChannelTimeLong[ch] += time;
-  long_ctrs.CounterChannelMoneyLong[ch] += money;
   long_ctrs.CounterRunLong++;
   long_ctrs.CounterTimeLong += time;
   long_ctrs.CounterMoneyLong += money;

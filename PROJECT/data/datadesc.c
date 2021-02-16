@@ -1878,7 +1878,9 @@ CPU_INT08U const *ErrorNumberList0[JOURNAL_EVENTS_COUNT] = {"нет", "", "", "",
                                       "ФР:C7h-Поле не", 
                                       "ФР:С8h-Отсутствуют",
                                       "",
-                                      ""
+                                      "",
+                                      "ОШИБКА ХОППЕРА",
+                                      "ХОППЕР: Нет жетонов"
 
 };
 
@@ -2041,7 +2043,9 @@ CPU_INT08U const *ErrorNumberList1[JOURNAL_EVENTS_COUNT] = {"", "", "", "",
                                         "редактируется",
                                         "импульсы тахо.",
                                         "",
-                                        ""
+                                        "",
+                                        "",
+                                        "",
 };
 
 TDataDescStruct const JournalErrorNumberDesc1 = {
@@ -2510,133 +2514,6 @@ TDataDescStruct const CounterLongTimeDesc = {
 };
 
 /*************************************
-  Канальный счетчик числа запусков
-*************************************/
-TDataDescStruct const CounterChannelRunDesc = {
-  DATA_DESC_VIEW,           // тип дескриптора
-  DATA_TYPE_ULONG,          // тип параметра
-  DATA_LOC_FRAM,            // расположение параметра
-  DATA_IS_ARRAY,            // признак массива
-  CHANNELS_NUM,                        // размер массива
-  &ChannelStIndexDesc,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, Counters.CounterChannelRun[0]),            // указатель на переменную или адрес FRAM
-  NULL,                     // указатель на границы параметра
-  NULL,                     // функция по изменению
-  sizeof(CPU_INT32U),                        // смещение между элементами в массиве
-  CounterRunName,           // указатель на строку названия параметра
-  DATA_NO_INDEX,            // признак индексного параметра (список строк)
-  NULL,                     // указатель на список строк для индексного параметра
-  DATA_INIT_DISABLE,
-  0                           
-};
-
-/*************************************
-  Канальный счетчик денег
-*************************************/
-TDataDescStruct const CounterChannelMoneyDesc = {
-  DATA_DESC_VIEW,           // тип дескриптора
-  DATA_TYPE_ULONG,          // тип параметра
-  DATA_LOC_FRAM,            // расположение параметра
-  DATA_IS_ARRAY,            // признак массива
-  CHANNELS_NUM,              // размер массива
-  &ChannelStIndexDesc,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, Counters.CounterChannelMoney[0]),            // указатель на переменную или адрес FRAM
-  NULL,                     // указатель на границы параметра
-  NULL,                     // функция по изменению
-  sizeof(CPU_INT32U),                        // смещение между элементами в массиве
-  CounterMoneyName,           // указатель на строку названия параметра
-  DATA_NO_INDEX,            // признак индексного параметра (список строк)
-  NULL,                     // указатель на список строк для индексного параметра
-  DATA_INIT_DISABLE,
-  0                           
-};
-
-/*************************************
-  Канальный счетчик времени работы
-*************************************/
-TDataDescStruct const CounterChannelTimeDesc = {
-  DATA_DESC_VIEW,           // тип дескриптора
-  DATA_TYPE_TIME_COUNT,     // тип параметра
-  DATA_LOC_FRAM,            // расположение параметра
-  DATA_IS_ARRAY,            // признак массива
-  CHANNELS_NUM,                        // размер массива
-  &ChannelStIndexDesc,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, Counters.CounterChannelTime),            // указатель на переменную или адрес FRAM
-  NULL,                     // указатель на границы параметра
-  NULL,                     // функция по изменению
-  sizeof(CPU_INT32U),                        // смещение между элементами в массиве
-  CounterTimeName,           // указатель на строку названия параметра
-  DATA_NO_INDEX,            // признак индексного параметра (список строк)
-  NULL,                     // указатель на список строк для индексного параметра
-  DATA_INIT_DISABLE,
-  0                           
-};
-
-
-/*************************************
-  Канальный счетчик числа запусков
-*************************************/
-TDataDescStruct const CounterChannelRunLongDesc = {
-  DATA_DESC_VIEW,           // тип дескриптора
-  DATA_TYPE_ULONG,          // тип параметра
-  DATA_LOC_FRAM,            // расположение параметра
-  DATA_IS_ARRAY,            // признак массива
-  CHANNELS_NUM,                        // размер массива
-  &ChannelStIndexDesc,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, CountersLong.CounterChannelRunLong[0]),            // указатель на переменную или адрес FRAM
-  NULL,                     // указатель на границы параметра
-  NULL,                     // функция по изменению
-  sizeof(CPU_INT32U),                        // смещение между элементами в массиве
-  CounterRunName,           // указатель на строку названия параметра
-  DATA_NO_INDEX,            // признак индексного параметра (список строк)
-  NULL,                     // указатель на список строк для индексного параметра
-  DATA_INIT_DISABLE,
-  0                           
-};
-
-/*************************************
-  Канальный счетчик денег
-*************************************/
-TDataDescStruct const CounterChannelMoneyLongDesc = {
-  DATA_DESC_VIEW,           // тип дескриптора
-  DATA_TYPE_ULONG,          // тип параметра
-  DATA_LOC_FRAM,            // расположение параметра
-  DATA_IS_ARRAY,            // признак массива
-  CHANNELS_NUM,              // размер массива
-  &ChannelStIndexDesc,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, CountersLong.CounterChannelMoneyLong[0]),            // указатель на переменную или адрес FRAM
-  NULL,                     // указатель на границы параметра
-  NULL,                     // функция по изменению
-  sizeof(CPU_INT32U),                        // смещение между элементами в массиве
-  CounterMoneyName,           // указатель на строку названия параметра
-  DATA_NO_INDEX,            // признак индексного параметра (список строк)
-  NULL,                     // указатель на список строк для индексного параметра
-  DATA_INIT_DISABLE,
-  0                           
-};
-
-/*************************************
-  Канальный счетчик времени работы
-*************************************/
-TDataDescStruct const CounterChannelTimeLongDesc = {
-  DATA_DESC_VIEW,           // тип дескриптора
-  DATA_TYPE_TIME_COUNT,     // тип параметра
-  DATA_LOC_FRAM,            // расположение параметра
-  DATA_IS_ARRAY,            // признак массива
-  CHANNELS_NUM,                        // размер массива
-  &ChannelStIndexDesc,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, CountersLong.CounterChannelTimeLong),            // указатель на переменную или адрес FRAM
-  NULL,                     // указатель на границы параметра
-  NULL,                     // функция по изменению
-  sizeof(CPU_INT32U),                        // смещение между элементами в массиве
-  CounterTimeName,           // указатель на строку названия параметра
-  DATA_NO_INDEX,            // признак индексного параметра (список строк)
-  NULL,                     // указатель на список строк для индексного параметра
-  DATA_INIT_DISABLE,
-  0                           
-};
-
-/*************************************
   Команда на очистку статистики 
 *************************************/
 CPU_INT32U ClearStatCmd = 0;
@@ -2938,7 +2815,7 @@ TDataDescStruct const AcceptedBankMoneyDesc = {
 };
 
 /*************************************
-  Дескриптор Crc16 энергонезависимого сохранения текущих денег
+  Дескриптор Crc16 энергонезависимого сохранения
 *************************************/
 TDataDescStruct const AcceptedBankMoneyCRC16Desc = {
   DATA_DESC_EDIT,           // тип дескриптора
@@ -2948,6 +2825,45 @@ TDataDescStruct const AcceptedBankMoneyCRC16Desc = {
   0,                        // размер массива
   NULL,                     // указатель на десриптор индекса массива
   (void*)offsetof(TFramMap, crc_AcceptedBankMoney),            // указатель на переменную или адрес FRAM
+   NULL,                     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  NULL,           // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0         
+};
+
+TDataDescStruct const AcceptedRestMoneyDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, FRAM_AcceptedRestMoney),            // указатель на переменную или адрес FRAM
+  NULL,                     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  NULL,           // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0         
+};
+
+/*************************************
+  Дескриптор Crc16 энергонезависимого сохранения
+*************************************/
+TDataDescStruct const AcceptedRestMoneyCRC16Desc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, crc_AcceptedRestMoney),            // указатель на переменную или адрес FRAM
    NULL,                     // указатель на границы параметра
   NULL,                     // функция по изменению
   0,                        // смещение между элементами в массиве
@@ -3742,6 +3658,7 @@ const TDataDescArrayStruct AllDataArray[] =
     {&RegimeHopperDesc, "RegimeHopperDesc"},
     
     {&PrintModeDesc, "PrintModeDesc"},
+    {&PrintTimeoutAfterDesc, "PrintTimeoutAfterDesc"},
     
     {NULL, ""}
 };

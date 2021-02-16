@@ -992,8 +992,8 @@ const TMenuLine line_FrMenu_12 = {
   NULL                     
 };
 
-const TMenuLineArray arr_FrMenuArray[] = {&line_FrMenu_0, &line_FrMenu_1, /*&line_FrMenu_2, &line_FrMenu_3,*/ &line_FrMenu_4, &line_FrMenu_5, &line_FrMenu_6, &line_FrMenu_7, &line_FrMenu_8, &line_FrMenu_9, &line_FrMenu_10, &line_FrMenu_11, &line_FrMenu_12, NULL};
-const TMenuPanel FrMenuPanel[] = {arr_FrMenuArray, NULL, 11, MENU_PANEL_STANDARD};
+const TMenuLineArray arr_FrMenuArray[] = {&line_FrMenu_0, &line_FrMenu_1, /*&line_FrMenu_2, &line_FrMenu_3, &line_FrMenu_4,*/ &line_FrMenu_5, &line_FrMenu_6, &line_FrMenu_7, &line_FrMenu_8, &line_FrMenu_9, &line_FrMenu_10, &line_FrMenu_11, &line_FrMenu_12, NULL};
+const TMenuPanel FrMenuPanel[] = {arr_FrMenuArray, NULL, 10, MENU_PANEL_STANDARD};
 
 /***********************************
   ÌÅÍŞ ÍÀÑÒĞÎÉÊÀ ÌÎÍÅÒÎÏĞÈÅÌÍÈÊÀ

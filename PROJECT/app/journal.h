@@ -88,12 +88,15 @@ typedef struct{
     #define ERROR_FR_CONN                   41
 
     // ВСЕ ОШИБКИ ФР ФАТАЛЬНЫЕ
-    #define ERROR_FR                        42
-
+    #define ERROR_FR                        42                    
+  
     #define JOURNAL_EVENT_MONEY_BANK            (ERROR_FR+FR_ERROR_NUMBER) + 1  // событие получения денег с банковского терминала (кол-во рублей)
     #define JOURNAL_EVENT_PRINT_BILL_ONLINE      JOURNAL_EVENT_MONEY_BANK + 1   // печать чека с деньгами с банковского терминала
 
-    #define JOURNAL_EVENTS_COUNT            JOURNAL_EVENT_PRINT_BILL_ONLINE     // число событий
+    #define ERROR_HOPPER                    JOURNAL_EVENT_PRINT_BILL_ONLINE + 1 // ошибка хоппера
+    #define ERROR_NO_MONEY_HOPPER           ERROR_HOPPER + 1                    // ошибка хоппера - кончились деньги
+  
+    #define JOURNAL_EVENTS_COUNT            ERROR_NO_MONEY_HOPPER     // число событий
   
   // канал
   CPU_INT08U channel;
@@ -106,12 +109,6 @@ typedef struct{
 
 // структура для хранения счетчиков
 typedef struct{
-  // число запусков поканально
-  CPU_INT32U  CounterChannelRun[CHANNELS_NUM];
-  // Суммарное время работы поканально, сек.
-  CPU_INT32U  CounterChannelTime[CHANNELS_NUM];
-  // Сумма денег поканально  
-  CPU_INT32U  CounterChannelMoney[CHANNELS_NUM];
   
   // общее число запусков 
   CPU_INT32U  CounterRun;
@@ -124,24 +121,27 @@ typedef struct{
   CPU_INT32U  CounterBillNominals[24];
   // общий счетчик купюр (всего в кассете)
   CPU_INT32U  BillsCount;
+  
+  CPU_INT32U  CounterCoin;    // счетчик выданных жетонов
+  CPU_INT32U  CounterCash;    // счетчик полученных наличных
+  CPU_INT32U  CounterBank;    // счетчик безналичных денег
+  
 }TCounters;
 
-
 // структура для хранения длинных счетчиков
-// ведем пока только эти три длинных
 typedef struct{
-  // число запусков поканально
-  CPU_INT32U  CounterChannelRunLong[CHANNELS_NUM];
-  // Суммарное время работы поканально, сек.
-  CPU_INT32U  CounterChannelTimeLong[CHANNELS_NUM];
-  // Сумма денег поканально  
-  CPU_INT32U  CounterChannelMoneyLong[CHANNELS_NUM];
+
   CPU_INT32U  CounterRunLong;
   CPU_INT32U  CounterTimeLong;
   CPU_INT32U  CounterMoneyLong;
+  
+  CPU_INT32U  CounterCoinLong;    // счетчик выданных жетонов
+  CPU_INT32U  CounterCashLong;    // счетчик полученных наличных
+  CPU_INT32U  CounterBankLong;    // счетчик безналичных денег
+  
   CPU_INT16U  crc;
+  
 }TCountersLong;
-
 
 extern CPU_INT32U GetShortMoney();
 extern void IncBillnomCounter(CPU_INT32U index);
@@ -154,7 +154,7 @@ extern int TstCriticalErrors(void);
 extern void ClearEventJournal(void);
 extern void GetEventStr(char* str, char event);
 extern int GetEventRecord(TEventRecord* record, CPU_INT32U index);
-extern void IncCounter(CPU_INT08U ch, CPU_INT32U time, CPU_INT32U money);
+extern void IncCounter(CPU_INT32U time, CPU_INT32U money);
 extern void ClearCounters(void);
 extern void ErrorServer(void);
 extern int TstCriticalValidatorErrors(void);

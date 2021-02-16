@@ -1,7 +1,7 @@
 #ifndef _CONTROL_H_
 #define _CONTROL_H_
 
-#define CHANNELS_NUM    6
+#define CHANNELS_NUM    1
 
 #define CHANNEL_1    0
 #define CHANNEL_2    1

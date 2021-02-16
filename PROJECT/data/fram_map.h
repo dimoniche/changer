@@ -20,11 +20,17 @@ typedef struct
   // длинные счетчики с CRC16 
   TCountersLong CountersLong;
 
+  // линия наличных денег
   CPU_INT32U FRAM_AcceptedMoney;
   CPU_INT32U crc_AcceptedMoney;
   
+  // линия безналичных денег
   CPU_INT32U FRAM_AcceptedBankMoney;
   CPU_INT32U crc_AcceptedBankMoney;
+  
+  // линия остатка от продажи жетонов
+  CPU_INT32U FRAM_AcceptedRestMoney;
+  CPU_INT32U crc_AcceptedRestMoney;
   
   // журнал событий+ошибок
   TEventRecord EventRecords[EVENT_RECORDS_COUNT];

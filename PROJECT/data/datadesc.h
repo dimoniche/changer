@@ -274,4 +274,7 @@ extern TDataDescStruct const RegimeHopperDesc;
 extern TDataDescStruct const AcceptedBankMoneyDesc;
 extern TDataDescStruct const AcceptedBankMoneyCRC16Desc;
 
+extern TDataDescStruct const AcceptedRestMoneyDesc;
+extern TDataDescStruct const AcceptedRestMoneyCRC16Desc;
+
 #endif //#ifndef _DATADESC_H_
