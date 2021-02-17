@@ -382,30 +382,44 @@ const TMenuLine line_CommonCountersMenu_0 = {
   (void*)&str_CommonCountersMenu_0,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-/*
+
 const TMenuLine line_CommonCountersMenu_1 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
   (void*)&CounterRunDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-*/
+
 const TMenuLine line_CommonCountersMenu_2 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
   (void*)&CounterMoneyDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-/*
 const TMenuLine line_CommonCountersMenu_3 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterTimeDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterCoinDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-*/
-const TMenuLineArray arr_CommonCountersArray[] = {&line_CommonCountersMenu_0, /*&line_CommonCountersMenu_1,*/ &line_CommonCountersMenu_2, /*&line_CommonCountersMenu_3,*/ NULL};
-const TMenuPanel CommonCountersPanel[] = {arr_CommonCountersArray, NULL, 2, MENU_PANEL_STATIC};
+
+
+const TMenuLine line_CommonCountersMenu_4 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&CounterCashDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_CommonCountersMenu_5 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&CounterBankDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLineArray arr_CommonCountersArray[] = {&line_CommonCountersMenu_0, &line_CommonCountersMenu_1, &line_CommonCountersMenu_2, &line_CommonCountersMenu_3, &line_CommonCountersMenu_4, &line_CommonCountersMenu_5,NULL};
+const TMenuPanel CommonCountersPanel[] = {arr_CommonCountersArray, NULL, 6, MENU_PANEL_STANDARD};
 
 /***********************************
   МЕНЮ ОБЩАЯ СТАТИСТИКА ДЛИННЫЕ СЧЕТЧИКИ
@@ -418,30 +432,45 @@ const TMenuLine line_CommonCountersLongMenu_0 = {
   (void*)&str_CommonCountersLongMenu_0,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-/*
+
 const TMenuLine line_CommonCountersLongMenu_1 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
   (void*)&CounterLongRunDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-*/
+
 const TMenuLine line_CommonCountersLongMenu_2 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
   (void*)&CounterLongMoneyDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-/*
+
 const TMenuLine line_CommonCountersLongMenu_3 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterLongTimeDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterLongCoinDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-*/
-const TMenuLineArray arr_CommonCountersLongArray[] = {&line_CommonCountersLongMenu_0, /*&line_CommonCountersLongMenu_1,*/ &line_CommonCountersLongMenu_2, /*&line_CommonCountersLongMenu_3, */ NULL};
-const TMenuPanel CommonCountersLongPanel[] = {arr_CommonCountersLongArray, NULL, 2, MENU_PANEL_STATIC};
+
+
+const TMenuLine line_CommonCountersLongMenu_4 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&CounterLongCashDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_CommonCountersLongMenu_5 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&CounterLongBankDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLineArray arr_CommonCountersLongArray[] = {&line_CommonCountersLongMenu_0, &line_CommonCountersLongMenu_1, &line_CommonCountersLongMenu_2, &line_CommonCountersLongMenu_3,  &line_CommonCountersLongMenu_4, &line_CommonCountersLongMenu_5, NULL};
+const TMenuPanel CommonCountersLongPanel[] = {arr_CommonCountersLongArray, NULL, 6, MENU_PANEL_STANDARD};
 
 /***********************************
   МЕНЮ НАСТРОЙКИ
@@ -1540,7 +1569,8 @@ const TMenuPanel SelectJournalMenuPanel[] = {arr_SelectJournalMenuArray, NULL, 3
 const CPU_INT08U str_ReportMenu_0[] = "      ОТЧЕТЫ";
 const CPU_INT08U str_ReportMenu_1[] = "X-отчет";
 const CPU_INT08U str_ReportMenu_2[] = "Отчет о закр.смены";
-const CPU_INT08U str_ReportMenu_3[] = "Z-отчет из буфера";
+const CPU_INT08U str_ReportMenu_3[] = "Z-отчет";
+const CPU_INT08U str_ReportMenu_4[] = "Аннулирование чека";
 
 const TMenuLine line_ReportMenu_0 = {
   MENU_LINE_STRING,               // тип пункта меню
@@ -1562,14 +1592,20 @@ const TMenuLine line_ReportMenu_2 = {
   (void*)str_ReportMenu_2,        // указатель на текстовую строку или дескриптор
   (void*)&zReportMenuPanel                            // панель для перехода
 };
-/*
+
 const TMenuLine line_ReportMenu_3 = {
   MENU_LINE_GOTO_MENU,               // тип пункта меню
   0,                              // доп. флаги  
   (void*)str_ReportMenu_3,        // указатель на текстовую строку или дескриптор
   (void*)&bufReportMenuPanel                            // панель для перехода
 };
-*/
+
+const TMenuLine line_ReportMenu_4 = {
+  MENU_LINE_GOTO_MENU,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)str_ReportMenu_4,        // указатель на текстовую строку или дескриптор
+  (void*)&CanselCheckMenuPanel                            // панель для перехода
+};
 
 void OnEnterReportsPanel(void)
 {
@@ -1583,8 +1619,8 @@ void OnEnterReportsPanel(void)
   FlagForPrintReport = 0;
 }
 
-const TMenuLineArray arr_ReportMenuArray[] = {&line_ReportMenu_0, &line_ReportMenu_1, &line_ReportMenu_2, /*&line_ReportMenu_3,*/ NULL};
-const TMenuPanel ReportMenuPanel[] = {arr_ReportMenuArray, OnEnterReportsPanel, 3, MENU_PANEL_STANDARD};
+const TMenuLineArray arr_ReportMenuArray[] = {&line_ReportMenu_0, &line_ReportMenu_1, &line_ReportMenu_2, &line_ReportMenu_3, &line_ReportMenu_4, NULL};
+const TMenuPanel ReportMenuPanel[] = {arr_ReportMenuArray, OnEnterReportsPanel, 5, MENU_PANEL_STANDARD};
 
 /***********************************
   МЕНЮ ПЕЧАТЬ X-ОТЧЕТА
@@ -1708,6 +1744,44 @@ const TMenuLine line_bufReportMenu_3 = {
 
 const TMenuLineArray arr_bufReportMenuArray[] = {&line_bufReportMenu_0, &line_bufReportMenu_1, &line_bufReportMenu_2, &line_xReportMenu_3, NULL};
 const TMenuPanel bufReportMenuPanel[] = {arr_bufReportMenuArray, OnEnterZXReportPanel, 4, MENU_PANEL_STATIC};
+
+/***********************************
+  МЕНЮ АННУЛИРОВАНИЕ ЧЕКА
+***********************************/
+const CPU_INT08U str_CanselCheckMenu_0[] = " ";
+const CPU_INT08U str_CanselCheckMenu_1[] = "  Аннулировaть чек?";
+const CPU_INT08U str_CanselCheckMenu_2[] = " ";
+
+const TMenuLine line_CanselCheckMenu_0 = {
+  MENU_LINE_STRING,               // тип пункта меню
+  MENU_FIXED_LINE,                // доп. флаги  
+  (void*)str_CanselCheckMenu_0,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_CanselCheckMenu_1 = {
+  MENU_LINE_STRING,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)str_CanselCheckMenu_1,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_CanselCheckMenu_2 = {
+  MENU_LINE_STRING,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)str_CanselCheckMenu_2,        // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_CanselCheckMenu_3 = {
+  MENU_LINE_STRING,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)str_xReportMenu_3,        // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLineArray arr_CanselCheckMenuArray[] = {&line_CanselCheckMenu_0, &line_CanselCheckMenu_1, &line_CanselCheckMenu_2, &line_CanselCheckMenu_3, NULL};
+const TMenuPanel CanselCheckMenuPanel[] = {arr_CanselCheckMenuArray, OnEnterZXReportPanel, 4, MENU_PANEL_STATIC};
 
 /***********************************
   МЕНЮ ФР ОТКЛЮЧЕН

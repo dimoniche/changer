@@ -59,6 +59,7 @@ extern CPU_INT08U  FiscalState;
 
 #define FISC_MAKE_SELL           0x80
 #define FISC_CLOSE_BILL          0x85
+#define FISC_CANSEL_BILL         0x88
 
 #define FISC_EXTENDED_CMD           0xFF
 
@@ -361,5 +362,7 @@ extern int FiscOpenDay(CPU_INT32U pass, CPU_INT08U* err);
 extern int FiscMakeSellV2(CPU_INT32U pass, CPU_INT64U *count, CPU_INT64U *price, CPU_INT08U department, CPU_INT08U* tax, CPU_INT08U subj, char* text, CPU_INT08U* err);
 extern int FiscCloseBillV2(CPU_INT32U pass, CPU_INT64U *cash, CPU_INT08U taxsys, char* text, CPU_INT08U* err);
 extern int FiscCloseBillV2Online(CPU_INT32U pass, CPU_INT64U *cash, CPU_INT08U taxsys, char* text, CPU_INT08U* err);
+
+extern int FiscCanselBill(CPU_INT32U pass, CPU_INT08U* err);
 
 #endif //#ifndef _FISCAL_H_

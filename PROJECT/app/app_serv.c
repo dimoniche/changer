@@ -127,38 +127,6 @@ CPU_INT32U FindBillIndex(CPU_INT32U nom)
   return 0xFFFFFFFF;
 }
 
-/*
-P0.24	MK_P8	управление хоппером
-P0.25   MK_P7   запрет банковского терминала
-P1.31   MK_P20  импульсный выход хоппера
-*/
-
-// настройка выходных ног управления
-void initOutputPorts(void)
-{
-    // управление хоппером: выдача импульсов на хоппер или непрерывный сигнал - LOW - управление и нормальный сигнал импульса
-    PINSEL1_bit.P0_24 = 0;
-    PINMODE1_bit.P0_24 = 0;
-    FIO0DIR_bit.P0_24  = 1;
-    FIO0MASK_bit.P0_24 = 0;
-    
-    // запрет банковского терминала - HIGH - запрет
-    PINSEL1_bit.P0_25 = 0;
-    PINMODE1_bit.P0_25 = 0;
-    FIO0DIR_bit.P0_25  = 1;
-    FIO0MASK_bit.P0_25 = 0;
-    
-    // запрет монетника - HIGH - запрет
-    PINSEL3_bit.P1_31 = 0;
-    PINMODE3_bit.P1_31 = 0;
-    FIO1DIR_bit.P1_31  = 1;
-    FIO1MASK_bit.P1_31 = 0; 
-    
-    FIO0SET_bit.P0_24 = 1; // HIGH
-    FIO0CLR_bit.P0_25 = 1; // LOW
-    FIO1CLR_bit.P1_31 = 1; // LOW
-}
-
 /*!
  Сервер обработки событий пользователя
 */
@@ -241,22 +209,27 @@ void UserAppTask(void *p_arg)
               // если есть ошибки, не работаем
               if (TstCriticalErrors()) 
               {
-                UserPrintErrorMenu(); 
-                RefreshMenu(); 
-                // выключим прием денег
-                if (was_critical_error == 0)
-                {
-                    if (IsValidatorConnected()) CC_CmdBillType(0x000000, 0x000000, ADDR_FL);
-                    CoinDisable();
-                    was_critical_error = 1;
-                }
-                break;
+                  UserPrintErrorMenu(); 
+                  RefreshMenu();
+  
+                  // выключим прием денег
+                  if (was_critical_error == 0)
+                  {
+                      if (IsValidatorConnected()) CC_CmdBillType(0x000000, 0x000000, ADDR_FL);
+                      CoinDisable();
+                      BankDisable();
+                      was_critical_error = 1;
+                  }
+                  break;
               }
               
               // включим заново прием денег, если была ошибка
               if (was_critical_error)
               {
                   if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffff, ADDR_FL);
+                  CoinEnable();
+                  BankEnable();
+                  
                   was_critical_error = 0;
                   break;
               }
@@ -277,6 +250,18 @@ void UserAppTask(void *p_arg)
                   else
                   {
                       LED_OK_OFF();
+                  }
+                  
+                  // посмотрим сколько еще можно держать кредит
+                  CPU_INT32U HopperSaveCredit = 0;
+                  GetData(&HopperSaveCreditDesc, &HopperSaveCredit, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  if ((HopperSaveCredit > 0) && (labs(OSTimeGet() - money_timestamp) > 60000UL * HopperSaveCredit))
+                  {
+                      // если разрешено обнуление и пришло время - очистим счетчики приема денег
+                      SetAcceptedRestMoney(0);
+                      SetAcceptedBankMoney(0);
+                      SetAcceptedMoney(0);
                   }
               }
               
@@ -337,6 +322,8 @@ void UserAppTask(void *p_arg)
                 accmoney = GetAcceptedMoney();
                 accmoney += money;
                 SetAcceptedMoney(accmoney);
+                IncCounterCoin(money);
+                
                 money_timestamp = OSTimeGet();
                 if (UserMenuState == USER_STATE_ACCEPT_MONEY)
                 {
@@ -365,6 +352,8 @@ void UserAppTask(void *p_arg)
                 accmoney = GetAcceptedMoney();
                 accmoney += money;
                 SetAcceptedMoney(accmoney);
+                IncCounterCash(money);
+                
                 money_timestamp = OSTimeGet();
                 if (UserMenuState == USER_STATE_ACCEPT_MONEY)
                 {
@@ -397,6 +386,8 @@ void UserAppTask(void *p_arg)
                 accmoney = GetAcceptedBankMoney();
                 accmoney += money;
                 SetAcceptedBankMoney(accmoney);
+                IncCounterBank(money);
+                
                 money_timestamp = OSTimeGet();
                 
                 if (UserMenuState == USER_STATE_ACCEPT_MONEY)
@@ -431,6 +422,9 @@ void UserAppTask(void *p_arg)
                 accmoney = GetAcceptedMoney();
                 accmoney += note;
                 SetAcceptedMoney(accmoney);
+                
+                IncCounterCash(note);
+                
                 money_timestamp = OSTimeGet();
                 if (UserMenuState == USER_STATE_ACCEPT_MONEY)
                 {
@@ -473,7 +467,7 @@ void UserAppTask(void *p_arg)
               break;
             
             case EVENT_KEY_START:
-            case EVENT_KEY_USER_START:
+            //case EVENT_KEY_USER_START:
               if (incassation) break;
               if (GetMode() != MODE_WORK)
                 {
@@ -518,6 +512,13 @@ void UserAppTask(void *p_arg)
                         GoToPreviousMenu();
                       }
                    }
+                  else if (GetCurrentMenu() == CanselCheckMenuPanel)
+                    {
+                      int res = CanselFiscalBill();
+                      SaveEventRecord(0, JOURNAL_EVENT_PRINT_X, res);
+                      CheckFiscalStatus();
+                      GoToPreviousMenu();
+                    }
                   break;
                 }
                 
@@ -526,7 +527,7 @@ void UserAppTask(void *p_arg)
               break;
               
             // нажали внешнюю кнопку
-            case EVENT_BUTTON_PRESS:
+            case EVENT_KEY_USER_START:
               if (GetMode() != MODE_WORK) break;
               
               // нажали кнопку - выдадим деньги
@@ -572,7 +573,7 @@ void UserAppTask(void *p_arg)
                         // режим Elolution - управляем выдачей жетонов импульсами
                         for(int j = 0; j < CountCoin; j++)
                         {
-                           FIO0SET_bit.P0_24 = 0;
+                           FIO0CLR_bit.P0_24 = 1;
                            OSTimeDly(50);
                            FIO0SET_bit.P0_24 = 1;
                            OSTimeDly(50);
@@ -591,8 +592,6 @@ void UserAppTask(void *p_arg)
                     CPU_INT32U restMoney = accmoney % HopperCost;
                     
                     SetAcceptedRestMoney(restMoney);
-                    SetAcceptedBankMoney(0);
-                    SetAcceptedMoney(0);
                 }
               }
               
@@ -717,15 +716,15 @@ void UserAppTask(void *p_arg)
 
 #endif
            case EVENT_KEY_F1:
-              testMoney = 10;
-              PostUserEvent(EVENT_COIN_INSERTED);
+              //testMoney = 10;
+              //PostUserEvent(EVENT_COIN_INSERTED);
               break;
            case EVENT_KEY_F2:
-              testMoney = 50;
-              PostUserEvent(EVENT_BANK_INSERTED);
+              //testMoney = 50;
+              //PostUserEvent(EVENT_ERROR_HOPPER_ON);
               break;
            case EVENT_KEY_F3:
-              //PostUserEvent(EVENT_BILL_STACKED);
+              //PostUserEvent(EVENT_ERROR_HOPPER_OFF);
               break;
               
             default:
@@ -747,10 +746,7 @@ void UserStartupFunc(void)
 #ifdef BOARD_CENTRAL_CFG
   // инициализация режима работы
   InitMode();
-
-  // инициализируем выходные порты
-  initOutputPorts();
-
+  
   // инициализация данных
   CheckAllData();
     

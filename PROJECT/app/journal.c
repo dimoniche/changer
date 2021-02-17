@@ -68,7 +68,8 @@ int TstCriticalErrors(void)
   }
   
   errors |= TstErrorFlag(ERROR_VALIDATOR_CONN);
-  errors |= TstErrorFlag(ERROR_HOPPER) || TstErrorFlag(ERROR_NO_MONEY_HOPPER);
+  errors |= TstErrorFlag(ERROR_HOPPER);
+  errors |= TstErrorFlag(ERROR_NO_MONEY_HOPPER);
   
   OS_EXIT_CRITICAL();
   if (errors) return 1;
@@ -343,6 +344,57 @@ void IncCounter(CPU_INT32U time, CPU_INT32U money)
   WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
 }  
 
+void IncCounterBank(CPU_INT32U money)
+{
+  CPU_INT32U m;
+  TCountersLong long_ctrs;
+  
+  // увеличим количество денег полученных через банк
+  ReadArrayFram(offsetof(TFramMap, Counters.CounterBank), sizeof(CPU_INT32U), (unsigned char*)&m);
+  m+=money;
+  WriteArrayFram(offsetof(TFramMap, Counters.CounterBank), sizeof(CPU_INT32U), (unsigned char*)&m);
+
+  // увеличим длинные счетчики
+  ReadArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+  long_ctrs.CounterBankLong += money;
+  long_ctrs.crc = CRC16((unsigned char*)&long_ctrs, offsetof(TCountersLong, crc));
+  WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+}
+
+void IncCounterCoin(CPU_INT32U money)
+{
+  CPU_INT32U m;
+  TCountersLong long_ctrs;
+  
+  // увеличим количество денег полученных через монетник
+  ReadArrayFram(offsetof(TFramMap, Counters.CounterCoin), sizeof(CPU_INT32U), (unsigned char*)&m);
+  m+=money;
+  WriteArrayFram(offsetof(TFramMap, Counters.CounterCoin), sizeof(CPU_INT32U), (unsigned char*)&m);
+
+  // увеличим длинные счетчики
+  ReadArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+  long_ctrs.CounterCoinLong += money;
+  long_ctrs.crc = CRC16((unsigned char*)&long_ctrs, offsetof(TCountersLong, crc));
+  WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+}
+
+void IncCounterCash(CPU_INT32U money)
+{
+  CPU_INT32U m;
+  TCountersLong long_ctrs;
+  
+  // увеличим количество денег полученных через монетник
+  ReadArrayFram(offsetof(TFramMap, Counters.CounterCash), sizeof(CPU_INT32U), (unsigned char*)&m);
+  m+=money;
+  WriteArrayFram(offsetof(TFramMap, Counters.CounterCash), sizeof(CPU_INT32U), (unsigned char*)&m);
+
+  // увеличим длинные счетчики
+  ReadArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+  long_ctrs.CounterCashLong += money;
+  long_ctrs.crc = CRC16((unsigned char*)&long_ctrs, offsetof(TCountersLong, crc));
+  WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+}
+
 CPU_INT32U GetShortMoney()
 {
   CPU_INT32U money;
@@ -369,7 +421,8 @@ void CheckLongCounters(void)
 
 void ClearCounters(void)
 {
-  SetArrayFram(offsetof(TFramMap, Counters), sizeof(CPU_INT32U)*(CHANNELS_NUM+1)*3, 0x00);
+  SetArrayFram(offsetof(TFramMap, Counters), sizeof(CPU_INT32U)*3, 0x00);
+  SetArrayFram(offsetof(TFramMap, Counters.CounterCoin), sizeof(CPU_INT32U)*3, 0x00);
 }
 
 /// инкремент счетчика купюр по номиналам

@@ -204,6 +204,14 @@ extern TDataDescStruct const CounterLongRunDesc;
 extern TDataDescStruct const CounterLongMoneyDesc;
 extern TDataDescStruct const CounterLongTimeDesc;
 
+extern TDataDescStruct const CounterLongCoinDesc;
+extern TDataDescStruct const CounterLongCashDesc;
+extern TDataDescStruct const CounterLongBankDesc;
+
+extern TDataDescStruct const CounterCoinDesc;
+extern TDataDescStruct const CounterCashDesc;
+extern TDataDescStruct const CounterBankDesc;
+
 extern TDataDescStruct const MasterPassTempDesc;
 
 extern TDataDescStruct const CounterChannelRunLongDesc;

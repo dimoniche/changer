@@ -1106,3 +1106,26 @@ int GetFirstCriticalFiscalError(CPU_INT08U *err)
     }
   return res;
 }
+
+// отмена чека
+int CanselFiscalBill(void)
+{
+    CPU_INT08U err;
+    
+    FPend();
+    
+    if (CheckFiscalStatus() < 0)
+    {
+        FPost();
+        return -100;
+    }
+
+    if (FiscCanselBill(DEFAULT_PASS, &err) != FISC_OK)
+    {
+        FPost();
+        return -101;
+    }
+      
+    FPost();
+    return 0;
+}

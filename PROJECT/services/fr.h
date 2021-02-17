@@ -26,5 +26,5 @@ extern void FReportPost(void);
 extern CPU_INT16U FReportTest(void);
 extern int CheckFiscalStatus();
 extern int ConnectFiscalFast(void);
-
+extern int CanselFiscalBill(void);
 #endif //#ifndef _FR_H_

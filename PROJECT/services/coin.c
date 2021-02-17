@@ -47,11 +47,6 @@ static char pend_upsignal_nomoney_hopper_counter;
 static char pend_downsignal_nomoney_hopper_counter;
 static CPU_INT32U pend_signal_nomoney_hopper_timestamp;
 
-static CPU_INT32U signal_button_pulse = 1000;
-static char pend_upsignal_button_counter;
-static char pend_downsignal_button_counter;
-static CPU_INT32U pend_signal_button_timestamp;
-
 static CPU_INT32U cashLevel;
 static CPU_INT32U coinLevel;
 static CPU_INT32U bankLevel;
@@ -319,19 +314,19 @@ void CoinTask(void *p_arg)
       {
         if (OSTimeGet() - pend_signal_nomoney_hopper_timestamp > signal_nomoney_hopper_pulse)
         {
-          // деньги в хоппере есть
+          // деньги в хоппере кончились
           PostUserEvent(EVENT_NOMONEY_HOPPER_ON);
           pend_upsignal_nomoney_hopper_counter = 0;
         }
       }
-      
-      if (pend_upsignal_button_counter)
+
+      if (pend_downsignal_nomoney_hopper_counter)
       {
-        if (OSTimeGet() - pend_signal_button_timestamp > signal_button_pulse)
+        if (OSTimeGet() - pend_signal_nomoney_hopper_timestamp > signal_nomoney_hopper_pulse)
         {
-          // кнопку нажали
-          PostUserEvent(EVENT_BUTTON_PRESS);
-          pend_upsignal_button_counter = 0;
+          // деньги в хоппере есть
+          PostUserEvent(EVENT_NOMONEY_HOPPER_OFF);
+          pend_downsignal_nomoney_hopper_counter = 0;
         }
       }
       
@@ -341,22 +336,26 @@ void CoinTask(void *p_arg)
 
 void CoinDisable(void)
 {
-
+    // для запрета монетника выставим высокий уровень
+    FIO1SET_bit.P1_31 = 1;
 }
 
 void CoinEnable(void)
 {
-
+    // для разрешения монетника выставим низкий уровень
+    FIO0CLR_bit.P0_25 = 1;
 }
 
 void BankDisable(void)
 {
-
+    // для запрета банка выставим высокий уровень
+    FIO0SET_bit.P0_25 = 1;
 }
 
 void BankEnable(void)
 {
-
+    // для разрешения монетника выставим низкий уровень
+    FIO0CLR_bit.P0_25 = 1;
 }
 
 void HopperDisable(void)
@@ -503,17 +502,17 @@ CPU_INT32U input_register()
   // 3 бит
   if (FIO1PIN_bit.P1_24)
   {
-     SETBIT(input, 2);
+     SETBIT(input, 3);
   }
   // 4 бит
   if (FIO1PIN_bit.P1_23)
   {
-     SETBIT(input, 3);
+     SETBIT(input, 4);
   }
   // 5 бит
   if (FIO1PIN_bit.P1_20)
   {
-     SETBIT(input, 3);
+     SETBIT(input, 5);
   }
   
   return input;
@@ -632,27 +631,19 @@ void InputCapture_ISR(void)
           pend_downsignal_nomoney_hopper_counter = 1;
       }
   }
-  
-  // сигнал нажатия кнопки
-  if(TSTBIT(input_event, 5))
-  {
-    pend_signal_button_timestamp = OSTimeGet();
-    
-    if (FIO1PIN_bit.P1_20)
-      {
-          pend_upsignal_button_counter = 1;
-          pend_downsignal_button_counter = 0;
-      }
-    else
-      {
-          pend_upsignal_button_counter = 0;
-          pend_downsignal_button_counter = 1;
-      }
-  }
 }
 
 extern CPU_INT32U  BSP_CPU_PclkFreq (CPU_INT08U  pclk);
 
+/*
+P0.23	MK_P9	импульсный выход монетоприемника
+P0.26   MK_P6   импульсный выход банковского терминала
+P1.25   MK_P39  импульсный выход хоппера
+
+P1.23   MK_P37  Security Output с хоппером все в порядке - LOW
+P1.24   MK_P38  Низкий уровень монет. Есть монеты - сигнал LOW.
+
+*/
 void InitInputPorts()
 {
     // монетоприемник
@@ -687,24 +678,39 @@ void InitInputPorts()
     PINMODE3_bit.P1_24 = 0;
     FIO1DIR_bit.P1_24  = 0;
     FIO1MASK_bit.P1_24 = 0;
-    
-    // сигнал наличия монет в хоппере
-    PINSEL3_bit.P1_20 = 0;
-    PINMODE3_bit.P1_20 = 0;
-    FIO1DIR_bit.P1_20  = 0;
-    FIO1MASK_bit.P1_20 = 0;
 }
 
 /*
-P0.23	MK_P9	импульсный выход монетоприемника
-P0.26   MK_P6   импульсный выход банковского терминала
-P1.25   MK_P39  импульсный выход хоппера
-
-P1.23   MK_P37  Security Output с хоппером все в порядке - LOW
-P1.24   MK_P38  Низкий уровень монет. Есть монеты - сигнал LOW.
-
-P1.20   MK_P34  Сигнал от кнопки
+P0.24	MK_P8	управление хоппером
+P0.25   MK_P7   запрет банковского терминала
+P1.31   MK_P20  импульсный выход хоппера
 */
+
+// настройка выходных ног управления
+void initOutputPorts(void)
+{
+    // управление хоппером: выдача импульсов на хоппер или непрерывный сигнал - LOW - управление и нормальный сигнал импульса
+    PINSEL1_bit.P0_24 = 0;
+    PINMODE1_bit.P0_24 = 0;
+    FIO0DIR_bit.P0_24  = 1;
+    FIO0MASK_bit.P0_24 = 0;
+    
+    // запрет банковского терминала - HIGH - запрет
+    PINSEL1_bit.P0_25 = 0;
+    PINMODE1_bit.P0_25 = 0;
+    FIO0DIR_bit.P0_25  = 1;
+    FIO0MASK_bit.P0_25 = 0;
+    
+    // запрет монетника - HIGH - запрет
+    PINSEL3_bit.P1_31 = 0;
+    PINMODE3_bit.P1_31 = 0;
+    FIO1DIR_bit.P1_31  = 1;
+    FIO1MASK_bit.P1_31 = 0; 
+    
+    FIO0SET_bit.P0_24 = 1; // HIGH
+    FIO0CLR_bit.P0_25 = 1; // LOW
+    FIO1CLR_bit.P1_31 = 1; // LOW
+}
 
 // инициализация импульсного входа
 // используется CAP3.0
@@ -728,7 +734,9 @@ void  InitImpInput (void)
     
     // назначим все ножки
     InitInputPorts();
- 
+    // инициализируем выходные порты
+    initOutputPorts();
+
     PCONP_bit.PCTIM3 = 1;
     PCLKSEL1_bit.PCLK_TIMER3 = 2;
 

@@ -944,3 +944,35 @@ int FiscPrintContinue(CPU_INT32U pass, CPU_INT08U* err)
   return FISC_OK;
 }
 
+// Админ.отмена чека
+int FiscCanselBill(CPU_INT32U pass, CPU_INT08U* err)
+{
+  CPU_INT08U* rxdat;
+  CPU_INT08U len;
+
+  memcpy(&fisc_buf[0], (CPU_INT08U*)&pass, 4);
+  
+  if (FiscSendCommand(FISC_CANSEL_BILL, fisc_buf, 4) != FISC_OK)
+  {
+    return FISC_ERR;
+  }
+  
+  if (FiscReceiveAnswer(&rxdat, &len, FISC_ANSWER_TIMEOUT) != FISC_OK)
+  {
+    return FISC_ERR;
+  }
+
+  *err = rxdat[1];
+    
+  if (3 != len) 
+  {
+    return FISC_ERR;
+  }
+  
+  if ((rxdat[0] != FISC_CANSEL_BILL) || (rxdat[1] != 0))
+  {
+    return FISC_ERR;
+  }
+  
+  return FISC_OK;
+}
