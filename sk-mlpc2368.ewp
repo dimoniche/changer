@@ -1084,6 +1084,8 @@
         <option>
           <name>CCDefines</name>
           <state>BOARD_CENTRAL_CFG</state>
+          <state>CONFIG_FTP_CLIENT_ENABLE</state>
+          <state>CONFIG_TERMINAL_ENABLE</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -3160,6 +3162,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\PROJECT\app\modem_task.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\PROJECT\app\term_tsk.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\PROJECT\app\term_tsk.h</name>
       </file>
     </group>
     <group>

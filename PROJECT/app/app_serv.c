@@ -21,12 +21,16 @@
 #include "host_app.h"
 #include "console.h"
 #include "keyboard.h"
+#include "term_tsk.h"
 
 // если определить этот макрос, будут вноситься деньги по кнопке F1
 //#define _DEBUG_MONEY
 
 CPU_INT32U SystemTime;
+
 CPU_INT32U money_timestamp;
+CPU_INT32U coin_timestamp;
+
 CPU_INT08U EnabledChannelsNum;
 CPU_INT08U RecentChannel;
 CPU_INT08U UserMenuState;
@@ -46,7 +50,7 @@ extern CPU_INT32U BillNominals[24];
 CPU_INT32U incas_bill_nom_counter[24];
 CPU_INT32U incas_common_bill_counter;
 
-#define USER_QUERY_LEN  64
+#define USER_QUERY_LEN  256
 
 OS_STK    UserTaskStk[USER_TASK_STK_SIZE];
 OS_EVENT *UserQuery = NULL;
@@ -72,6 +76,10 @@ CPU_INT32U GetAcceptedBankMoney(void);
 void SetAcceptedRestMoney(CPU_INT32U money);
 void ClearAcceptedRestMoney(void);
 CPU_INT32U GetAcceptedRestMoney(void);
+
+void SetAcceptedCoin(CPU_INT32U money);
+void ClearAcceptedCoin(void);
+CPU_INT32U GetAcceptedCoin(void);
 
 void InitPass(void);
 int CheckChannelEnabled(CPU_INT08U channel);
@@ -168,7 +176,14 @@ void UserAppTask(void *p_arg)
       PostModemTask(MODEM_TASK_SEND_INCAS);
   }
 #endif
-      
+  
+  // количество жетонов под выдачу
+  CPU_INT32U CountCoin = 0;
+  // режим хоппера
+  CPU_INT32U regime_hopper = 0;
+  // сстояние хоппера - 1 - выдача жетонов
+  CPU_INT32U hopperOn = 0;
+  
   while (1)
     {
       if (GetUserEvent(&event))
@@ -256,12 +271,23 @@ void UserAppTask(void *p_arg)
                   CPU_INT32U HopperSaveCredit = 0;
                   GetData(&HopperSaveCreditDesc, &HopperSaveCredit, 0, DATA_FLAG_SYSTEM_INDEX);
                   
-                  if ((HopperSaveCredit > 0) && (labs(OSTimeGet() - money_timestamp) > 60000UL * HopperSaveCredit))
+                  if ((accmoney > 0) && (HopperSaveCredit > 0) && (labs(OSTimeGet() - money_timestamp) > 60000UL * HopperSaveCredit))
                   {
-                      // если разрешено обнуление и пришло время - очистим счетчики приема денег
+                      // если есть деньги, разрешено обнуление и пришло время - очистим счетчики приема денег
                       SetAcceptedRestMoney(0);
                       SetAcceptedBankMoney(0);
                       SetAcceptedMoney(0);
+                  }
+                  
+                  // посмотрим сколько еще можно куртить мотор хоппера
+                  CPU_INT32U HopperStopEngine = 0;
+                  GetData(&HopperStopEngineDesc, &HopperStopEngine, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  if (hopperOn && (labs(OSTimeGet() - coin_timestamp) > 1000UL * HopperStopEngine))
+                  {
+                      // хоппер включен и пришло время остановить хоппер
+                      FIO0SET_bit.P0_24 = 1;
+                      hopperOn = 0;
                   }
               }
               
@@ -551,8 +577,7 @@ void UserAppTask(void *p_arg)
               
               // здесь управляем хоппером--
               {
-                CPU_INT32U hopper_mode = 0;
-                GetData(&RegimeHopperDesc, &hopper_mode, 0, DATA_FLAG_SYSTEM_INDEX);
+                GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
                 
                 // стоимость жетона в хоппере
                 CPU_INT32U HopperCost = 0;
@@ -564,11 +589,10 @@ void UserAppTask(void *p_arg)
                 
                 if(accmoney >= HopperCost)
                 {
-                    CPU_INT32U CountCoin = 0;
                     CountCoin = accmoney / HopperCost;
                     
                     // если хватает на жетон - вне зависимости от типа выдачи жетонов
-                    if(!hopper_mode)
+                    if(!regime_hopper)
                     {
                         // режим Elolution - управляем выдачей жетонов импульсами
                         for(int j = 0; j < CountCoin; j++)
@@ -578,20 +602,28 @@ void UserAppTask(void *p_arg)
                            FIO0SET_bit.P0_24 = 1;
                            OSTimeDly(50);
                         }
+                        
+                        // жетоны выдали
+                        CountCoin = 0;
+                        
+                        // после работы с хоппером - печатаем чеки - только если выдали жетон
+                        PostUserEvent(EVENT_PRINT_CHECK);
+
+                        // найдем остаток от выдачи жетона
+                        CPU_INT32U restMoney = accmoney % HopperCost;
+
+                        SetAcceptedRestMoney(restMoney);
                     }
                     else
                     {
-                        // режим  Cube
+                        // начали выдавать жетоны
+                        hopperOn = 1;
                         
+                        // режим  Cube - разрешаем выдавать жетоны - опускаем линию
+                        FIO0CLR_bit.P0_24 = 1;
+                        
+                        // печать чека, расчет остатка после остановки выдачи на хоппере
                     }
-                    
-                    // после работы с хоппером - печатаем чеки - только если выдали жетон
-                    PostUserEvent(EVENT_PRINT_CHECK);
-                    
-                    // найдем остаток от выдачи жетона
-                    CPU_INT32U restMoney = accmoney % HopperCost;
-                    
-                    SetAcceptedRestMoney(restMoney);
                 }
               }
               
@@ -715,6 +747,66 @@ void UserAppTask(void *p_arg)
 #else
 
 #endif
+           case EVENT_HOPPER_EXTRACTED:
+             {
+                  if (GetMode() != MODE_WORK || !hopperOn || !CountCoin)
+                  {
+                      // что-то пошло не так - останавливаем выдачу
+                      FIO0SET_bit.P0_24 = 1;
+                      break;
+                  }
+
+                  // импульсы от хоппера в режиме Cube 
+                  // считаем и пытаемся остановить хоппер вовремя
+                  
+                  if (regime_hopper) // режим хоппера был загружен ранее
+                  {
+                      // мы в нужном режиме - посмотрим сколько мы там накопили импульсов - выдали жетонов
+                      CPU_INT32U coin = GetResetHopperCount();
+                      
+                      // прибавим сколько выдали ранее
+                      coin += GetAcceptedCoin();
+                      
+                      // нету жетонов - выход
+                      if (!coin) break;
+
+                      if (coin >= CountCoin)
+                      {
+                          // все выдали - останавливаем выдачу
+                          FIO0SET_bit.P0_24 = 1;
+                          
+                          // жетоны выдали
+                          CountCoin = 0;
+                          // остановили выдачу
+                          hopperOn = 0;
+                      
+                          // жетоны выдали - забываем про них
+                          SetAcceptedCoin(0);
+
+                          // после работы с хоппером - печатаем чеки - только если выдали нужное количество жетонов
+                          PostUserEvent(EVENT_PRINT_CHECK);
+
+                          // сколько денег уже есть
+                          CPU_INT32U accmoney = GetAcceptedMoney();
+                          accmoney += GetAcceptedBankMoney();
+                          accmoney += GetAcceptedRestMoney();
+
+                          // стоимость жетона в хоппере
+                          CPU_INT32U HopperCost = 0;
+                          GetData(&HopperCostDesc, &HopperCost, 0, DATA_FLAG_SYSTEM_INDEX);
+
+                          // найдем остаток от выдачи жетона
+                          CPU_INT32U restMoney = accmoney % HopperCost;
+                          SetAcceptedRestMoney(restMoney);
+                      }
+                      else
+                      {
+                          SetAcceptedCoin(coin);
+                          coin_timestamp = OSTimeGet();
+                      }
+                  }
+             }
+              break; 
            case EVENT_KEY_F1:
               //testMoney = 10;
               //PostUserEvent(EVENT_COIN_INSERTED);
@@ -814,7 +906,11 @@ void UserStartupFunc(void)
 #ifdef BOARD_CENTRAL_CFG
   InitHostApp();
 #endif
-      
+
+#if defined(CONFIG_TERMINAL_ENABLE)
+  InitTerminalApp();  
+#endif
+  
   SystemTime = GetTimeSec();
   
 #ifdef BOARD_CENTRAL_CFG
@@ -1060,6 +1156,21 @@ void LoadAcceptedMoney(void)
         SetData(&AcceptedRestMoneyDesc, &m, 0, DATA_FLAG_SYSTEM_INDEX);
         SetData(&AcceptedRestMoneyCRC16Desc, &crc, 0, DATA_FLAG_SYSTEM_INDEX);
       }
+    
+  // считаем cохраненные деньги из FRAM
+  GetData(&AcceptedCoinDesc, &m, 0, DATA_FLAG_SYSTEM_INDEX);    
+  // считаем crc16 этих денег из FRAM 
+  GetData(&AcceptedCoinCRC16Desc, &crc, 0, DATA_FLAG_SYSTEM_INDEX);    
+    
+    crct = crc16((unsigned char*)&m, sizeof(CPU_INT32U));
+  
+    if (crct != crc)
+      { // обнуляем, если crc не сошлась
+        m = 0;
+        crc = crc16((unsigned char*)&m, sizeof(CPU_INT32U));
+        SetData(&AcceptedCoinDesc, &m, 0, DATA_FLAG_SYSTEM_INDEX);
+        SetData(&AcceptedCoinCRC16Desc, &crc, 0, DATA_FLAG_SYSTEM_INDEX);
+      }
 }
 
 // добавить денег
@@ -1149,6 +1260,34 @@ CPU_INT32U GetAcceptedRestMoney(void)
   CPU_INT32U m;
 
   GetData(&AcceptedRestMoneyDesc, &m, 0, DATA_FLAG_SYSTEM_INDEX);
+  return m;
+}
+
+// выдали жетонов
+void SetAcceptedCoin(CPU_INT32U money)
+{
+  CPU_INT32U m,crc;
+  m=money;
+  crc = crc16((unsigned char*)&m, sizeof(CPU_INT32U));
+  SetData(&AcceptedCoinDesc, &m, 0, DATA_FLAG_SYSTEM_INDEX);
+  SetData(&AcceptedCoinCRC16Desc, &crc, 0, DATA_FLAG_SYSTEM_INDEX);
+}
+
+// очистить счетчик жетонов
+void ClearAcceptedCoin(void)
+{
+  CPU_INT32U m,crc;
+  m=0;
+  crc = crc16((unsigned char*)&m, sizeof(CPU_INT32U));
+  SetData(&AcceptedCoinDesc, &m, 0, DATA_FLAG_SYSTEM_INDEX);
+  SetData(&AcceptedCoinCRC16Desc, &crc, 0, DATA_FLAG_SYSTEM_INDEX);
+}
+
+// выдали жетонов
+CPU_INT32U GetAcceptedCoin(void)
+{
+  CPU_INT32U m;
+  GetData(&AcceptedCoinDesc, &m, 0, DATA_FLAG_SYSTEM_INDEX);
   return m;
 }
 

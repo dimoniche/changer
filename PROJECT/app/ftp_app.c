@@ -90,194 +90,194 @@ int ReadFtpCountersString(int index, char *buf)
         case 0:
             strcpy(buf, header1);
             break;
-        case 1:
-            strcpy(buf, line1);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 2:
-            strcpy(buf, line2);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 3:
-            strcpy(buf, line3);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 4:
-            strcpy(buf, line6);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarTestRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 5:
-            strcpy(buf, line6);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarTestWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 6:
-            strcpy(buf, "\r\n");
-            break;
-        case 7:
-            strcpy(buf, header2);
-            break;
-        case 8:
-            strcpy(buf, line1);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 9:
-            strcpy(buf, line2);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 10:
-            strcpy(buf, line3);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 11:
-            strcpy(buf, line6);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeTestRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 12:
-            strcpy(buf, line7);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeWorkTestTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 13:
-            strcpy(buf, "\r\n");
-            break;
-        case 14:
-            strcpy(buf, header3);
-            break;
-        case 15:
-            strcpy(buf, line4);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterCollatenTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 16:
-            strcpy(buf, line5);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterUFTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 17:
-            strcpy(buf, line6);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterAllTestCountDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 18:
-            strcpy(buf, line7);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterAllTestTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 19:
-            strcpy(buf, line13);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterTestMeanTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 20:
-            strcpy(buf, line10);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterCleaningCountDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 21:
-            strcpy(buf, line11);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterCleaningTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 22:
-            strcpy(buf, line12);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterCleaningMeanTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 23:
-            strcpy(buf, "\r\n");
-            break;
-        case 24:
-            strcpy(buf, header4);
-            break;
-        case 25:
-            GetDataStr(&CounterCashMoneyDesc, (CPU_INT08U*)buf, i, DATA_FLAG_DIRECT_INDEX);
-            strcat(buf, ";");
-            GetDataStr(&CounterCardMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            strcat(buf, ";");
-            GetDataStr(&CounterCommonMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            strcat(buf, "\r\n");
-            break;
+//        case 1:
+//            strcpy(buf, line1);
+//            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterSolarMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 2:
+//            strcpy(buf, line2);
+//            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterSolarRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 3:
+//            strcpy(buf, line3);
+//            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterSolarWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 4:
+//            strcpy(buf, line6);
+//            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterSolarTestRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 5:
+//            strcpy(buf, line6);
+//            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterSolarTestWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 6:
+//            strcpy(buf, "\r\n");
+//            break;
+//        case 7:
+//            strcpy(buf, header2);
+//            break;
+//        case 8:
+//            strcpy(buf, line1);
+//            for (i = 0; i < SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterModeMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 9:
+//            strcpy(buf, line2);
+//            for (i = 0; i < SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterModeRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 10:
+//            strcpy(buf, line3);
+//            for (i = 0; i < SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterModeWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 11:
+//            strcpy(buf, line6);
+//            for (i = 0; i < SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterModeTestRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 12:
+//            strcpy(buf, line7);
+//            for (i = 0; i < SOLAR_MODES_COUNT; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterModeWorkTestTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 13:
+//            strcpy(buf, "\r\n");
+//            break;
+//        case 14:
+//            strcpy(buf, header3);
+//            break;
+//        case 15:
+//            strcpy(buf, line4);
+//            for (i = 0; i < CHANNELS_NUM; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterCollatenTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 16:
+//            strcpy(buf, line5);
+//            for (i = 0; i < CHANNELS_NUM; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterUFTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 17:
+//            strcpy(buf, line6);
+//            for (i = 0; i < CHANNELS_NUM; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterAllTestCountDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 18:
+//            strcpy(buf, line7);
+//            for (i = 0; i < CHANNELS_NUM; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterAllTestTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 19:
+//            strcpy(buf, line13);
+//            for (i = 0; i < CHANNELS_NUM; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterTestMeanTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 20:
+//            strcpy(buf, line10);
+//            for (i = 0; i < CHANNELS_NUM; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterCleaningCountDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 21:
+//            strcpy(buf, line11);
+//            for (i = 0; i < CHANNELS_NUM; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterCleaningTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 22:
+//            strcpy(buf, line12);
+//            for (i = 0; i < CHANNELS_NUM; i++)
+//            {
+//                strcat(buf, ";");
+//                GetDataStr(&CounterCleaningMeanTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            }
+//            strcat(buf, "\r\n");
+//            break;
+//        case 23:
+//            strcpy(buf, "\r\n");
+//            break;
+//        case 24:
+//            strcpy(buf, header4);
+//            break;
+//        case 25:
+//            GetDataStr(&CounterCashMoneyDesc, (CPU_INT08U*)buf, i, DATA_FLAG_DIRECT_INDEX);
+//            strcat(buf, ";");
+//            GetDataStr(&CounterCardMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            strcat(buf, ";");
+//            GetDataStr(&CounterCommonMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
+//            strcat(buf, "\r\n");
+//            break;
         default:
             return 0;
     }
