@@ -4,9 +4,6 @@
 #include "data.h"
 #include "control.h"
 
-#define TERMINAL_PROTOCOL_TTK2  0
-#define TERMINAL_PROTOCOL_VTK   1
-
 #define INCAS_SEND_FLAG     0x87654321
 
 #define MAX_PRICE 9999
@@ -287,8 +284,5 @@ extern TDataDescStruct const AcceptedBankMoneyCRC16Desc;
 
 extern TDataDescStruct const AcceptedRestMoneyDesc;
 extern TDataDescStruct const AcceptedRestMoneyCRC16Desc;
-
-extern TDataDescStruct const AcceptedCoinDesc;
-extern TDataDescStruct const AcceptedCoinCRC16Desc;
 
 #endif //#ifndef _DATADESC_H_

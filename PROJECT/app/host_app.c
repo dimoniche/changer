@@ -271,26 +271,6 @@ int HostWritePulses(CPU_INT32U ip_addr, CPU_INT32U count, CPU_INT32U len_ms)
     return HostWriteParam(ip_addr, CONSOLE_TCP_DEFAULT_PORT, "PULSEOUT", str, HOST_SOCKET_DEFAULT_TIMEOUT);
 }
 
-int HostWriteData(NET_SOCK_ID sock, char* str, int len)
-{
-    int tx_ctr = 0;
-    while (tx_ctr < len)
-    {
-        NET_ERR err;
-        int tx_size = NetSock_TxData(sock, &str[tx_ctr], len - tx_ctr, NET_SOCK_FLAG_NONE, &err);
-        OSTimeDly(10);
-        if (tx_size > 0)
-        {
-            tx_ctr += tx_size;        
-        }
-        else
-        {
-            return -1;
-        }
-    }
-    return tx_ctr;
-}
-
 int HostWriteDataTimeout(NET_SOCK_ID sock, char* str, int len, CPU_INT32U timeout)
 {
     CPU_INT32U time_stamp = OSTimeGet();

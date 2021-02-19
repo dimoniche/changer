@@ -155,8 +155,6 @@ void CoinTask(void *p_arg)
 
       if (enable_coin)
       {
-        CoinEnable();
-
         OS_ENTER_CRITICAL();
         if (pend_coin_counter)
         {
@@ -202,8 +200,6 @@ void CoinTask(void *p_arg)
       
       if (bank_enable)
       {
-        BankEnable();
-        
         OS_ENTER_CRITICAL();
         if (pend_bank_counter)
         {
@@ -249,29 +245,37 @@ void CoinTask(void *p_arg)
       
       if (regime_hopper)
       {
-          OS_ENTER_CRITICAL();
-          if (pend_hopper_counter)
+        OS_ENTER_CRITICAL();
+        if (pend_hopper_counter)
+        {
+          // импульсы инкрементируем только после выдержки паузы
+          if (OSTimeGet() - pend_hopper_timestamp > hopper_pause)
           {
-              // импульсы инкрементируем только после выдержки паузы
-              if (OSTimeGet() - pend_hopper_timestamp > hopper_pause)
+            pend_hopper_counter = 0;
+            HopperImpCounter++;
+          }
+        }
+        OS_EXIT_CRITICAL();
+            
+        if (GetHopperCount())
+        {
+          if (last_hopper_count == GetHopperCount())
+          {
+              if (labs(OSTimeGet() - last_hopper_time) > 500)
               {
-                  pend_hopper_counter = 0;
-                  HopperImpCounter++;
+                PostUserEvent(EVENT_HOPPER_EXTRACTED);
               }
           }
-          OS_EXIT_CRITICAL();
-              
-          if (GetHopperCount())
+          else
           {
-              if (last_hopper_count != GetHopperCount())
-              {
-                  // событие от хоппера шлем сразу - чтобы успеть все вовремя остановить
-                  PostUserEvent(EVENT_HOPPER_EXTRACTED);
-                  
-                  // может быть придется и здесь останавливать хоппер
-                  last_hopper_count = GetHopperCount();
-              }
+              last_hopper_count = GetHopperCount();
+              last_hopper_time = OSTimeGet();
           }
+        }
+        else
+        {
+          last_bank_time = OSTimeGet();
+        }
       }
       else
       {

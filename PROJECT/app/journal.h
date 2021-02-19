@@ -95,12 +95,9 @@ typedef struct{
 
     #define ERROR_HOPPER                    JOURNAL_EVENT_PRINT_BILL_ONLINE + 1 // ошибка хоппера
     #define ERROR_NO_MONEY_HOPPER           ERROR_HOPPER + 1                    // ошибка хоппера - кончились деньги
-
-    // событие отправки журнала
-    #define JOURNAL_EVENT_FTP_SEND          ERROR_NO_MONEY_HOPPER + 1
   
-    #define JOURNAL_EVENTS_COUNT            JOURNAL_EVENT_FTP_SEND     // число событий
- 
+    #define JOURNAL_EVENTS_COUNT            ERROR_NO_MONEY_HOPPER     // число событий
+  
   // канал
   CPU_INT08U channel;
   

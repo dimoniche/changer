@@ -319,9 +319,4 @@ void Sec2Date(TRTC_Data *pDest, CPU_INT32U ulSec)
   pDest->sec = ulSec;
 }
 
-void PrintSecDateTimeStringRaw(char *str, CPU_INT32U time)
-{
-  TRTC_Data rtc_data;
-  Sec2Date(&rtc_data, time);
-  sprintf(str, "20%02d%02d%02d_%02d%02d%02d", rtc_data.year, rtc_data.mon, rtc_data.date, rtc_data.hour, rtc_data.min, rtc_data.sec);
-}
+
