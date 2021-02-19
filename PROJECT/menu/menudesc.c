@@ -483,6 +483,9 @@ const CPU_INT08U str_SettingsMenu_6[] = "Сеть";
 const CPU_INT08U str_SettingsMenu_3[] = "Установка пароля";
 const CPU_INT08U str_SettingsMenu_4[] = "Установка времени";
 const CPU_INT08U str_SettingsMenu_5[] = "Сброс настроек";
+#ifdef CONFIG_FTP_CLIENT_ENABLE
+const CPU_INT08U str_SettingsMenu_9[] = "FTP";
+#endif
 
 const TMenuLine line_SettingsMenu_0 = {
   MENU_LINE_STRING,               // тип пункта меню
@@ -541,9 +544,18 @@ const TMenuLine line_SettingsMenu_7 = {
   NULL                            // панель для перехода
 };
 */
-const TMenuLineArray arr_SettingsMenuArray[] = {&line_SettingsMenu_0, &line_SettingsMenu_2, &line_SettingsMenu_5, &line_SettingsMenu_3, &line_SettingsMenu_6, &line_SettingsMenu_8, NULL};
-const TMenuPanel SettingsMenuPanel[] = {arr_SettingsMenuArray, NULL, 6, MENU_PANEL_STANDARD};
 
+#ifdef CONFIG_FTP_CLIENT_ENABLE
+const TMenuLine line_SettingsMenu_9 = {
+  MENU_LINE_GOTO_MENU,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&str_SettingsMenu_9,       // указатель на текстовую строку или дескриптор
+  (void*)&FtpSettingsMenuPanel                            // панель для перехода
+};
+#endif
+
+const TMenuLineArray arr_SettingsMenuArray[] = {&line_SettingsMenu_0, &line_SettingsMenu_2, &line_SettingsMenu_5, &line_SettingsMenu_3, &line_SettingsMenu_6, &line_SettingsMenu_8,  &line_SettingsMenu_9, NULL};
+const TMenuPanel SettingsMenuPanel[] = {arr_SettingsMenuArray, NULL, 7, MENU_PANEL_STANDARD};
 
 
 /***********************************
@@ -2061,3 +2073,92 @@ const TMenuLine line_ChannelCountersLongMenu_3 = {
 
 const TMenuLineArray arr_ChannelCountersLongArray[] = {&line_ChannelCountersLongMenu_0, &line_ChannelCountersLongMenu_1, &line_ChannelCountersLongMenu_2, &line_ChannelCountersLongMenu_3, NULL};
 const TMenuPanel ChannelCountersLongPanel[] = {arr_ChannelCountersLongArray, NULL, 4, MENU_PANEL_STATIC};
+
+#ifdef CONFIG_FTP_CLIENT_ENABLE
+
+/***********************************
+  МЕНЮ НАСТРОЙКА FTP-КЛИЕНТА 
+***********************************/
+const char str_FtpSettings_0[] = " НАСТРОйКА FTP";
+
+const TMenuLine line_FtpSettingsMenu_0 = {
+  MENU_LINE_STRING,                 // тип пункта меню
+  MENU_FIXED_LINE,                // доп. флаги  
+  (void*)&str_FtpSettings_0,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_1 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpEnableDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_2 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpServerIpAddrDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_3 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpServerLoginDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_4 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpServerPassDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_5 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpDeviceNumberDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_6 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpSendHourMinDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_7 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpSendIntervalDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_8 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpLastSendTimeDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_9 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpLastSendResultDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLine line_FtpSettingsMenu_10 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&FtpSendNowCmdDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLineArray arr_FtpSettingsArray[] = {&line_FtpSettingsMenu_0, &line_FtpSettingsMenu_1, &line_FtpSettingsMenu_2, &line_FtpSettingsMenu_3, &line_FtpSettingsMenu_4, &line_FtpSettingsMenu_5, &line_FtpSettingsMenu_6, &line_FtpSettingsMenu_7, &line_FtpSettingsMenu_8, &line_FtpSettingsMenu_9, &line_FtpSettingsMenu_10, NULL};
+const TMenuPanel FtpSettingsMenuPanel[] = {arr_FtpSettingsArray, NULL, 11, MENU_PANEL_STANDARD};
+
+#endif

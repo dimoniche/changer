@@ -265,8 +265,8 @@
 
                                                                 /* Configure total number of       BUFFERs ...          */
                                                                 /* ... (see Note #1) :                                  */
-#define  NET_BUF_CFG_NBR_SMALL                             5    /* Configure total number of SMALL BUFFERs.             */
-#define  NET_BUF_CFG_NBR_LARGE                             3    /* Configure total number of LARGE BUFFERs.             */
+#define  NET_BUF_CFG_NBR_SMALL                             6    /* Configure total number of SMALL BUFFERs.             */
+#define  NET_BUF_CFG_NBR_LARGE                             1    /* Configure total number of LARGE BUFFERs.             */
 
                                                                 /* Configure size of       BUFFER DATA areas ...        */
                                                                 /* ... (see Note #2) :                                  */

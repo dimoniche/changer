@@ -3,18 +3,31 @@
 
 #include "cpu.h"
 
-#define MENU_LINES_NUMBER   4
-#define MENU_SYMB_NUMBER   20
+#ifdef CONFIG_LCD_1602A
+    #define MENU_LINES_NUMBER   2
+    #define MENU_SYMB_NUMBER   16
+#else
+    #define MENU_LINES_NUMBER   4
+    #define MENU_SYMB_NUMBER   20
+#endif
 
 
 // служебные символы
 #define SYMB_GO_UP    0x87
 #define SYMB_GO_DOWN  0x86
 
-#define SYMB_RIGHT_ARROW  0x3E
-#define SYMB_DESC_MARK    0x3E
-#define SYMB_IND_MARK     0x3C
-#define SYMB_POINT_MARK   0x3E
+#ifdef CONFIG_LCD_1602A
+	#define SYMB_RIGHT_ARROW  '>'
+#else
+	#define SYMB_RIGHT_ARROW  '>' //0x13
+#endif
+
+#define SYMB_DESC_MARK    '>'//0x84
+#define SYMB_IND_MARK     '<'//0x85
+#define SYMB_POINT_MARK   '*'//0xDF
+
+
+#define MENU_MAX_INPUT_STRING_LEN     16
 
 
 // структура описания пункта меню
@@ -94,5 +107,8 @@ extern void ReInitMenu(void);
 extern void MenuSprintf(CPU_INT08U* str, CPU_INT08U len, CPU_INT32U Val);
 extern TMenuPanel* GetCurrentMenu(void);
 extern void RefreshMenu(void);
+extern void MenuCursorOn(CPU_INT08U x, CPU_INT08U y);
+extern void MenuCursorOff(void);
+
 
 #endif //#ifndef _MENU_H_

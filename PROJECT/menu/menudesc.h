@@ -63,5 +63,6 @@ extern void PrintEventJournalRecord(TEventRecord *record);
 extern char str_EventNumber[24];
 extern char str_EventData[24];
 
+extern const TMenuPanel FtpSettingsMenuPanel[];
 
 #endif //#ifndef _MENUDESC_H_

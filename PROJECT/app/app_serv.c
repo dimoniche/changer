@@ -906,8 +906,8 @@ void UserStartupFunc(void)
   InitHostApp();
 #endif
 
-#if defined(CONFIG_TERMINAL_ENABLE)
-  InitTerminalApp();  
+#ifdef CONFIG_FTP_CLIENT_ENABLE
+  InitFTPApp();  
 #endif
   
   SystemTime = GetTimeSec();

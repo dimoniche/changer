@@ -40,5 +40,8 @@ extern void PrintTimeString(char *str, CPU_INT32U time);
 extern void PrintSecToHourMinSec(char *str, int seconds);
 extern void PrintSecToBigHourMinSec(char *str, int seconds);
 extern void PrintSecDateTimeStringRaw(char *str, CPU_INT32U time);
+extern void ScanRTCDateStringRus(char *str, TRTC_Data *rtc);
+extern void PrintDateString(char *str, CPU_INT32U time);
+extern void PrintRTCDateStringRus(char *str, TRTC_Data *rtc);
 
 #endif //#ifndef _TIME_H_

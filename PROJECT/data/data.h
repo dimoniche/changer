@@ -46,13 +46,19 @@ typedef struct{
   CPU_INT08U Type; 
     //#define DATA_TYPE_UCHAR  0
     //#define DATA_TYPE_SCHAR  1  
-    #define DATA_TYPE_ULONG       2
-    #define DATA_TYPE_SLONG       3  
-    #define DATA_TYPE_FLOAT       4
-    #define DATA_TYPE_TIME        5
-    #define DATA_TYPE_TIME_COUNT  6
-    #define DATA_TYPE_HOUR_MIN    7
-    #define DATA_TYPE_IP_ADDR     8
+    #define DATA_TYPE_ULONG             2
+    #define DATA_TYPE_SLONG             3
+    #define DATA_TYPE_FLOAT             4
+    #define DATA_TYPE_TIME              5
+    #define DATA_TYPE_TIME_COUNT        6   // счетчик в секундах
+    #define DATA_TYPE_HOUR_MIN          7   // время в минутах, отображается как ЧЧ:ММ
+    #define DATA_TYPE_TIME_SEC_H_MM     8   // счетчик в секундах, отображается как Ч:ММ
+    #define DATA_TYPE_TIME_SEC_M_SS     9   // счетчик в секундах, отображается как М:СС
+    #define DATA_TYPE_TIME_SEC_M        10  // счетчик в секундах, отображается как минуты
+    #define DATA_TYPE_DATE              11
+    #define DATA_TYPE_IP_ADDR           12
+    #define DATA_TYPE_CHAR_STRING       13
+    #define DATA_TYPE_RUB_CENT          14
   
   // расположение параметра
   CPU_INT08U Location; 
@@ -142,5 +148,9 @@ extern int GetDataMin(const TDataDescStruct* desc, void* buf);
 extern int GetDataMax(const TDataDescStruct* desc, void* buf);
 
 extern void FindDescByName(char* name, TDataDescStruct const** desc, CPU_INT32U *index);
+extern void GetDescIdStr(TDataDescStruct const* desc, char* name);
+extern void GetDescByIdStr(char* name, TDataDescStruct const** desc);
+extern CPU_INT32U GetDataValidIndex(const TDataDescStruct* desc, CPU_INT32U index);
+extern int SetDataFromStr(const TDataDescStruct* desc, char* buf, CPU_INT32U index, CPU_INT08U flags);
 
 #endif //#ifndef _DATA_H_

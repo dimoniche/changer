@@ -15,4 +15,6 @@ extern CPU_INT08U time_to_ftp;
 extern int FtpUploadCsvReport(NET_IP_ADDR ip, CPU_INT32U id, char* login, char* pass, CPU_INT32U time, CPU_INT08U flags);
 extern void FtpCheckTimeToSend(CPU_INT32U systime);
 
+extern void InitFTPApp();
+
 #endif //_FTP_APP_H_

@@ -325,3 +325,28 @@ void PrintSecDateTimeStringRaw(char *str, CPU_INT32U time)
   Sec2Date(&rtc_data, time);
   sprintf(str, "20%02d%02d%02d_%02d%02d%02d", rtc_data.year, rtc_data.mon, rtc_data.date, rtc_data.hour, rtc_data.min, rtc_data.sec);
 }
+
+void ScanRTCDateStringRus(char *str, TRTC_Data *rtc)
+{
+  int date, mon, year;
+  sscanf(str, "%02d/%02d/%02d", &date, &mon, &year);
+  rtc->year = year;
+  rtc->mon = mon;
+  rtc->date = date;
+  rtc->hour = 0;
+  rtc->min = 0;
+  rtc->sec = 0;  
+}
+
+void PrintDateString(char *str, CPU_INT32U time)
+{
+  TRTC_Data rtc_data;
+  Sec2Date(&rtc_data, time);
+  PrintRTCDateStringRus(str, &rtc_data);
+}
+
+void PrintRTCDateStringRus(char *str, TRTC_Data *rtc)
+{
+  sprintf(str, "%02d/%02d/%02d", rtc->date, rtc->mon, rtc->year);
+}
+
