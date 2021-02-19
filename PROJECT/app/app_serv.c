@@ -21,6 +21,7 @@
 #include "host_app.h"
 #include "console.h"
 #include "keyboard.h"
+#include "ftp_app.h"
 
 // если определить этот макрос, будут вноситься деньги по кнопке F1
 //#define _DEBUG_MONEY
