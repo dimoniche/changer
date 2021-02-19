@@ -1084,6 +1084,7 @@
         <option>
           <name>CCDefines</name>
           <state>BOARD_CENTRAL_CFG</state>
+          <state>CONFIG_FTP_CLIENT_ENABLE</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

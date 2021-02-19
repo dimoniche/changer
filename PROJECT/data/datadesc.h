@@ -291,4 +291,17 @@ extern TDataDescStruct const AcceptedRestMoneyCRC16Desc;
 extern TDataDescStruct const AcceptedCoinDesc;
 extern TDataDescStruct const AcceptedCoinCRC16Desc;
 
+extern TDataDescStruct const FtpServerIpAddrDesc;
+extern TDataDescStruct const FtpEnableDesc;
+extern TDataDescStruct const FtpSendHourMinDesc;
+extern TDataDescStruct const FtpSendIntervalDesc;
+extern TDataDescStruct const FtpLastSendTimeDesc;
+extern TDataDescStruct const FtpLastSendResultDesc;
+extern TDataDescStruct const FtpSendNowCmdDesc;
+extern TDataDescStruct const FtpDeviceNumberDesc;
+extern TDataDescStruct const FtpServerLoginDesc;
+extern TDataDescStruct const FtpServerPassDesc;
+
+extern CPU_INT32U ftp_send_cmd;
+
 #endif //#ifndef _DATADESC_H_

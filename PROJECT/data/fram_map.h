@@ -80,5 +80,17 @@ typedef struct
   CPU_INT32U  CommandV2;
   CPU_INT32U  TaxSystem;
 
+  #ifdef CONFIG_FTP_CLIENT_ENABLE
+  CPU_INT32U  FtpEnable;
+  CPU_INT32U  FtpServerIpAddr;
+  CPU_INT32U  FtpDeviceNumber;
+  CPU_INT32U  FtpSendHourMin;
+  CPU_INT32U  FtpSendIntervalIndex;
+  CPU_INT32U  FtpLastTime;
+  CPU_INT32U  FtpLastResult;
+  char  FtpLogin[16];
+  char  FtpPass[16];
+#endif
+  
 }TFramMap;
 

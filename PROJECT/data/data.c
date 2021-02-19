@@ -13,6 +13,15 @@ int GetData(const TDataDescStruct* desc, void* buf, CPU_INT32U index, CPU_INT08U
   TVariant32 Val;
   CPU_INT32U ofst = 0;
 
+  if (desc->Type == DATA_TYPE_CHAR_STRING)
+  {
+    if (desc->Location == DATA_LOC_FRAM)
+    {
+        ReadArrayFram((CPU_INT32U)desc->Data, desc->ArraySize, buf);
+    }
+    return DATA_OK;
+  }
+
   // определим доп. смещение для массива
   if (desc->IsArray)
     {

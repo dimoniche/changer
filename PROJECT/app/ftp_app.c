@@ -5,11 +5,12 @@
 #include "ftp_client.h"
 #include <string.h>
 #include "time.h"
-#include "term_tsk.h"
 #include "journal.h"
 #include "data.h"
 #include "datadesc.h"
 #include "ftp_app.h"
+#include "fram.h"
+#include "fram_map.h"
 
 /*
 92.53.96.10
@@ -17,8 +18,9 @@ xmiker_morozov
 Qwerty11
 */
 
-// испольузем общий с терминалом буфер данных
-extern char term_buffer[TERM_BUFFER_SIZE];
+static  OS_STK  FtpTaskStk[TERM_TASK_STK_SIZE];
+char term_buffer[TERM_BUFFER_SIZE];
+
 extern void PrintEventJournalRecord(TEventRecord *record, char *str_event, char *str_data);
 CPU_INT08U time_to_ftp = 0;
 
@@ -70,213 +72,11 @@ int ReadFtpCountersString(int index, char *buf)
 {
     CPU_INT32U i;
     static const char header1[] = ";Солярий 1 Коллатэн;Солярий 1 Ультрафиолет;Солярий 1 Максимальный;Солярий 2 Коллатэн;Солярий 2 Ультрафиолет;Солярий 2 Максимальный;Солярий 3 Коллатэн;Солярий 3 Ультрафиолет;Солярий 3 Максимальный\r\n";
-    static const char line1[] = "Деньги, руб.";
-    static const char line2[] = "Запусков";
-    static const char line3[] = "Наработка, мин.";
-    static const char header2[] = ";Коллатэн;Ультрафиолет;Максимальный\r\n";
-    static const char header3[] = ";Солярий 1;Солярий 2;Солярий 3\r\n";
-    static const char line4[] = "Коллатэн, ч:мм";
-    static const char line5[] = "Ультрафиолет, ч:мм";
-    static const char header4[] = "Наличные, руб.;Банк, руб.;Всего, руб.\r\n";
-    static const char line6[] = "Тестовых запусков";
-    static const char line7[] = "Время теста, мин.";
-    static const char line10[] = "Количество уборок";
-    static const char line11[] = "Время уборок, мин.";
-    static const char line12[] = "Среднее время уборки, м:сс";
-    static const char line13[] = "Среднее время теста, м:сс";
 
     switch (index)
     {
         case 0:
             strcpy(buf, header1);
-            break;
-        case 1:
-            strcpy(buf, line1);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 2:
-            strcpy(buf, line2);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 3:
-            strcpy(buf, line3);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 4:
-            strcpy(buf, line6);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarTestRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 5:
-            strcpy(buf, line6);
-            for (i = 0; i < CHANNELS_NUM * SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterSolarTestWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 6:
-            strcpy(buf, "\r\n");
-            break;
-        case 7:
-            strcpy(buf, header2);
-            break;
-        case 8:
-            strcpy(buf, line1);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 9:
-            strcpy(buf, line2);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 10:
-            strcpy(buf, line3);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeWorkTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 11:
-            strcpy(buf, line6);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeTestRunsDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 12:
-            strcpy(buf, line7);
-            for (i = 0; i < SOLAR_MODES_COUNT; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterModeWorkTestTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 13:
-            strcpy(buf, "\r\n");
-            break;
-        case 14:
-            strcpy(buf, header3);
-            break;
-        case 15:
-            strcpy(buf, line4);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterCollatenTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 16:
-            strcpy(buf, line5);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterUFTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 17:
-            strcpy(buf, line6);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterAllTestCountDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 18:
-            strcpy(buf, line7);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterAllTestTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 19:
-            strcpy(buf, line13);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterTestMeanTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 20:
-            strcpy(buf, line10);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterCleaningCountDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 21:
-            strcpy(buf, line11);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterCleaningTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 22:
-            strcpy(buf, line12);
-            for (i = 0; i < CHANNELS_NUM; i++)
-            {
-                strcat(buf, ";");
-                GetDataStr(&CounterCleaningMeanTimeDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            }
-            strcat(buf, "\r\n");
-            break;
-        case 23:
-            strcpy(buf, "\r\n");
-            break;
-        case 24:
-            strcpy(buf, header4);
-            break;
-        case 25:
-            GetDataStr(&CounterCashMoneyDesc, (CPU_INT08U*)buf, i, DATA_FLAG_DIRECT_INDEX);
-            strcat(buf, ";");
-            GetDataStr(&CounterCardMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            strcat(buf, ";");
-            GetDataStr(&CounterCommonMoneyDesc, (CPU_INT08U*)&buf[strlen(buf)], i, DATA_FLAG_DIRECT_INDEX);
-            strcat(buf, "\r\n");
             break;
         default:
             return 0;
@@ -512,5 +312,58 @@ int FtpUploadCsvReport(NET_IP_ADDR ip, CPU_INT32U id, char* login, char* pass, C
     return 0;
 }
 
+void FtpAppTask(void *p_arg)
+{
+    while(1)
+    {
+#ifdef CONFIG_FTP_CLIENT_ENABLE
+        if (time_to_ftp)
+        {
+            CPU_INT32U ip;
+            CPU_INT32U id;
+            CPU_INT32U time = SystemTime;
+            CPU_INT32U result;
+            char login[16];
+            char pass[16];
+            
+            GetData(&FtpDeviceNumberDesc, &id, 0, DATA_FLAG_SYSTEM_INDEX); 
+            GetData(&FtpServerIpAddrDesc, &ip, 0, DATA_FLAG_SYSTEM_INDEX); 
+            GetData(&FtpServerLoginDesc, login, 0, DATA_FLAG_SYSTEM_INDEX); 
+            GetData(&FtpServerPassDesc, pass, 0, DATA_FLAG_SYSTEM_INDEX); 
+                
+            if (FtpUploadCsvReport(ip, id, login, pass, time, time_to_ftp) == 0)
+            {
+                result = 1;
+                SaveEventRecord(0, JOURNAL_EVENT_FTP_SEND, (time_to_ftp << 1) | 0);
+                if (time_to_ftp & FTP_FLAG_CLEAR_COUNTERS)
+                {
+                    ClearCounters();
+                }
+                if (time_to_ftp & FTP_FLAG_CLEAR_LOGS)
+                {
+                    ClearEventJournal();
+                }
+            }
+            else
+            {
+                result = 0;
+                SaveEventRecord(0, JOURNAL_EVENT_FTP_SEND, (time_to_ftp << 1) | 1);
+            }
+            WriteArrayFram(offsetof(TFramMap, FtpLastResult), sizeof(CPU_INT32U), (unsigned char *)&result);
+            WriteArrayFram(offsetof(TFramMap, FtpLastTime), sizeof(CPU_INT32U), (unsigned char *)&time);
+            time_to_ftp = 0;
+            ftp_send_cmd = 0;
+        }
+#endif
+        OSTimeDly(1000);
+    }
+}
+
+void InitFTPApp()
+{
+    OSTaskCreate(FtpAppTask, (void *)0, (OS_STK *)&FtpTaskStk[TERM_TASK_STK_SIZE-1], TERM_TASK_PRIO);
+    INT8U err;
+    OSTaskNameSet(TERM_TASK_PRIO, "Ftp Task", &err);
+}
 
 #endif //#ifdef CONFIG_FTP_CLIENT_ENABLE

@@ -16,6 +16,7 @@
 #include "modem_task.h"
 #include "modem.h"
 #include "coin.h"
+#include "ftp_app.h"
 
 extern CPU_INT32U modem_status;
 
@@ -3735,6 +3736,279 @@ TDataDescStruct const RegimeHopperDesc = {
   0                           // значение по умолчанию
 };
 
+#ifdef CONFIG_FTP_CLIENT_ENABLE
+
+/*************************************
+  Включение FTP
+*************************************/
+TDataDescStruct const FtpEnableDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  NULL,        // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpEnable),            // указатель на переменную или адрес FRAM
+  (void*)&EnableChannelRange,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  sizeof(CPU_INT32U),       // смещение между элементами в массиве
+  EnableChannelName,       // указатель на строку названия параметра
+  DATA_IS_INDEX,            // признак индексного параметра (список строк)
+  EnableChannelList,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           
+};
+
+char const FtpEnableDescId[] = "FtpEnableDesc";
+
+/*************************************
+  IP-адрес FTP-сервера 
+*************************************/
+CPU_INT08U const FtpServerIpAddrName[] = "FTP";
+
+TDataDescStruct const FtpServerIpAddrDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_IP_ADDR,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  NULL,        // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpServerIpAddr),            // указатель на переменную или адрес FRAM
+  NULL,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  sizeof(CPU_INT32U),       // смещение между элементами в массиве
+  FtpServerIpAddrName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0x5C35600A // "92.53.96.10"
+};
+char const FtpServerIpAddrDescId[] = "FtpServerIpAddrDesc";
+
+/*************************************
+  Логин FTP-сервера 
+*************************************/
+CPU_INT08U const FtpServerLoginName[] = "Логин";
+CPU_INT08U const FtpServerLoginDefault[] = "xmiker_morozov";
+
+TDataDescStruct const FtpServerLoginDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_CHAR_STRING,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  15,             // размер массива
+  NULL,        // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpLogin),            // указатель на переменную или адрес FRAM
+  NULL,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  FtpServerLoginName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  (CPU_INT32U)&FtpServerLoginDefault[0]
+};
+char const FtpServerLoginDescId[] = "FtpServerLoginDesc";
+
+/*************************************
+  Пароль FTP-сервера 
+*************************************/
+CPU_INT08U const FtpServerPassName[] = "Пароль";
+CPU_INT08U const FtpServerPassDefault[] = "Qwerty11";
+
+TDataDescStruct const FtpServerPassDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_CHAR_STRING,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  15,             // размер массива
+  NULL,        // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpPass),            // указатель на переменную или адрес FRAM
+  NULL,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  FtpServerPassName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  (CPU_INT32U)&FtpServerPassDefault[0]
+};
+char const FtpServerPassDescId[] = "FtpServerPassDesc";
+
+/*************************************
+  FTP идентификатор устройства
+*************************************/
+CPU_INT08U const FtpDeviceNumberName[] = "ID устр.";
+TRangeValueULONG const FtpDeviceNumberRange = {0, 99999999};
+
+TDataDescStruct const FtpDeviceNumberDesc = {
+  DATA_DESC_EDIT,          // тип дескриптора
+  DATA_TYPE_ULONG,         // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,           // признак массива
+  0,                       // размер массива
+  NULL,                       // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpDeviceNumber),            // указатель на переменную или адрес FRAM
+  (void*)&FtpDeviceNumberRange,                    // указатель на границы параметра
+  NULL,                    // функция по изменению
+  sizeof(CPU_INT32U),                       // смещение между элементами в массиве
+  FtpDeviceNumberName,        // указатель на строку названия параметра
+  DATA_NO_INDEX,           // признак индексного параметра (список строк)
+  NULL,        // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           
+};
+char const FtpDeviceNumberDescId[] = "FtpDeviceNumberDesc";
+
+/*************************************
+Время отправки статистики на FTP, час : мин
+*************************************/
+CPU_INT08U const FtpSendHourMinName[] = "Вр.отпр.";
+
+TDataDescStruct const FtpSendHourMinDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_HOUR_MIN,    // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  0,        // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpSendHourMin),            // указатель на переменную или адрес FRAM
+  (void*)&StatSendHourRange,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  FtpSendHourMinName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  60 * 1
+};
+char const FtpSendHourMinDescId[] = "FtpSendHourMinDesc";
+
+/*************************************
+  Интервал отправки на FTP
+*************************************/
+CPU_INT08U const FtpSendIntervalName[] = "Интервал";
+TRangeValueULONG const FtpSendIntervalRange = {0, 7};
+CPU_INT08U const FtpSendInterval_str0[] = "1ч";
+CPU_INT08U const FtpSendInterval_str1[] = "2ч";
+CPU_INT08U const FtpSendInterval_str2[] = "3ч";
+CPU_INT08U const FtpSendInterval_str3[] = "4ч";
+CPU_INT08U const FtpSendInterval_str4[] = "6ч";
+CPU_INT08U const FtpSendInterval_str5[] = "8ч";
+CPU_INT08U const FtpSendInterval_str6[] = "12ч";
+CPU_INT08U const FtpSendInterval_str7[] = "24ч";
+CPU_INT08U const *FtpSendIntervalList[] = {FtpSendInterval_str0, FtpSendInterval_str1, FtpSendInterval_str2, FtpSendInterval_str3,
+                                           FtpSendInterval_str4, FtpSendInterval_str5, FtpSendInterval_str6, FtpSendInterval_str7};
+
+TDataDescStruct const FtpSendIntervalDesc = {
+  DATA_DESC_EDIT,          // тип дескриптора
+  DATA_TYPE_ULONG,         // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,           // признак массива
+  0,                       // размер массива
+  NULL,                       // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpSendIntervalIndex),            // указатель на переменную или адрес FRAM
+  (void*)&FtpSendIntervalRange,                    // указатель на границы параметра
+  NULL,                    // функция по изменению
+  0,                       // смещение между элементами в массиве
+  FtpSendIntervalName,        // указатель на строку названия параметра
+  DATA_IS_INDEX,           // признак индексного параметра (список строк)
+  FtpSendIntervalList,        // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  7                           
+};
+char const FtpSendIntervalDescId[] = "FtpSendIntervalDesc";
+
+/*************************************
+  Последнее время отправки на ftp
+*************************************/
+CPU_INT08U const FtpLastSendTimeName[] = "Посл.вр.";
+
+TDataDescStruct const FtpLastSendTimeDesc = {
+  DATA_DESC_VIEW,           // тип дескриптора
+  DATA_TYPE_TIME,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  NULL,        // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpLastTime),            // указатель на переменную или адрес FRAM
+  NULL,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  FtpLastSendTimeName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           
+};
+char const FtpLastSendTimeDescId[] = "FtpLastSendTimeDesc";
+
+/*************************************
+  Последний результат отправки на FTP
+*************************************/
+CPU_INT08U const FtpLastSendResultName[] = "Посл.статус";
+TRangeValueULONG const FtpLastSendResultRange = {0, 1};
+CPU_INT08U const FtpLastSendResult_str0[] = "ОШИБКА";
+CPU_INT08U const FtpLastSendResult_str1[] = "ОК";
+CPU_INT08U const FtpLastSendResult_str2[] = "НЕИЗВЕСТНО";
+CPU_INT08U const *FtpLastSendResultList[] = {FtpLastSendResult_str0, FtpLastSendResult_str1, FtpLastSendResult_str2};
+
+TDataDescStruct const FtpLastSendResultDesc = {
+  DATA_DESC_VIEW,          // тип дескриптора
+  DATA_TYPE_ULONG,         // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,           // признак массива
+  0,                       // размер массива
+  NULL,                       // указатель на дескриптор индекса массива
+  (void*)offsetof(TFramMap, FtpLastResult),            // указатель на переменную или адрес FRAM
+  (void*)&FtpLastSendResultRange,                    // указатель на границы параметра
+  NULL,                    // функция по изменению
+  0,                       // смещение между элементами в массиве
+  FtpLastSendResultName,        // указатель на строку названия параметра
+  DATA_IS_INDEX,           // признак индексного параметра (список строк)
+  FtpLastSendResultList,        // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  2
+};
+char const FtpLastSendResultDescId[] = "FtpLastSendResultDesc";
+
+/*************************************
+  Команда отправить данные на ftp сейчас 
+*************************************/
+CPU_INT08U const FtpSendNowCmdName[] = "Отправить";
+
+CPU_INT32U ftp_send_cmd;
+extern CPU_INT08U time_to_ftp;
+
+void OnChangeFtpSendNowCmd(void)
+{
+    if (ftp_send_cmd != 0)
+    {
+        time_to_ftp = FTP_FLAG_SEND_COUNTERS | FTP_FLAG_SEND_LOGS;
+    }
+}
+
+TDataDescStruct const FtpSendNowCmdDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_RAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  NULL,        // указатель на дескриптор индекса массива
+  (void*)&ftp_send_cmd,            // указатель на переменную или адрес FRAM
+  (void*)&EnableChannelRange,     // указатель на границы параметра
+  OnChangeFtpSendNowCmd,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  FtpSendNowCmdName,       // указатель на строку названия параметра
+  DATA_IS_INDEX,            // признак индексного параметра (список строк)
+  EnableChannelList,                     // указатель на список строк для индексного параметра
+  DATA_INIT_ENABLE,
+  0
+};
+char const FtpSendNowCmdDescId[] = "FtpSendNowCmdDesc";
+
+#endif // #ifdef CONFIG_FTP_CLIENT_ENABLE
+
 //**************************************************
 //**************************************************
 //**************************************************
@@ -3832,7 +4106,20 @@ const TDataDescArrayStruct AllDataArray[] =
     
     {&PrintModeDesc, "PrintModeDesc"},
     {&PrintTimeoutAfterDesc, "PrintTimeoutAfterDesc"},
-    
+
+#ifdef CONFIG_FTP_CLIENT_ENABLE
+    {&FtpEnableDesc,  "FtpEnableDesc"},
+    {&FtpServerIpAddrDesc,  "FtpServerIpAddrDesc"},
+    {&FtpSendHourMinDesc,  "FtpSendHourMinDesc"},
+    {&FtpSendIntervalDesc,  "FtpSendIntervalDesc"},
+    {&FtpLastSendTimeDesc,  "FtpLastSendTimeDesc"},
+    {&FtpLastSendResultDesc,  "FtpLastSendResultDesc"},
+    {&FtpSendNowCmdDesc,  "FtpSendNowCmdDesc"},
+    {&FtpDeviceNumberDesc,  "FtpDeviceNumberDesc"},
+    {&FtpServerLoginDesc,  "FtpServerLoginDesc"},
+    {&FtpServerPassDesc,  "FtpServerPassDesc"},
+#endif
+
     {NULL, ""}
 };
 

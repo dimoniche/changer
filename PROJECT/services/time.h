@@ -39,6 +39,6 @@ int RTCCheckTime(TRTC_Data *rtc);
 extern void PrintTimeString(char *str, CPU_INT32U time);
 extern void PrintSecToHourMinSec(char *str, int seconds);
 extern void PrintSecToBigHourMinSec(char *str, int seconds);
-
+extern void PrintSecDateTimeStringRaw(char *str, CPU_INT32U time);
 
 #endif //#ifndef _TIME_H_
