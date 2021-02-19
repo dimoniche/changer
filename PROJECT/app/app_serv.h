@@ -16,9 +16,9 @@ extern CPU_INT32U incas_common_bill_counter;
 #define   VALIDATOR_TASK_STK_SIZE   384
 #define   FISCAL_TASK_STK_SIZE      384
 #define   MODEM_TASK_STK_SIZE       768
-
-#define  CONSOLE_TASK_STK_SIZE      256
-#define  HOST_TASK_STK_SIZE         256
+#define   TERM_TASK_STK_SIZE        384
+#define   CONSOLE_TASK_STK_SIZE     256
+#define   HOST_TASK_STK_SIZE        256
 
 
 #define   VALIDATOR_TASK_PRIO   USER_HIGHEST_PRIO
@@ -28,8 +28,9 @@ extern CPU_INT32U incas_common_bill_counter;
 #define   FISCAL_TASK_PRIO      (USER_HIGHEST_PRIO + 4)
 #define   MENU_TASK_PRIO        (USER_HIGHEST_PRIO + 5)
 
-#define  CONSOLE_TASK_PRIO      (USER_HIGHEST_PRIO + 6)
-#define  HOST_TASK_PRIO         (USER_HIGHEST_PRIO + 7)
+#define   CONSOLE_TASK_PRIO     (USER_HIGHEST_PRIO + 6)
+#define   HOST_TASK_PRIO        (USER_HIGHEST_PRIO + 7)
+#define   TERM_TASK_PRIO        (USER_HIGHEST_PRIO + 8)
 
 #define   MODEM_TASK_PRIO       USER_LOWEST_PRIO
 
@@ -77,6 +78,8 @@ enum{
 
 #define EVENT_KEY_LEFT EVENT_KEY_POST2
 #define EVENT_KEY_RIGHT EVENT_KEY_POST5
+
+extern CPU_INT32U SystemTime;
 
 extern void UserStartupFunc(void);
 extern void PostUserEvent(int event);
