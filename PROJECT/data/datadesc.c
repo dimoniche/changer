@@ -666,7 +666,7 @@ TDataDescStruct const EnableValidatorDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   EnableValidatorList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  1                           // значение по умолчанию
+  0                           // значение по умолчанию
 };
 
 /*************************************
@@ -690,7 +690,7 @@ TDataDescStruct const EnableBankDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   EnableValidatorList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  0                           // значение по умолчанию
+  1                           // значение по умолчанию
 };
 
 /*************************************
@@ -882,7 +882,7 @@ TDataDescStruct const EnableCoinDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   EnableCoinList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  0                           
+  1                           
 };
 
 /*************************************
@@ -906,7 +906,7 @@ TDataDescStruct const CoinPerPulseDesc = {
   DATA_NO_INDEX,            // признак индексного параметра (список строк)
   NULL,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  1                           // значение по умолчанию
+  10                        // значение по умолчанию
 };
 
 
@@ -1405,30 +1405,6 @@ TDataDescStruct const PeriodWeekdaysIndexDesc = {
 /*************************************
   Цена по выходным
 *************************************/
-TRangeValueULONG const PriceRange = {1, 10000};
-CPU_INT08U const PriceName[] = "Цена,руб.";
-
-TDataDescStruct const PriceDesc = {
-  DATA_DESC_EDIT,           // тип дескриптора
-  DATA_TYPE_ULONG,          // тип параметра
-  DATA_LOC_FRAM,             // расположение параметра
-  DATA_NO_ARRAY,            // признак массива
-  1,             // размер массива
-  NULL,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, ChannelConfig.Price),                // указатель на переменную или адрес FRAM
-  (void*)&PriceRange,           // указатель на границы параметра
-  NULL,                     // функция по изменению
-  sizeof(CPU_INT32U),       // смещение между элементами в массиве
-  PriceName,             // указатель на строку названия параметра
-  DATA_NO_INDEX,            // признак индексного параметра (список строк)
-  NULL,                     // указатель на список строк для индексного параметра
-  DATA_INIT_DISABLE,
-  100                           
-};
-
-/*************************************
-  Цена по выходным
-*************************************/
 TRangeValueULONG const PriceWeekendRange = {1, MAX_PRICE};
 CPU_INT08U const PriceWeekendName[] = "Цена,руб.";
 
@@ -1738,10 +1714,33 @@ TDataDescStruct const PrintXReportDesc = {
   Ошибка в журнале ошибок
 *************************************/
 TRangeValueULONG const ErrorNumberRange = {0, JOURNAL_EVENTS_COUNT - 1};
-CPU_INT08U const *ErrorNumberList0[JOURNAL_EVENTS_COUNT] = {"нет", "", "", "",
-                                        "", "", "", "",
-                                        "", "", "", "",
-                                        "", "", "", "",
+CPU_INT08U const *ErrorNumberList0[JOURNAL_EVENTS_COUNT] = {
+                                        "нет", 
+                                        "", 
+                                        "", 
+                                        "",
+                                        "", 
+                                        "", 
+                                        "", 
+                                        "",
+                                        "", 
+                                        "", 
+                                        "", 
+                                        "",
+                                        "", 
+                                        "", 
+                                        "", 
+                                        "",
+                                        
+                                        "",
+                                        "",
+                                        "Отчет отправлен",
+                                        "Хоппер заполнен",
+                                        "Выдано",
+                                        
+                                        "Ошибка хоппера",
+                                        "Хоппер пуст",
+                                        
                                        "ошибка связи с", 
                                        "ошибка работы", 
                                        "1Ch60h-выбр.купюры", 
@@ -1768,7 +1767,6 @@ CPU_INT08U const *ErrorNumberList0[JOURNAL_EVENTS_COUNT] = {"нет", "", "", "",
                                        "к/п:67h-ошибка емк.",
                                        "ошибка", 
                                        "ошибка",
-
                                        "ФР:01h-Неизвестная",
                                        "ФР:02h-Неверное",
                                        "ФР:03h-Ошибка ФН",
@@ -1877,12 +1875,7 @@ CPU_INT08U const *ErrorNumberList0[JOURNAL_EVENTS_COUNT] = {"нет", "", "", "",
                                       "ФР:C2h-Превышение", 
                                       "ФР:C4h-Несовпадение", 
                                       "ФР:C7h-Поле не", 
-                                      "ФР:С8h-Отсутствуют",
-                                      "",
-                                      "",
-                                      "Ошибка хоппера",
-                                      "Хоппер пуст"
-
+                                      "ФР:С8h-Отсутствуют"
 };
 
 TDataDescStruct const JournalErrorNumberDesc0 = {
@@ -1907,6 +1900,15 @@ CPU_INT08U const *ErrorNumberList1[JOURNAL_EVENTS_COUNT] = {"", "", "", "",
                                         "", "", "", "",
                                         "", "", "", "",
                                         "", "", "", "",
+                                        
+                                        "",
+                                        "",
+                                        "",
+                                        "",
+                                        "",
+                                        "",
+                                        "",
+                                        
                                        "купюроприемником", 
                                        "купюроприемника", 
                                        "при замине", 
@@ -2042,11 +2044,7 @@ CPU_INT08U const *ErrorNumberList1[JOURNAL_EVENTS_COUNT] = {"", "", "", "",
                                         "напряжения",
                                         "номеров смен",
                                         "редактируется",
-                                        "импульсы тахо.",
-                                        "",
-                                        "",
-                                        "",
-                                        "",
+                                        "импульсы тахо."
 };
 
 TDataDescStruct const JournalErrorNumberDesc1 = {
@@ -2407,7 +2405,7 @@ TDataDescStruct const CounterRunDesc = {
 /*************************************
   Общий счетчик денег
 *************************************/
-CPU_INT08U const CounterMoneyName[] = "Деньги,руб.";
+CPU_INT08U const CounterMoneyName[] = "Сумма нал.,руб.";
 
 TDataDescStruct const CounterMoneyDesc = {
   DATA_DESC_VIEW,           // тип дескриптора
@@ -2444,6 +2442,29 @@ TDataDescStruct const CounterTimeDesc = {
   NULL,                     // функция по изменению
   0,                        // смещение между элементами в массиве
   CounterTimeName,           // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           
+};
+
+/*************************************
+  Выданные жетоны
+*************************************/
+CPU_INT08U const CounterCoinOutName[] = "Жетоны,руб.";
+
+TDataDescStruct const CounterCoinOutDesc = {
+  DATA_DESC_VIEW,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, Counters.CounterCoinOut),            // указатель на переменную или адрес FRAM
+  NULL,                     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  CounterCoinOutName,           // указатель на строку названия параметра
   DATA_NO_INDEX,            // признак индексного параметра (список строк)
   NULL,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
@@ -2490,6 +2511,29 @@ TDataDescStruct const CounterCashDesc = {
   NULL,                     // функция по изменению
   0,                        // смещение между элементами в массиве
   CounterCashName,           // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           
+};
+
+/*************************************
+  Общий счетчик налиных денег
+*************************************/
+CPU_INT08U const CounterBillName[] = "Сумма нал.,руб.";
+
+TDataDescStruct const CounterAllCashDesc = {
+  DATA_DESC_VIEW,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, Counters.CounterAllCash),            // указатель на переменную или адрес FRAM
+  NULL,                     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  CounterBillName,          // указатель на строку названия параметра
   DATA_NO_INDEX,            // признак индексного параметра (список строк)
   NULL,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
@@ -2562,6 +2606,27 @@ TDataDescStruct const CounterLongMoneyDesc = {
 };
 
 /*************************************
+  Выданные жетоны ДЛИННЫЙ
+*************************************/
+TDataDescStruct const CounterLongCoinOutDesc = {
+  DATA_DESC_VIEW,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, CountersLong.CounterCoinOutLong),            // указатель на переменную или адрес FRAM
+  NULL,                     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  CounterCoinOutName,           // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           
+};
+
+/*************************************
   Общий счетчик денег через монетник ДЛИННЫЙ 
 *************************************/
 TDataDescStruct const CounterLongCoinDesc = {
@@ -2597,6 +2662,27 @@ TDataDescStruct const CounterLongCashDesc = {
   NULL,                     // функция по изменению
   0,                        // смещение между элементами в массиве
   CounterCashName,           // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           
+};
+
+/*************************************
+  Общий счетчик налиных денег ДЛИННЫЙ
+*************************************/
+TDataDescStruct const CounterLongAllCashDesc = {
+  DATA_DESC_VIEW,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, CountersLong.CounterAllCashLong),            // указатель на переменную или адрес FRAM
+  NULL,                     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,                        // смещение между элементами в массиве
+  CounterBillName,          // указатель на строку названия параметра
   DATA_NO_INDEX,            // признак индексного параметра (список строк)
   NULL,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
@@ -2762,7 +2848,7 @@ TDataDescStruct const TaxSystemDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   TaxSystemList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  0                           
+  1                           
 };
 
 /*************************************
@@ -2794,7 +2880,7 @@ TDataDescStruct const TaxFormatDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   TaxFormatList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  1                           
+  4                           
 };
 
 /*************************************
@@ -2822,7 +2908,7 @@ TDataDescStruct const SubjSellDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   SubjSellList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  0                           
+  2                           
 };
 
 /*************************************
@@ -2883,7 +2969,7 @@ TDataDescStruct const ServiceNameDesc = {
   DATA_IS_INDEX,            // признак индексного параметра (список строк)
   ServiceNameList,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  0                           // значение по умолчанию
+  1                           // значение по умолчанию
 };
 
 /*************************************
@@ -3556,7 +3642,7 @@ TDataDescStruct const IncasTimeDesc = {
 /*************************************
   Стоимость жетона, руб. хоппера
 *************************************/
-CPU_INT08U const HopperCostName[] = "Жетон, руб";
+CPU_INT08U const HopperCostName[] = "Жетон,руб";
 TRangeValueULONG const HopperCostRange = {0, 9999};
 
 TDataDescStruct const HopperCostDesc = {
@@ -3580,7 +3666,7 @@ TDataDescStruct const HopperCostDesc = {
 /*************************************
   остановка мотора хоппера, сек
 *************************************/
-CPU_INT08U const HopperStopEngineName[] = "Останов, сек";
+CPU_INT08U const HopperStopEngineName[] = "Останов,сек";
 TRangeValueULONG const HopperStopEngineRange = {1, 20};
 
 TDataDescStruct const HopperStopEngineDesc = {
@@ -3604,7 +3690,7 @@ TDataDescStruct const HopperStopEngineDesc = {
 /*************************************
   Хранить кредит, мин
 *************************************/
-CPU_INT08U const HopperSaveCreditName[] = "Кредит, мин";
+CPU_INT08U const HopperSaveCreditName[] = "Кредит,мин";
 TRangeValueULONG const HopperSaveCreditRange = {0, 60};
 
 TDataDescStruct const HopperSaveCreditDesc = {
@@ -4078,8 +4164,6 @@ const TDataDescArrayStruct AllDataArray[] =
     {&EnableFiscalDayClearDesc, "EnableFiscalDayClearDesc"},
     {&PrintTimeoutDesc, "PrintTimeoutDesc"},
 
-    {&PriceDesc, "PriceDesc"},
-
     {&ServiceNameDesc, "ServiceNameDesc"},
 
     {&CashPulseLenDesc, "CashPulseLenDesc"},
@@ -4120,6 +4204,14 @@ const TDataDescArrayStruct AllDataArray[] =
     {&FtpServerPassDesc,  "FtpServerPassDesc"},
 #endif
 
+    {&TaxSystemDesc,"TaxSystemDesc"},
+    {&TaxFormatDesc,"TaxFormatDesc"},
+    {&SubjSellDesc, "SubjSellDesc"},
+    {&DisableFiscalErrorsDesc, "DisableFiscalErrorsDesc"},
+    {&CommandV2Desc, "CommandV2Desc"},
+    
+    {&HopperLevelDesc, "HopperLevelDesc"},
+    
     {NULL, ""}
 };
 

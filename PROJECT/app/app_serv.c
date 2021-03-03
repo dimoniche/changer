@@ -30,6 +30,7 @@ CPU_INT32U SystemTime;
 
 CPU_INT32U money_timestamp;
 CPU_INT32U coin_timestamp;
+CPU_INT32U coin_out_timestamp;
 
 CPU_INT08U EnabledChannelsNum;
 CPU_INT08U RecentChannel;
@@ -86,6 +87,7 @@ int CheckChannelEnabled(CPU_INT08U channel);
 int ChannelBusy(CPU_INT08U ch);
 void UserPrintIpDeviceErrMenu(CPU_INT08U post);
 void UserPrintPrintBillMenu(void);
+void UserPrintCoinOut(CPU_INT32U CountCoin);
 
 #ifdef BOARD_CENTRAL_CFG
 static char incassation;
@@ -181,8 +183,10 @@ void UserAppTask(void *p_arg)
   CPU_INT32U CountCoin = 0;
   // режим хоппера
   CPU_INT32U regime_hopper = 0;
-  // ссто€ние хоппера - 1 - выдача жетонов
+  // состо€ние хоппера - 1 - выдача жетонов
   CPU_INT32U hopperOn = 0;
+  // 1 - прин€ли деньги
+  CPU_INT32U MoneyIn = 0;
   
   while (1)
     {
@@ -277,9 +281,10 @@ void UserAppTask(void *p_arg)
                       SetAcceptedRestMoney(0);
                       SetAcceptedBankMoney(0);
                       SetAcceptedMoney(0);
+                      MoneyIn = 0;
                   }
                   
-                  // посмотрим сколько еще можно куртить мотор хоппера
+                  // посмотрим сколько еще можно крутить мотор хоппера
                   CPU_INT32U HopperStopEngine = 0;
                   GetData(&HopperStopEngineDesc, &HopperStopEngine, 0, DATA_FLAG_SYSTEM_INDEX);
                   
@@ -288,6 +293,18 @@ void UserAppTask(void *p_arg)
                       // хоппер включен и пришло врем€ остановить хоппер
                       FIO0SET_bit.P0_24 = 1;
                       hopperOn = 0;
+                  }
+                  
+                  // выдаем монеты по кнопке?
+                  CPU_INT32U hopperStartButton = 0;
+                  GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  // если не по кнопке - на каждом внесении провер€ем необходимость выдачи жетонов
+                  // правда через некоторый таймаут
+                  if(MoneyIn && !hopperStartButton && (labs(OSTimeGet() - coin_out_timestamp) > 1000UL))
+                  {
+                      PostUserEvent(EVENT_GIVE_COIN);
+                      MoneyIn = 0;
                   }
               }
               
@@ -349,6 +366,7 @@ void UserAppTask(void *p_arg)
                 accmoney += money;
                 SetAcceptedMoney(accmoney);
                 IncCounterCoin(money);
+                IncCounterAllCash(money);
                 
                 money_timestamp = OSTimeGet();
                 if (UserMenuState == USER_STATE_ACCEPT_MONEY)
@@ -358,15 +376,8 @@ void UserAppTask(void *p_arg)
                 }
                 if (money) SaveEventRecord(RecentChannel, JOURNAL_EVENT_MONEY_COIN, money);
                 
-                // выдаем монеты по кнопке?
-                CPU_INT32U hopperStartButton = 0;
-                GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
-                
-                if(!hopperStartButton)
-                {
-                    // если не по кнопке - на каждом внесении провер€ем необходимость выдачи жетонов
-                    PostUserEvent(EVENT_GIVE_COIN);
-                }
+                coin_out_timestamp = OSTimeGet();
+                MoneyIn = 1;
               }
               break;
             case EVENT_CASH_INSERTED:
@@ -378,7 +389,6 @@ void UserAppTask(void *p_arg)
                 accmoney = GetAcceptedMoney();
                 accmoney += money;
                 SetAcceptedMoney(accmoney);
-                IncCounterCash(money);
                 
                 money_timestamp = OSTimeGet();
                 if (UserMenuState == USER_STATE_ACCEPT_MONEY)
@@ -390,15 +400,8 @@ void UserAppTask(void *p_arg)
                 CPU_INT32U billnom_index = FindBillIndex(money);
                 if (billnom_index != 0xFFFFFFFF) IncBillnomCounter(billnom_index);
                 
-                // выдаем монеты по кнопке?
-                CPU_INT32U hopperStartButton = 0;
-                GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
-                
-                if(!hopperStartButton)
-                {
-                    // если не по кнопке - на каждом внесении провер€ем необходимость выдачи жетонов
-                    PostUserEvent(EVENT_GIVE_COIN);
-                }
+                coin_out_timestamp = OSTimeGet();
+                MoneyIn = 1;
               }
               break;
             case EVENT_BANK_INSERTED:
@@ -421,18 +424,10 @@ void UserAppTask(void *p_arg)
                     UserPrintMoneyMenu();  
                     RefreshMenu();
                 }
+                if (money) SaveEventRecord(RecentChannel, JOURNAL_EVENT_MONEY_BANK, money); 
                 
-                // выдаем монеты по кнопке?
-                CPU_INT32U hopperStartButton = 0;
-                GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
-                
-                if(!hopperStartButton)
-                {
-                    // если не по кнопке - на каждом внесении провер€ем необходимость выдачи жетонов
-                    PostUserEvent(EVENT_GIVE_COIN);
-                }
-                
-                if (money) SaveEventRecord(RecentChannel, JOURNAL_EVENT_MONEY_BANK, money);
+                coin_out_timestamp = OSTimeGet();
+                MoneyIn = 1;
               }              
             break;
             case EVENT_BILL_ESCROW:
@@ -450,6 +445,7 @@ void UserAppTask(void *p_arg)
                 SetAcceptedMoney(accmoney);
                 
                 IncCounterCash(note);
+                IncCounterAllCash(note);
                 
                 money_timestamp = OSTimeGet();
                 if (UserMenuState == USER_STATE_ACCEPT_MONEY)
@@ -464,15 +460,8 @@ void UserAppTask(void *p_arg)
                     IncBillnomCounter(billnom_index);
                 }
                 
-                // выдаем монеты по кнопке?
-                CPU_INT32U hopperStartButton = 0;
-                GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
-                
-                if(!hopperStartButton)
-                {
-                    // если не по кнопке - на каждом внесении провер€ем необходимость выдачи жетонов
-                    PostUserEvent(EVENT_GIVE_COIN);
-                }
+                coin_out_timestamp = OSTimeGet();
+                MoneyIn = 1;
               }
               break;                  
 
@@ -571,6 +560,11 @@ void UserAppTask(void *p_arg)
                 break;
               }
               
+              // запретим прием денег - печатаем чек и выдаем монеты
+              if (IsValidatorConnected()) CC_CmdBillType(0x000000, 0x000000, ADDR_FL);
+              CoinDisable();
+              BankDisable();
+
               // --------------------------
               // находимс€ в рабочем режиме
               // --------------------------
@@ -591,6 +585,13 @@ void UserAppTask(void *p_arg)
                 {
                     CountCoin = accmoney / HopperCost;
                     
+                    // напишем сколько выдадим жетонов
+                    UserPrintCoinOut(CountCoin);
+                    RefreshMenu();
+                    OSTimeDly(2000);
+                    
+                    if (CountCoin) SaveEventRecord(RecentChannel, JOURNAL_EVENT_COIN_OUT, CountCoin); 
+
                     // если хватает на жетон - вне зависимости от типа выдачи жетонов
                     if(!regime_hopper)
                     {
@@ -602,6 +603,8 @@ void UserAppTask(void *p_arg)
                            FIO0SET_bit.P0_24 = 1;
                            OSTimeDly(50);
                         }
+                        
+                        IncCounterCoinOut(CountCoin);
                         
                         // жетоны выдали
                         CountCoin = 0;
@@ -632,9 +635,11 @@ void UserAppTask(void *p_arg)
               {
                   if (GetMode() != MODE_WORK) break;
                   
-                  // сигнал ошибки хоппера
-                  SetErrorFlag(ERROR_HOPPER);
-                  SaveEventRecord(RecentChannel, ERROR_HOPPER, 0);
+                  if(!TstErrorFlag(ERROR_HOPPER))
+                  {
+                      // сигнал ошибки хоппера
+                      SetErrorFlag(ERROR_HOPPER);
+                  }
               }
               break;
             case EVENT_ERROR_HOPPER_OFF:
@@ -649,17 +654,23 @@ void UserAppTask(void *p_arg)
               {
                   if (GetMode() != MODE_WORK) break;
                   
-                  // сигнал отсутстви€ денег в хоппере
-                  SetErrorFlag(ERROR_NO_MONEY_HOPPER);
-                  SaveEventRecord(RecentChannel, ERROR_NO_MONEY_HOPPER, 0);
+                  if(!TstErrorFlag(ERROR_NO_MONEY_HOPPER))
+                  {
+                      // сигнал отсутстви€ денег в хоппере
+                      SetErrorFlag(ERROR_NO_MONEY_HOPPER);
+                  }
               }
               break;
            case EVENT_NOMONEY_HOPPER_OFF:
               {
                   if (GetMode() != MODE_WORK) break;
                   
-                  // сигнал —Ќя“»я отсутстви€ денег в хоппере
-                  ClrErrorFlag(ERROR_NO_MONEY_HOPPER);
+                  if(TstErrorFlag(ERROR_NO_MONEY_HOPPER))
+                  {
+                      // сигнал —Ќя“»я отсутстви€ денег в хоппере
+                      ClrErrorFlag(ERROR_NO_MONEY_HOPPER);
+                      SaveEventRecord(RecentChannel, EVENT_FULL_MONEY_HOPPER, 0);
+                  }
               }
               break;              
             case EVENT_PRINT_CHECK:
@@ -682,22 +693,23 @@ void UserAppTask(void *p_arg)
                   CPU_INT32U accmoney = GetAcceptedMoney();
                   
                   if (accmoney > 0)
-                  { 
-                      UserPrintPrintBillMenu();
-                      RefreshMenu();
-                      
+                  {
                       // напечатаем чек
                       if (IsFiscalConnected())
                       {
-                        if (PrintFiscalBill(accmoney, 0) == 0)
-                        {
-                            SaveEventRecord(RecentChannel, JOURNAL_EVENT_PRINT_BILL, GetTimeSec());
-                        }
+                          UserPrintPrintBillMenu();
+                          RefreshMenu();
+
+                          if (PrintFiscalBill(accmoney, 0) == 0)
+                          {
+                              SaveEventRecord(RecentChannel, JOURNAL_EVENT_PRINT_BILL, GetTimeSec());
+                          }
+                          
+                          OSTimeDly(1000);
                       }
                       
                       IncCounter(ChannelsPayedTime[RecentChannel], accmoney);
                       SetAcceptedMoney(0);
-                      OSTimeDly(1000);
                      
                       // повесим меню "—ѕј—»Ѕќ"                      
                       if (IsFiscalConnected())
@@ -716,21 +728,22 @@ void UserAppTask(void *p_arg)
                   
                   if (accmoney > 0)
                   { 
-                      UserPrintPrintBillMenu();
-                      RefreshMenu();
-                      
                       // напечатаем чек
                       if (IsFiscalConnected())
                       {
-                        if (PrintFiscalBill(accmoney, 1) == 0)
-                        {
-                            SaveEventRecord(RecentChannel, JOURNAL_EVENT_PRINT_BILL_ONLINE, GetTimeSec());
-                        }
+                          UserPrintPrintBillMenu();
+                          RefreshMenu();
+
+                          if (PrintFiscalBill(accmoney, 1) == 0)
+                          {
+                              SaveEventRecord(RecentChannel, JOURNAL_EVENT_PRINT_BILL_ONLINE, GetTimeSec());
+                          }
+                          
+                          OSTimeDly(1000);
                       }
                       
                       IncCounter(ChannelsPayedTime[RecentChannel], accmoney);
                       SetAcceptedBankMoney(0);
-                      OSTimeDly(1000);
                      
                       // повесим меню "—ѕј—»Ѕќ"                      
                       if (IsFiscalConnected())
@@ -742,6 +755,16 @@ void UserAppTask(void *p_arg)
                       OSTimeDly(1000);
                       LED_OK_OFF();
                   }
+                   
+                  UserPrintMoneyMenu();
+                  RefreshMenu();
+                  
+                  // чек напечатали - разрешим снова принимать деньги
+                  if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffff, ADDR_FL);
+                  CoinEnable();
+                  BankEnable();
+                  
+                  MoneyIn = 0;
               }
               break;
 #else
@@ -813,10 +836,10 @@ void UserAppTask(void *p_arg)
               break;
            case EVENT_KEY_F2:
               //testMoney = 50;
-              //PostUserEvent(EVENT_ERROR_HOPPER_ON);
+              //PostUserEvent(EVENT_NOMONEY_HOPPER_ON);
               break;
            case EVENT_KEY_F3:
-              //PostUserEvent(EVENT_ERROR_HOPPER_OFF);
+              //PostUserEvent(EVENT_NOMONEY_HOPPER_OFF);
               break;
               
             default:
@@ -836,6 +859,7 @@ void UserAppTask(void *p_arg)
 void UserStartupFunc(void)
 {
 #ifdef BOARD_CENTRAL_CFG
+  
   // инициализаци€ режима работы
   InitMode();
   
@@ -961,7 +985,7 @@ void UserPrintMoneyMenu(void)
 
     strcpy(buf, " ");
     PrintUserMenuStr(buf, 0);
-    sprintf(buf, " ¬несите деньги");
+    sprintf(buf, "  ¬несите деньги");
     PrintUserMenuStr(buf, 1);
     
     accmoney = GetAcceptedMoney();
@@ -1021,13 +1045,13 @@ void UserPrintErrorMenu(void)
       sprintf(buf, "ќЎ»Ѕ ј");
       PrintUserMenuStr(buf, 0);
       CPU_INT08U errcode = 0;
-      sprintf(buf, "ќЎ»Ѕ ј ’ќѕѕ≈–ј");
+      sprintf(buf, "’оппер пуст");
       PrintUserMenuStr(buf, 1);
       GetFirstCriticalFiscalError(&errcode);
-      GetDataItem(&JournalErrorNumberDesc0, (CPU_INT08U*)buf, errcode);
+      
+      sprintf(buf, "");
       PrintUserMenuStr(buf, 2);
-      GetDataItem(&JournalErrorNumberDesc1, (CPU_INT08U*)buf, errcode);
-      PrintUserMenuStr(buf, 3);      
+      PrintUserMenuStr(buf, 3);
   }
   /*  
   else if (!FReportTest())
@@ -1059,6 +1083,19 @@ int CheckChannelEnabled(CPU_INT08U channel)
 void WorkServer(void)
 {
 
+}
+
+void UserPrintCoinOut(CPU_INT32U coin)
+{
+  char buf[32];
+  sprintf(buf, " ");
+  PrintUserMenuStr(buf, 0);
+  sprintf(buf, "ѕолучите размен");
+  PrintUserMenuStr(buf, 1);
+  sprintf(buf, "%d жетонов", coin);
+  PrintUserMenuStr(buf, 2);
+  sprintf(buf, " ");
+  PrintUserMenuStr(buf, 3);
 }
 
 void UserPrintPrintBillMenu(void)

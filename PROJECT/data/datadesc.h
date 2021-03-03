@@ -207,12 +207,16 @@ extern TDataDescStruct const CounterLongRunDesc;
 extern TDataDescStruct const CounterLongMoneyDesc;
 extern TDataDescStruct const CounterLongTimeDesc;
 
+extern TDataDescStruct const CounterLongCoinOutDesc;
 extern TDataDescStruct const CounterLongCoinDesc;
 extern TDataDescStruct const CounterLongCashDesc;
+extern TDataDescStruct const CounterLongAllCashDesc;
 extern TDataDescStruct const CounterLongBankDesc;
 
+extern TDataDescStruct const CounterCoinOutDesc;
 extern TDataDescStruct const CounterCoinDesc;
 extern TDataDescStruct const CounterCashDesc;
+extern TDataDescStruct const CounterAllCashDesc;
 extern TDataDescStruct const CounterBankDesc;
 
 extern TDataDescStruct const MasterPassTempDesc;
@@ -240,8 +244,6 @@ extern TDataDescStruct const PostMinutePriceDesc;
 extern TDataDescStruct const CashModeDesc;
 extern TDataDescStruct const CashPerPulseDesc;
 extern TDataDescStruct const PrintTimeoutDesc;
-
-extern TDataDescStruct const PriceDesc;
 
 extern void OnChangeInitByDefault(void);
 extern void OnChangeServiceName(void);

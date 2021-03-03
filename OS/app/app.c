@@ -9,6 +9,7 @@
 #include "console.h"
 #include "fram_map.h"
 #include "lcd.h"
+#include "coin.h"
 #include "keyboard.h"
 #include "app_serv.h"
 #include "lpc23xx-iap.h"
@@ -79,6 +80,9 @@ static  void  AppTaskStart (void *p_arg)
 
     BSP_Init();                                                 /* Initialize BSP functions                                 */
 
+    // сразу инициализируем входные ноги
+    initOutputPorts();
+  
 #if OS_TASK_STAT_EN > 0
     OSStatInit();                                               /* Determine CPU capacity                                   */
 #endif

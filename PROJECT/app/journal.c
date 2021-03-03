@@ -135,10 +135,10 @@ void GetEventStr(char* str, char event)
 {
   switch (event){
     case JOURNAL_EVENT_MONEY_NOTE:
-      sprintf(str, "Вн.купюра ");
+      sprintf(str, "Принята.купюра ");
       break;
     case JOURNAL_EVENT_MONEY_COIN:
-      sprintf(str, "Вн.монеты ");
+      sprintf(str, "Принята.монета ");
       break;
     case JOURNAL_EVENT_START_SESSION:
       sprintf(str, "Печать чека ");
@@ -177,10 +177,13 @@ void GetEventStr(char* str, char event)
       sprintf(str, "E-mail отпр.успешно");
       break;
     case JOURNAL_EVENT_MONEY_BANK:
-      sprintf(str, "Вн.безнал ");
+      sprintf(str, "Безнал.оплата ");
       break;
     case JOURNAL_EVENT_PRINT_BILL_ONLINE:
       sprintf(str, "Печать чека безнал");
+      break;
+    case JOURNAL_EVENT_COIN_OUT:
+      sprintf(str, "Выдано");
       break;
     default:
       sprintf(str, "нет");
@@ -342,7 +345,7 @@ void IncCounter(CPU_INT32U time, CPU_INT32U money)
   long_ctrs.CounterMoneyLong += money;
   long_ctrs.crc = CRC16((unsigned char*)&long_ctrs, offsetof(TCountersLong, crc));
   WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
-}  
+}
 
 void IncCounterBank(CPU_INT32U money)
 {
@@ -357,6 +360,23 @@ void IncCounterBank(CPU_INT32U money)
   // увеличим длинные счетчики
   ReadArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
   long_ctrs.CounterBankLong += money;
+  long_ctrs.crc = CRC16((unsigned char*)&long_ctrs, offsetof(TCountersLong, crc));
+  WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+}
+
+void IncCounterCoinOut(CPU_INT32U money)
+{
+  CPU_INT32U m;
+  TCountersLong long_ctrs;
+  
+  // увеличим количество выданных жетонов
+  ReadArrayFram(offsetof(TFramMap, Counters.CounterCoinOut), sizeof(CPU_INT32U), (unsigned char*)&m);
+  m+=money;
+  WriteArrayFram(offsetof(TFramMap, Counters.CounterCoinOut), sizeof(CPU_INT32U), (unsigned char*)&m);
+
+  // увеличим длинные счетчики
+  ReadArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+  long_ctrs.CounterCoinOutLong += money;
   long_ctrs.crc = CRC16((unsigned char*)&long_ctrs, offsetof(TCountersLong, crc));
   WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
 }
@@ -383,7 +403,7 @@ void IncCounterCash(CPU_INT32U money)
   CPU_INT32U m;
   TCountersLong long_ctrs;
   
-  // увеличим количество денег полученных через монетник
+  // увеличим количество денег полученных через купюрник
   ReadArrayFram(offsetof(TFramMap, Counters.CounterCash), sizeof(CPU_INT32U), (unsigned char*)&m);
   m+=money;
   WriteArrayFram(offsetof(TFramMap, Counters.CounterCash), sizeof(CPU_INT32U), (unsigned char*)&m);
@@ -391,6 +411,23 @@ void IncCounterCash(CPU_INT32U money)
   // увеличим длинные счетчики
   ReadArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
   long_ctrs.CounterCashLong += money;
+  long_ctrs.crc = CRC16((unsigned char*)&long_ctrs, offsetof(TCountersLong, crc));
+  WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+}
+
+void IncCounterAllCash(CPU_INT32U money)
+{
+  CPU_INT32U m;
+  TCountersLong long_ctrs;
+  
+  // увеличим количество денег полученных через купюрник
+  ReadArrayFram(offsetof(TFramMap, Counters.CounterAllCash), sizeof(CPU_INT32U), (unsigned char*)&m);
+  m+=money;
+  WriteArrayFram(offsetof(TFramMap, Counters.CounterAllCash), sizeof(CPU_INT32U), (unsigned char*)&m);
+
+  // увеличим длинные счетчики
+  ReadArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
+  long_ctrs.CounterAllCashLong += money;
   long_ctrs.crc = CRC16((unsigned char*)&long_ctrs, offsetof(TCountersLong, crc));
   WriteArrayFram(offsetof(TFramMap, CountersLong), sizeof(TCountersLong), (unsigned char*)&long_ctrs);
 }
@@ -422,7 +459,7 @@ void CheckLongCounters(void)
 void ClearCounters(void)
 {
   SetArrayFram(offsetof(TFramMap, Counters), sizeof(CPU_INT32U)*3, 0x00);
-  SetArrayFram(offsetof(TFramMap, Counters.CounterCoin), sizeof(CPU_INT32U)*3, 0x00);
+  SetArrayFram(offsetof(TFramMap, Counters.CounterCoinOut), sizeof(CPU_INT32U)*5, 0x00);
 }
 
 /// инкремент счетчика купюр по номиналам
@@ -456,7 +493,7 @@ void ClearBillnomCounter(void)
 // сервер ошибок (занесение ошибок в журнал)
 void ErrorServer(void)
 {
-    for (int i = ERROR_VALIDATOR_CONN; i < JOURNAL_EVENTS_COUNT; i++)
+    for (int i = ERROR_HOPPER; i < JOURNAL_EVENTS_COUNT; i++)
     {
         if (!(PrevFlags[i/32] & (1L<<(i%32)))
             && (TstErrorFlag(i)))

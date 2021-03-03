@@ -31,6 +31,8 @@ extern void SetBankPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
 extern void SetHopperPulseParam(CPU_INT32U pulse, CPU_INT32U pause);
 extern void SetLevelParam(CPU_INT32U level1, CPU_INT32U level2, CPU_INT32U level3, CPU_INT32U level4);
 
+extern void initOutputPorts(void);
+
 #define BIT(bit)          (1UL << (bit))
 
 #define SETBIT(Val,bit)   ((Val) |= BIT(bit))

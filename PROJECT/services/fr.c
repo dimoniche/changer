@@ -740,7 +740,7 @@ repeat_sell1:
             }
         }
         
-        GetData(&PriceDesc, &price, 0, DATA_FLAG_SYSTEM_INDEX);
+        GetData(&HopperCostDesc, &price, 0, DATA_FLAG_SYSTEM_INDEX);
         price *= 100;
         count = (cash / price) * 1000;
         if (ext)

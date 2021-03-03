@@ -339,7 +339,7 @@ void CoinDisable(void)
 void CoinEnable(void)
 {
     // для разрешения монетника выставим низкий уровень
-    FIO0CLR_bit.P0_25 = 1;
+    FIO1CLR_bit.P1_31 = 1;
 }
 
 void BankDisable(void)
@@ -496,19 +496,14 @@ CPU_INT32U input_register()
      SETBIT(input, 2);
   }
   // 3 бит
-  if (FIO1PIN_bit.P1_24)
+  if (FIO1PIN_bit.P1_23)
   {
      SETBIT(input, 3);
   }
   // 4 бит
-  if (FIO1PIN_bit.P1_23)
+  if (FIO1PIN_bit.P1_24)
   {
      SETBIT(input, 4);
-  }
-  // 5 бит
-  if (FIO1PIN_bit.P1_20)
-  {
-     SETBIT(input, 5);
   }
   
   return input;
@@ -599,7 +594,7 @@ void InputCapture_ISR(void)
   {
     pend_signal_error_hopper_timestamp = OSTimeGet();
     
-    if ((FIO1PIN_bit.P1_23 && hopperLevel) || (!FIO1PIN_bit.P1_23 && !hopperLevel))
+    if (FIO1PIN_bit.P1_23)
       {
           pend_upsignal_error_hopper_counter = 1;
           pend_downsignal_error_hopper_counter = 0;
@@ -616,7 +611,7 @@ void InputCapture_ISR(void)
   {
     pend_signal_nomoney_hopper_timestamp = OSTimeGet();
     
-    if ((FIO1PIN_bit.P1_24 && hopperLevel) || (!FIO1PIN_bit.P1_24 && !hopperLevel))
+    if (FIO1PIN_bit.P1_24)
       {
           pend_upsignal_nomoney_hopper_counter = 1;
           pend_downsignal_nomoney_hopper_counter = 0;

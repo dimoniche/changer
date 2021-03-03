@@ -30,76 +30,77 @@ typedef struct{
     #define JOURNAL_EVENT_EMAIL_OK         14  // правильно отправлен email
     #define JOURNAL_EVENT_EMAIL_FAIL       15  // ошибка при отправке email
 
+    #define JOURNAL_EVENT_MONEY_BANK            16   // событие получения денег с банковского терминала (кол-во рублей)
+    #define JOURNAL_EVENT_PRINT_BILL_ONLINE     17   // печать чека с деньгами с банковского терминала
+    #define JOURNAL_EVENT_FTP_SEND          18       // событие отправки журнала
+
+    #define EVENT_FULL_MONEY_HOPPER         19       // хоппер - заполнен
+    #define JOURNAL_EVENT_COIN_OUT          20       // выдача жетона
+  
+    #define ERROR_HOPPER                    21       // ошибка хоппера
+    #define ERROR_NO_MONEY_HOPPER           22       // ошибка хоппера - кончились деньги
+  
     // ошибка связи с купюрником
-    #define ERROR_VALIDATOR_CONN           16
+    #define ERROR_VALIDATOR_CONN           23
     // критическая ошибка работы купюрника
-    #define ERROR_VALIDATOR_FAILURE        17
+    #define ERROR_VALIDATOR_FAILURE        24
 
     // некритические ошибки купюроприемника
     // Выброс купюры при замине
-    #define ERROR_VALIDATOR_INSERTION       18
+    #define ERROR_VALIDATOR_INSERTION       25
     // Выброс купюры по маг.датчику
-    #define ERROR_VALIDATOR_MAGNETIC        19
+    #define ERROR_VALIDATOR_MAGNETIC        26
     // Выброс купюры при транспортировке
-    #define ERROR_VALIDATOR_CONVEYING       20
+    #define ERROR_VALIDATOR_CONVEYING       27
     // Выброс купюры по идентификации
-    #define ERROR_VALIDATOR_IDENT           21
+    #define ERROR_VALIDATOR_IDENT           28
     // Выброс купюры по верификации 
-    #define ERROR_VALIDATOR_VRFY            22
+    #define ERROR_VALIDATOR_VRFY            29
     // Выброс купюры по оптич.датчику 
-    #define ERROR_VALIDATOR_OPT             23
+    #define ERROR_VALIDATOR_OPT             30
     // Выброс купюры по запрету
-    #define ERROR_VALIDATOR_INHIBIT         24
+    #define ERROR_VALIDATOR_INHIBIT         31
     // Выброс купюры по емкостному датчику
-    #define ERROR_VALIDATOR_CAP             25
+    #define ERROR_VALIDATOR_CAP             32
     // Выброс купюры по длине
-    #define ERROR_VALIDATOR_LNG             26
+    #define ERROR_VALIDATOR_LNG             33
     // Кассета заполнена
-    #define ERROR_STACKER_FULL              27
+    #define ERROR_STACKER_FULL              34
     // Кассета отсутствует
-    #define ERROR_STACKER_REMOVED           28
+    #define ERROR_STACKER_REMOVED           35
     // Замин в купюроприемнике
-    #define ERROR_BV_JAMMED                 29
+    #define ERROR_BV_JAMMED                 36
     // Замин в кассете
-    #define ERROR_ST_JAMMED                 30
+    #define ERROR_ST_JAMMED                 37
     // Попытка обмана
-    #define ERROR_CHEATED                   31
+    #define ERROR_CHEATED                   38
     // Ошибка стекерного мотора
-    #define ERROR_FLR_STACKER               32
+    #define ERROR_FLR_STACKER               39
     // Ошибка скорости транспорт.мотора
-    #define ERROR_TR_SPEED                  33
+    #define ERROR_TR_SPEED                  40
     // Ошибка транспорт.мотора
-    #define ERROR_FLR_TRANSPORT             34
+    #define ERROR_FLR_TRANSPORT             41
     // Ошибка механизма выравнивания
-    #define ERROR_FLR_ALIGNIN               35
+    #define ERROR_FLR_ALIGNIN               42
     // Кассета отсутствует
-    #define ERROR_FLR_INIT_CAS              36
+    #define ERROR_FLR_INIT_CAS              43
     // Ошибка оптики
-    #define ERROR_FLR_OPT                   37
+    #define ERROR_FLR_OPT                   44
     // Ошибка маг.датчика
-    #define ERROR_FLR_MAG                   38
+    #define ERROR_FLR_MAG                   45
     // Ошибка емкостного датчика
-    #define ERROR_FLR_CAP                   39
+    #define ERROR_FLR_CAP                   46
 
     // ошибка связи с модемом
-    #define ERROR_MODEM_CONN                40
+    #define ERROR_MODEM_CONN                47
   
     // ошибка связи с фискальником
-    #define ERROR_FR_CONN                   41
+    #define ERROR_FR_CONN                   48
 
     // ВСЕ ОШИБКИ ФР ФАТАЛЬНЫЕ
-    #define ERROR_FR                        42                    
-  
-    #define JOURNAL_EVENT_MONEY_BANK            (ERROR_FR+FR_ERROR_NUMBER) + 1  // событие получения денег с банковского терминала (кол-во рублей)
-    #define JOURNAL_EVENT_PRINT_BILL_ONLINE      JOURNAL_EVENT_MONEY_BANK + 1   // печать чека с деньгами с банковского терминала
+    #define ERROR_FR                        49                    
 
-    #define ERROR_HOPPER                    JOURNAL_EVENT_PRINT_BILL_ONLINE + 1 // ошибка хоппера
-    #define ERROR_NO_MONEY_HOPPER           ERROR_HOPPER + 1                    // ошибка хоппера - кончились деньги
-
-    // событие отправки журнала
-    #define JOURNAL_EVENT_FTP_SEND          ERROR_NO_MONEY_HOPPER + 1
-  
-    #define JOURNAL_EVENTS_COUNT            JOURNAL_EVENT_FTP_SEND     // число событий
+    #define JOURNAL_EVENTS_COUNT            (ERROR_FR+FR_ERROR_NUMBER)          // число событий
  
   // канал
   CPU_INT08U channel;
@@ -125,8 +126,10 @@ typedef struct{
   // общий счетчик купюр (всего в кассете)
   CPU_INT32U  BillsCount;
   
-  CPU_INT32U  CounterCoin;    // счетчик выданных жетонов
-  CPU_INT32U  CounterCash;    // счетчик полученных наличных
+  CPU_INT32U  CounterCoinOut; // счетчик выданных жетонов
+  CPU_INT32U  CounterCoin;    // счетчик полученных монет
+  CPU_INT32U  CounterCash;    // счетчик полученных Банктнот
+  CPU_INT32U  CounterAllCash; // счетчик полученных наличных
   CPU_INT32U  CounterBank;    // счетчик безналичных денег
   
 }TCounters;
@@ -138,8 +141,10 @@ typedef struct{
   CPU_INT32U  CounterTimeLong;
   CPU_INT32U  CounterMoneyLong;
   
-  CPU_INT32U  CounterCoinLong;    // счетчик выданных жетонов
-  CPU_INT32U  CounterCashLong;    // счетчик полученных наличных
+  CPU_INT32U  CounterCoinOutLong; // счетчик выданных жетонов
+  CPU_INT32U  CounterCoinLong;    // счетчик полученных монет
+  CPU_INT32U  CounterCashLong;    // счетчик полученных банкнот
+  CPU_INT32U  CounterAllCashLong; // счетчик полученных наличных
   CPU_INT32U  CounterBankLong;    // счетчик безналичных денег
   
   CPU_INT16U  crc;
@@ -159,8 +164,10 @@ extern void GetEventStr(char* str, char event);
 extern int GetEventRecord(TEventRecord* record, CPU_INT32U index);
 extern void IncCounter(CPU_INT32U time, CPU_INT32U money);
 extern void IncCounterBank(CPU_INT32U money);
+extern void IncCounterCoinOut(CPU_INT32U money);
 extern void IncCounterCoin(CPU_INT32U money);
 extern void IncCounterCash(CPU_INT32U money);
+extern void IncCounterAllCash(CPU_INT32U money);
 extern void ClearCounters(void);
 extern void ErrorServer(void);
 extern int TstCriticalValidatorErrors(void);

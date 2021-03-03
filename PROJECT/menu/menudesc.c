@@ -140,7 +140,7 @@ const CPU_INT08U str_ServiceMenu_0[] = "СЕРВИС вер.ПО "DEVICE_FW_VERSION;
 const CPU_INT08U str_ServiceMenu_1[] = "Настройки";
 const CPU_INT08U str_ServiceMenu_2[] = "Статистика";
 const CPU_INT08U str_ServiceMenu_3[] = "Журналы";
-const CPU_INT08U str_ServiceMenu_4[] = "Отчеты";
+const CPU_INT08U str_ServiceMenu_4[] = "Комманды ФР";
 
 const TMenuLine line_ServiceMenu_0 = {
   MENU_LINE_STRING,               // тип пункта меню
@@ -386,16 +386,17 @@ const TMenuLine line_CommonCountersMenu_0 = {
 const TMenuLine line_CommonCountersMenu_1 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterRunDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterCoinOutDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
 
 const TMenuLine line_CommonCountersMenu_2 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterMoneyDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterCashDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
+
 const TMenuLine line_CommonCountersMenu_3 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
@@ -403,11 +404,10 @@ const TMenuLine line_CommonCountersMenu_3 = {
   NULL                            // панель для перехода
 };
 
-
 const TMenuLine line_CommonCountersMenu_4 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterCashDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterAllCashDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
 
@@ -436,29 +436,28 @@ const TMenuLine line_CommonCountersLongMenu_0 = {
 const TMenuLine line_CommonCountersLongMenu_1 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterLongRunDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterLongCoinOutDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
 
 const TMenuLine line_CommonCountersLongMenu_2 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterLongMoneyDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterLongCoinDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
 
 const TMenuLine line_CommonCountersLongMenu_3 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterLongCoinDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterLongCashDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
-
 
 const TMenuLine line_CommonCountersLongMenu_4 = {
   MENU_LINE_SHOW_DESC,               // тип пункта меню
   0,                              // доп. флаги  
-  (void*)&CounterLongCashDesc,       // указатель на текстовую строку или дескриптор
+  (void*)&CounterLongAllCashDesc,       // указатель на текстовую строку или дескриптор
   NULL                            // панель для перехода
 };
 
@@ -554,7 +553,7 @@ const TMenuLine line_SettingsMenu_9 = {
 };
 #endif
 
-const TMenuLineArray arr_SettingsMenuArray[] = {&line_SettingsMenu_0, &line_SettingsMenu_2, &line_SettingsMenu_5, &line_SettingsMenu_3, &line_SettingsMenu_6, &line_SettingsMenu_8,  &line_SettingsMenu_9, NULL};
+const TMenuLineArray arr_SettingsMenuArray[] = {&line_SettingsMenu_0, &line_SettingsMenu_2, &line_SettingsMenu_8, &line_SettingsMenu_9, &line_SettingsMenu_5, &line_SettingsMenu_3, &line_SettingsMenu_6, NULL};
 const TMenuPanel SettingsMenuPanel[] = {arr_SettingsMenuArray, NULL, 7, MENU_PANEL_STANDARD};
 
 
@@ -1015,26 +1014,19 @@ const TMenuLine line_FrMenu_9 = {
 const TMenuLine line_FrMenu_10 = {
   MENU_LINE_SHOW_DESC,
   0,
-  (void*)&PriceDesc,
-  NULL
-};
-
-const TMenuLine line_FrMenu_11 = {
-  MENU_LINE_SHOW_DESC,
-  0,
   (void*)&ServiceNameDesc,
   NULL
 };
 
-const TMenuLine line_FrMenu_12 = {
+const TMenuLine line_FrMenu_11 = {
   MENU_LINE_SHOW_DESC, 
   0,                   
   (void*)&DisableFiscalErrorsDesc,
   NULL                     
 };
 
-const TMenuLineArray arr_FrMenuArray[] = {&line_FrMenu_0, &line_FrMenu_1, /*&line_FrMenu_2, &line_FrMenu_3, &line_FrMenu_4,*/ &line_FrMenu_5, &line_FrMenu_6, &line_FrMenu_7, &line_FrMenu_8, &line_FrMenu_9, &line_FrMenu_10, &line_FrMenu_11, &line_FrMenu_12, NULL};
-const TMenuPanel FrMenuPanel[] = {arr_FrMenuArray, NULL, 10, MENU_PANEL_STANDARD};
+const TMenuLineArray arr_FrMenuArray[] = {&line_FrMenu_0, &line_FrMenu_1, /*&line_FrMenu_2, &line_FrMenu_3, &line_FrMenu_4,*/ &line_FrMenu_5, &line_FrMenu_6, &line_FrMenu_7, &line_FrMenu_8, &line_FrMenu_9, &line_FrMenu_10, &line_FrMenu_11, NULL};
+const TMenuPanel FrMenuPanel[] = {arr_FrMenuArray, NULL, 9, MENU_PANEL_STANDARD};
 
 /***********************************
   МЕНЮ НАСТРОЙКА МОНЕТОПРИЕМНИКА
@@ -1866,9 +1858,13 @@ void PrintEventJournalRecord(TEventRecord *record)
   if (record->event)
     { // есть событие
       GetEventStr(str_EventNumber, record->event);
-      if ((record->event == JOURNAL_EVENT_MONEY_NOTE) || (record->event == JOURNAL_EVENT_MONEY_COIN))
+      if ((record->event == JOURNAL_EVENT_MONEY_NOTE) || (record->event == JOURNAL_EVENT_MONEY_COIN) || (record->event == JOURNAL_EVENT_MONEY_BANK))
         {
           sprintf(str_EventData, "%d руб.", record->data);
+        }
+      else if (record->event == JOURNAL_EVENT_COIN_OUT)
+        {
+          sprintf(str_EventData, "%d жетонов.", record->data);
         }
       else if (record->event == JOURNAL_EVENT_START_SESSION)
         {
