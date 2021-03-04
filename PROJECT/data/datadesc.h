@@ -104,6 +104,7 @@ typedef struct{
   CPU_INT32U  hopperStopEngine;
   CPU_INT32U  hopperSaveCredit;
   CPU_INT32U  hopperButtonStart;
+  CPU_INT32U  hopperDisableErrors;
   
 }TDeviceConfig;
 
@@ -283,6 +284,7 @@ extern TDataDescStruct const HopperPulseLenDesc;
 extern TDataDescStruct const HopperPauseLenDesc;
 extern TDataDescStruct const HopperLevelDesc;
 extern TDataDescStruct const RegimeHopperDesc;
+extern TDataDescStruct const DisableHopperErrorsDesc;
 
 extern TDataDescStruct const AcceptedBankMoneyDesc;
 extern TDataDescStruct const AcceptedBankMoneyCRC16Desc;

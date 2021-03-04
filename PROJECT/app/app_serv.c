@@ -635,6 +635,16 @@ void UserAppTask(void *p_arg)
               {
                   if (GetMode() != MODE_WORK) break;
                   
+                  // Игнорируем ошибки хоппера?
+                  CPU_INT32U DisableHopperErrors = 0;
+                  GetData(&DisableHopperErrorsDesc, &DisableHopperErrors, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  if(DisableHopperErrors)
+                  {
+                      ClrErrorFlag(ERROR_HOPPER);
+                      break;
+                  }
+                  
                   if(!TstErrorFlag(ERROR_HOPPER))
                   {
                       // сигнал ошибки хоппера
@@ -654,6 +664,16 @@ void UserAppTask(void *p_arg)
               {
                   if (GetMode() != MODE_WORK) break;
                   
+                  // Игнорируем ошибки хоппера?
+                  CPU_INT32U DisableHopperErrors = 0;
+                  GetData(&DisableHopperErrorsDesc, &DisableHopperErrors, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  if(DisableHopperErrors)
+                  {
+                      ClrErrorFlag(ERROR_NO_MONEY_HOPPER);
+                      break;
+                  }
+
                   if(!TstErrorFlag(ERROR_NO_MONEY_HOPPER))
                   {
                       // сигнал отсутствия денег в хоппере
@@ -716,11 +736,10 @@ void UserAppTask(void *p_arg)
                       {
                           UserPrintThanksMenu();
                           RefreshMenu();
+                          
+                          OSTimeDly(1000);
                       }
                       
-                      if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffff, ADDR_FL);
-                      
-                      OSTimeDly(1000);
                       LED_OK_OFF();
                   }
                     
@@ -750,9 +769,10 @@ void UserAppTask(void *p_arg)
                       {
                           UserPrintThanksMenu();
                           RefreshMenu();
+                          
+                          OSTimeDly(1000);
                       }
                       
-                      OSTimeDly(1000);
                       LED_OK_OFF();
                   }
                    
@@ -985,15 +1005,15 @@ void UserPrintMoneyMenu(void)
 
     strcpy(buf, " ");
     PrintUserMenuStr(buf, 0);
-    sprintf(buf, "  Внесите деньги");
-    PrintUserMenuStr(buf, 1);
+    sprintf(buf, "Внесите деньги");
+    PrintUserMenuStrNew(buf, 1);
     
     accmoney = GetAcceptedMoney();
     accmoney += GetAcceptedBankMoney();
     accmoney += GetAcceptedRestMoney();
     
     sprintf(buf, "Принято %d руб.", accmoney);
-    PrintUserMenuStr(buf, 2);
+    PrintUserMenuStrNew(buf, 2);
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 3);
 }
@@ -1040,14 +1060,23 @@ void UserPrintErrorMenu(void)
       GetDataItem(&JournalErrorNumberDesc1, (CPU_INT08U*)buf, errcode);
       PrintUserMenuStr(buf, 3);
     }
-  else if(TstErrorFlag(ERROR_HOPPER) || TstErrorFlag(ERROR_NO_MONEY_HOPPER))
+  else if(TstErrorFlag(ERROR_HOPPER))
   {
       sprintf(buf, "ОШИБКА");
       PrintUserMenuStr(buf, 0);
-      CPU_INT08U errcode = 0;
+      sprintf(buf, "Хоппер ошибка датчика");
+      PrintUserMenuStr(buf, 1);
+      
+      sprintf(buf, "");
+      PrintUserMenuStr(buf, 2);
+      PrintUserMenuStr(buf, 3);
+  }
+  else if(TstErrorFlag(ERROR_NO_MONEY_HOPPER))
+  {
+      sprintf(buf, "ОШИБКА");
+      PrintUserMenuStr(buf, 0);
       sprintf(buf, "Хоппер пуст");
       PrintUserMenuStr(buf, 1);
-      GetFirstCriticalFiscalError(&errcode);
       
       sprintf(buf, "");
       PrintUserMenuStr(buf, 2);
@@ -1087,28 +1116,28 @@ void WorkServer(void)
 
 void UserPrintCoinOut(CPU_INT32U coin)
 {
-  char buf[32];
-  sprintf(buf, " ");
-  PrintUserMenuStr(buf, 0);
-  sprintf(buf, "Получите размен");
-  PrintUserMenuStr(buf, 1);
-  sprintf(buf, "%d жетонов", coin);
-  PrintUserMenuStr(buf, 2);
-  sprintf(buf, " ");
-  PrintUserMenuStr(buf, 3);
+    char buf[32];
+    sprintf(buf, " ");
+    PrintUserMenuStr(buf, 0);
+    sprintf(buf, "Получите жетоны");
+    PrintUserMenuStrNew(buf, 1);
+    sprintf(buf, "       %d", coin);
+    PrintUserMenuStrNew(buf, 2);
+    sprintf(buf, " ");
+    PrintUserMenuStr(buf, 3);
 }
 
 void UserPrintPrintBillMenu(void)
 {
-  char buf[32];
-  sprintf(buf, " ");
-  PrintUserMenuStr(buf, 0);
-  sprintf(buf, "Идeт печать");
-  PrintUserMenuStr(buf, 1);
-  sprintf(buf, "   чека");
-  PrintUserMenuStr(buf, 2);
-  sprintf(buf, " ");
-  PrintUserMenuStr(buf, 3);
+    char buf[32];
+    sprintf(buf, " ");
+    PrintUserMenuStr(buf, 0);
+    sprintf(buf, "Идeт печать");
+    PrintUserMenuStr(buf, 1);
+    sprintf(buf, "   чека");
+    PrintUserMenuStr(buf, 2);
+    sprintf(buf, " ");
+    PrintUserMenuStr(buf, 3);
 }
 
 void UserPrintThanksMenu(void)
@@ -1135,9 +1164,9 @@ void UserPrintFirstMenu(void)
     char buf[32];
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 0);
-    sprintf(buf, "    ВНЕСИТЕ");
+    sprintf(buf, "     ВНЕСИТЕ");
     PrintUserMenuStr(buf, 1);
-    sprintf(buf, "    ДЕНЬГИ");
+    sprintf(buf, "     ДЕНЬГИ");
     PrintUserMenuStr(buf, 2);
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 3);

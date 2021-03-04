@@ -164,13 +164,13 @@
 
                                                                 /* Configure external argument check feature ...        */
                                                                 /* ... (see Note #1) :                                  */
-#define  NET_ERR_CFG_ARG_CHK_EXT_EN             DEF_DISABLED
+#define  NET_ERR_CFG_ARG_CHK_EXT_EN             DEF_ENABLED
                                                                 /*   DEF_DISABLED     Argument check DISABLED           */
                                                                 /*   DEF_ENABLED      Argument check ENABLED            */
 
                                                                 /* Configure internal argument check feature :          */
                                                                 /* ... (see Note #2) :                                  */
-#define  NET_ERR_CFG_ARG_CHK_DBG_EN             DEF_DISABLED
+#define  NET_ERR_CFG_ARG_CHK_DBG_EN             DEF_ENABLED
                                                                 /*   DEF_DISABLED     Argument check DISABLED           */
                                                                 /*   DEF_ENABLED      Argument check ENABLED            */
 
@@ -226,7 +226,7 @@
 *********************************************************************************************************
 */
 
-#define  NET_TMR_CFG_NBR_TMR                              30    /* Configure total number of TIMERs (see Note #1).      */
+#define  NET_TMR_CFG_NBR_TMR                              15     /* Configure total number of TIMERs (see Note #1).      */
 
 #define  NET_TMR_CFG_TASK_FREQ                            100     /* Configure Timer Task frequency   (see Note #2).      */
 
@@ -527,7 +527,7 @@
 *********************************************************************************************************
 */
 
-#define  NET_TCP_CFG_NBR_CONN                             3    /* Configure total number of TCP connections.           */
+#define  NET_TCP_CFG_NBR_CONN                             4    /* Configure total number of TCP connections.           */
 
 
                                                                 /* Configure TCP connections' window sizes ...          */
@@ -585,10 +585,10 @@
 
 
                                                                 /* Configure socket timeout values (see Note #3) :      */
-#define  NET_SOCK_CFG_TIMEOUT_RX_Q_MS                   3000    /* Configure socket receive    queue   timeout.         */
-#define  NET_SOCK_CFG_TIMEOUT_CONN_REQ_MS              10000    /* Configure socket connection request timeout.         */
-#define  NET_SOCK_CFG_TIMEOUT_CONN_ACCEPT_MS            3000    /* Configure socket connection accept  timeout.         */
-#define  NET_SOCK_CFG_TIMEOUT_CONN_CLOSE_MS            10000    /* Configure socket connection close   timeout.         */
+#define  NET_SOCK_CFG_TIMEOUT_RX_Q_MS                   1000    /* Configure socket receive    queue   timeout.         */
+#define  NET_SOCK_CFG_TIMEOUT_CONN_REQ_MS               1000    /* Configure socket connection request timeout.         */
+#define  NET_SOCK_CFG_TIMEOUT_CONN_ACCEPT_MS            1000    /* Configure socket connection accept  timeout.         */
+#define  NET_SOCK_CFG_TIMEOUT_CONN_CLOSE_MS             3000    /* Configure socket connection close   timeout.         */
 
 
 /*

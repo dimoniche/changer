@@ -32,8 +32,8 @@
 
 #define  APP_TASK_START_STK_SIZE             128
 #define  NET_OS_CFG_TMR_TASK_STK_SIZE        300
-#define  NET_OS_CFG_IF_RX_TASK_STK_SIZE      256
-#define  APP_TASK_PHY_STK_SIZE               256
+#define  NET_OS_CFG_IF_RX_TASK_STK_SIZE      640
+#define  APP_TASK_PHY_STK_SIZE               640
 
 /*
 *********************************************************************************************************

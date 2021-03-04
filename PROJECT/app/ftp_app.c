@@ -21,7 +21,7 @@ Qwerty11
 static  OS_STK  FtpTaskStk[TERM_TASK_STK_SIZE];
 char term_buffer[TERM_BUFFER_SIZE];
 
-extern void PrintEventJournalRecord(TEventRecord *record, char *str_event, char *str_data);
+extern void PrintEventJournalRecordFtp(TEventRecord *record, char *str_event, char *str_data);
 CPU_INT08U time_to_ftp = 0;
 
 ///
@@ -70,13 +70,40 @@ void FtpCheckTimeToSend(CPU_INT32U systime)
 // чтение очередной строки для создания файла csv счетчиков
 int ReadFtpCountersString(int index, char *buf)
 {
-    CPU_INT32U i;
-    static const char header1[] = ";Солярий 1 Коллатэн;Солярий 1 Ультрафиолет;Солярий 1 Максимальный;Солярий 2 Коллатэн;Солярий 2 Ультрафиолет;Солярий 2 Максимальный;Солярий 3 Коллатэн;Солярий 3 Ультрафиолет;Солярий 3 Максимальный\r\n";
-
+    static const char header1[] = "Жетоны;Купюры, руб.;Монеты, руб;Наличные, руб.;Банк, руб.\r\n";
+    static const char header2[] = "Жетоны;Купюры, руб.;Монеты, руб;Наличные, руб.;Банк, руб.\r\n";
+    
     switch (index)
     {
         case 0:
             strcpy(buf, header1);
+            break;
+        case 1:
+            GetDataStr(&CounterCoinOutDesc, (CPU_INT08U*)buf, 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, ";");
+            GetDataStr(&CounterCashDesc, (CPU_INT08U*)&buf[strlen(buf)], 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, ";");
+            GetDataStr(&CounterCoinDesc, (CPU_INT08U*)&buf[strlen(buf)], 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, ";");
+            GetDataStr(&CounterAllCashDesc, (CPU_INT08U*)&buf[strlen(buf)], 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, ";");
+            GetDataStr(&CounterBankDesc, (CPU_INT08U*)&buf[strlen(buf)], 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, "\r\n");
+            break;
+       case 2:
+            strcpy(buf, header2);
+            break;
+       case 3:
+            GetDataStr(&CounterLongCoinOutDesc, (CPU_INT08U*)buf, 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, ";");
+            GetDataStr(&CounterLongCashDesc, (CPU_INT08U*)&buf[strlen(buf)], 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, ";");
+            GetDataStr(&CounterLongCoinDesc, (CPU_INT08U*)&buf[strlen(buf)], 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, ";");
+            GetDataStr(&CounterLongAllCashDesc, (CPU_INT08U*)&buf[strlen(buf)], 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, ";");
+            GetDataStr(&CounterLongBankDesc, (CPU_INT08U*)&buf[strlen(buf)], 0, DATA_FLAG_SYSTEM_INDEX);
+            strcat(buf, "\r\n");
             break;
         default:
             return 0;
@@ -101,7 +128,7 @@ int ReadFtpLogString(int index, char *buf)
         sprintf(buf, "%d;", index);
         PrintTimeString(&buf[strlen(buf)], record.time);
         strcat(buf, ";");
-        PrintEventJournalRecord(&record, &buf[strlen(buf)], &buf[128]);
+        PrintEventJournalRecordFtp(&record, &buf[strlen(buf)], &buf[128]);
         strcat(buf, ";");
         strcpy(&buf[strlen(buf)], &buf[128]);
         strcat(buf, "\r\n");
@@ -134,17 +161,17 @@ int FtpUploadCsvReport(NET_IP_ADDR ip, CPU_INT32U id, char* login, char* pass, C
         return -2;
     }
     
-    // создадим путь к каталогу выгрузки /solarium/00000001/
-    res_ftp = ftpChangeWorkingDir(ftp_context, "solarium");
+    // создадим путь к каталогу выгрузки /changer/00000001/
+    res_ftp = ftpChangeWorkingDir(ftp_context, "changer");
     if (res_ftp != 0)
     {
-        res_ftp = ftpMakeDir(ftp_context, "solarium");
+        res_ftp = ftpMakeDir(ftp_context, "changer");
         if (res_ftp != 0)
         {
             ftpClose(ftp_context);
             return -3;
         }
-        res_ftp = ftpChangeWorkingDir(ftp_context, "solarium");
+        res_ftp = ftpChangeWorkingDir(ftp_context, "changer");
         if (res_ftp != 0)
         {
             ftpClose(ftp_context);
@@ -254,7 +281,7 @@ int FtpUploadCsvReport(NET_IP_ADDR ip, CPU_INT32U id, char* login, char* pass, C
             return -6;
         }
     }
-    
+ 
     // ЖУРНАЛ
     // имя файла log_20191201_121005.csv
     if (flags & FTP_FLAG_SEND_LOGS)

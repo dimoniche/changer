@@ -58,7 +58,9 @@ extern const TMenuPanel ValidatorSetupPanel[];
 extern const TMenuPanel CanselCheckMenuPanel[];
 
 extern void PrintUserMenuStr(char* str, CPU_INT08U n);
+extern void PrintUserMenuStrNew(char* str, CPU_INT08U n);
 extern void PrintEventJournalRecord(TEventRecord *record);
+extern void PrintEventJournalRecordFtp(TEventRecord *record, char *str_event, char *str_data);
 
 extern char str_EventNumber[24];
 extern char str_EventData[24];

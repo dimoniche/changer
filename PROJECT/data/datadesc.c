@@ -1738,7 +1738,7 @@ CPU_INT08U const *ErrorNumberList0[JOURNAL_EVENTS_COUNT] = {
                                         "Хоппер заполнен",
                                         "Выдано",
                                         
-                                        "Ошибка хоппера",
+                                        "Хоппер ошибка датчика",
                                         "Хоппер пуст",
                                         
                                        "ошибка связи с", 
@@ -2451,7 +2451,7 @@ TDataDescStruct const CounterTimeDesc = {
 /*************************************
   Выданные жетоны
 *************************************/
-CPU_INT08U const CounterCoinOutName[] = "Жетоны,руб.";
+CPU_INT08U const CounterCoinOutName[] = "Жетоны";
 
 TDataDescStruct const CounterCoinOutDesc = {
   DATA_DESC_VIEW,           // тип дескриптора
@@ -3822,6 +3822,33 @@ TDataDescStruct const RegimeHopperDesc = {
   0                           // значение по умолчанию
 };
 
+/*************************************
+  Включение игнорирования ошибок хоппера
+*************************************/
+TRangeValueULONG const DisableHopperErrorsRange = {0, 1};
+CPU_INT08U const DisableHopperErrorsName[] = "Игнорир.ош.";
+CPU_INT08U const DisableHopperErrorsList_str0[] = "нет";
+CPU_INT08U const DisableHopperErrorsList_str1[] = "да";
+CPU_INT08U const *DisableHopperErrorsList[] = {DisableHopperErrorsList_str0, DisableHopperErrorsList_str1};
+
+TDataDescStruct const DisableHopperErrorsDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  0,        // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, DeviceConfig.hopperDisableErrors),            // указатель на переменную или адрес FRAM
+  (void*)&DisableHopperErrorsRange,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  sizeof(CPU_INT32U),       // смещение между элементами в массиве
+  DisableHopperErrorsName,       // указатель на строку названия параметра
+  DATA_IS_INDEX,            // признак индексного параметра (список строк)
+  DisableHopperErrorsList,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0                           
+};
+
 #ifdef CONFIG_FTP_CLIENT_ENABLE
 
 /*************************************
@@ -4211,6 +4238,7 @@ const TDataDescArrayStruct AllDataArray[] =
     {&CommandV2Desc, "CommandV2Desc"},
     
     {&HopperLevelDesc, "HopperLevelDesc"},
+    {&DisableHopperErrorsDesc, "DisableHopperErrorsDesc"},
     
     {NULL, ""}
 };

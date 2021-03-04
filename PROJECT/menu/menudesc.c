@@ -1225,8 +1225,15 @@ const TMenuLine line_HopperMenu_5 = {
   NULL                            // панель для перехода
 };
 
-const TMenuLineArray arr_HopperMenuArray[] = {&line_HopperMenu_0, &line_HopperMenu_1, &line_HopperMenu_2, &line_HopperMenu_3, &line_HopperMenu_4, &line_HopperMenu_5, NULL};
-const TMenuPanel HopperSetupPanel[] = {arr_HopperMenuArray, NULL, 6, MENU_PANEL_STANDARD};
+const TMenuLine line_HopperMenu_6 = {
+  MENU_LINE_SHOW_DESC,               // тип пункта меню
+  0,                              // доп. флаги  
+  (void*)&DisableHopperErrorsDesc,       // указатель на текстовую строку или дескриптор
+  NULL                            // панель для перехода
+};
+
+const TMenuLineArray arr_HopperMenuArray[] = {&line_HopperMenu_0, &line_HopperMenu_1, &line_HopperMenu_2, &line_HopperMenu_3, &line_HopperMenu_4, &line_HopperMenu_5, &line_HopperMenu_6, NULL};
+const TMenuPanel HopperSetupPanel[] = {arr_HopperMenuArray, NULL, 7, MENU_PANEL_STANDARD};
 
 /***********************************
   МЕНЮ НАСТРОЙКА МОДЕМА
@@ -1297,6 +1304,41 @@ char str_UserMenu_3[22] = "";
 
 char str_buf[22];
 
+void PrintUserMenuStrNew(char* str, CPU_INT08U n)
+{
+  char *strptr;
+  char *instr;
+  // выровняем по центру для красоты
+    
+  switch (n)
+  {
+    case 0:
+      strptr = str_UserMenu_0;
+      break;
+    case 1:
+      strptr = str_UserMenu_1;
+      break;
+    case 2:
+      strptr = str_UserMenu_2;
+      break;
+    case 3:
+      strptr = str_UserMenu_3;
+      break;
+    default:
+      return;
+  }
+
+  // найдем начало строки, отличное от пробела
+  instr = str;
+  while (*instr==0x20) instr++;
+  
+  memset(strptr, 0x20, 20);
+  
+  int len = strlen(instr);
+  if ((len >= 20) || ((10-len/2) < 0)) {strcpy(strptr, instr); return;}
+
+  strcpy(&strptr[10-len/2], instr);
+}
 
 void PrintUserMenuStr(char* str, CPU_INT08U n)
 {
@@ -1501,7 +1543,7 @@ const TMenuPanel JournalIsReset[] = {JournalIsResetMenuArray, NULL, 4, MENU_PANE
   ПАНЕЛЬ ВНЕСЕНИЯ ДЕНЕГ
 ***********************************/
 
-const CPU_INT08U str_GetMoney_0[] = " Внесите деньги";
+const CPU_INT08U str_GetMoney_0[] = "  Внесите деньги";
 
 const TMenuLine line_GetMoneyMenu_0 = {
   MENU_LINE_STRING,               // тип пункта меню
@@ -1923,6 +1965,69 @@ void PrintEventJournalRecord(TEventRecord *record)
     { // пустая запись
       sprintf(str_EventNumber, "пусто");
       sprintf(str_EventData, "пусто");
+    }
+}
+
+void PrintEventJournalRecordFtp(TEventRecord *record, char *str_event, char *str_data)
+{
+  if (record->event)
+    { // есть событие
+      GetEventStr(str_event, record->event);
+      if ((record->event == JOURNAL_EVENT_MONEY_NOTE) || (record->event == JOURNAL_EVENT_MONEY_COIN) || (record->event == JOURNAL_EVENT_MONEY_BANK))
+        {
+          sprintf(str_data, "%d руб.", record->data);
+        }
+      else if (record->event == JOURNAL_EVENT_COIN_OUT)
+        {
+          sprintf(str_data, "%d жетонов.", record->data);
+        }
+      else if (record->event == JOURNAL_EVENT_DEVICE_ON)
+        {
+          sprintf(str_data, "");
+        }
+      else if (record->event == JOURNAL_EVENT_PRINT_BILL)
+        {
+          sprintf(str_data, " ");
+        }
+      else if (record->event == JOURNAL_EVENT_PRINT_Z)
+        {
+          sprintf(str_data, "");
+        }
+      else if (record->event == JOURNAL_EVENT_PRINT_X)
+        {
+          sprintf(str_data, "");
+        }
+      else if (record->event == JOURNAL_EVENT_PRINT_BUF)
+        {
+          sprintf(str_data, "");
+        }
+      else if (record->event == JOURNAL_EVENT_CHANGE_MODE)
+        {
+          if (record->data == MODE_WORK) sprintf(str_data, "работа");
+          else sprintf(str_data, "настройка");
+        }
+      else if (record->event == JOURNAL_EVENT_INCASSATION)
+        {
+            sprintf(str_data, "%u руб.", record->data);
+        }
+      else if (record->event == JOURNAL_EVENT_PASS_FAIL)
+        {
+            sprintf(str_data, "%u", record->data);
+        }
+      else if ((record->event == JOURNAL_EVENT_EMAIL_OK) || (record->event == JOURNAL_EVENT_EMAIL_FAIL))
+        {
+            sprintf(str_data, "");
+        }
+      else
+      {
+          GetDataItem(&JournalErrorNumberDesc0, (CPU_INT08U*)str_event, record->event);
+          GetDataItem(&JournalErrorNumberDesc1, (CPU_INT08U*)str_data, record->event);
+      }
+    }
+  else
+    { // пустая запись
+      sprintf(str_event, "пусто");
+      sprintf(str_data, "пусто");
     }
 }
 
