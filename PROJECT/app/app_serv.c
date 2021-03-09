@@ -330,9 +330,6 @@ void UserAppTask(void *p_arg)
             case EVENT_MODE_CHANGE:
               ReInitMenu();
               SaveEventRecord(0, JOURNAL_EVENT_CHANGE_MODE, GetMode());
-              if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffff, ADDR_FL);
-              CoinEnable();
-              BankEnable();
               break;
             case EVENT_COIN_INSERTED:
               {
