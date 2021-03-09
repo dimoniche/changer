@@ -185,6 +185,9 @@ void GetEventStr(char* str, char event)
     case JOURNAL_EVENT_COIN_OUT:
       sprintf(str, "Выдано");
       break;
+    case JOURNAL_EVENT_FTP_SEND:
+      strcpy(str, "Отправка на FTP");
+      break;
     default:
       sprintf(str, "нет");
       break;

@@ -12,6 +12,9 @@ OS_STK  CoinTaskStk[COIN_TASK_STK_SIZE];
 
 void  InitImpInput(void);
 
+CPU_INT08U  coin_enabled;
+CPU_INT08U  bank_enabled;
+
 static CPU_INT32U  CoinImpCounter;
 static CPU_INT32U  CashImpCounter;
 static CPU_INT32U  BankImpCounter;
@@ -153,10 +156,11 @@ void CoinTask(void *p_arg)
       OS_CPU_SR  cpu_sr = 0;
       #endif
 
-      if (enable_coin)
+      if (enable_coin && coin_enabled)
       {
-        CoinEnable();
-
+        // для разрешения монетника выставим низкий уровень
+        FIO1CLR_bit.P1_31 = 1;
+        
         OS_ENTER_CRITICAL();
         if (pend_coin_counter)
         {
@@ -191,8 +195,17 @@ void CoinTask(void *p_arg)
       }
       else
       {
-          CoinDisable();
-          GetResetCoinCount();
+          // для запрета монетника выставим высокий уровень
+          FIO1SET_bit.P1_31 = 1;
+
+          if (enable_coin && GetCoinCount())
+          {
+              PostUserEvent(EVENT_COIN_INSERTED);
+          }
+          else
+          {
+              GetResetCoinCount();
+          }
           
           OS_ENTER_CRITICAL();
           pend_coin_counter = 0;
@@ -200,9 +213,10 @@ void CoinTask(void *p_arg)
           OS_EXIT_CRITICAL();
       }
       
-      if (bank_enable)
+      if (bank_enable && bank_enabled)
       {
-        BankEnable();
+        // для разрешения монетника выставим низкий уровень
+        FIO0CLR_bit.P0_25 = 1;
         
         OS_ENTER_CRITICAL();
         if (pend_bank_counter)
@@ -238,8 +252,17 @@ void CoinTask(void *p_arg)
       }
       else
       {
-          BankDisable();
-          GetResetbankCount();
+          // для запрета банка выставим высокий уровень
+          FIO0SET_bit.P0_25 = 1;
+
+          if (bank_enable && GetbankCount())
+          {
+              PostUserEvent(EVENT_BANK_INSERTED);
+          }
+          else
+          {
+              GetResetbankCount();
+          }
           
           OS_ENTER_CRITICAL();
           pend_bank_counter = 0;
@@ -332,26 +355,22 @@ void CoinTask(void *p_arg)
 
 void CoinDisable(void)
 {
-    // для запрета монетника выставим высокий уровень
-    FIO1SET_bit.P1_31 = 1;
+    coin_enabled = 0;
 }
 
 void CoinEnable(void)
 {
-    // для разрешения монетника выставим низкий уровень
-    FIO1CLR_bit.P1_31 = 1;
+    coin_enabled = 1;
 }
 
 void BankDisable(void)
 {
-    // для запрета банка выставим высокий уровень
-    FIO0SET_bit.P0_25 = 1;
+    bank_enabled = 0;
 }
 
 void BankEnable(void)
 {
-    // для разрешения монетника выставим низкий уровень
-    FIO0CLR_bit.P0_25 = 1;
+    bank_enabled = 1;
 }
 
 void HopperDisable(void)
@@ -471,6 +490,9 @@ void InitCoin(void)
   CashImpCounter = 0;
   BankImpCounter = 0;
   HopperImpCounter = 0;
+  
+  coin_enabled = 0;
+  bank_enabled = 0;
   
   InitImpInput();
   OSTaskCreate(CoinTask, (void *)0, (OS_STK *)&CoinTaskStk[COIN_TASK_STK_SIZE-1], COIN_TASK_PRIO);
@@ -677,8 +699,7 @@ P0.25   MK_P7   запрет банковского терминала
 P1.31   MK_P20  запрет монетника
 */
 
-// настройка выходных ног управления
-void initOutputPorts(void)
+void initHopper(void)
 {
     // управление хоппером: выдача импульсов на хоппер или непрерывный сигнал - LOW - управление и нормальный сигнал импульса
     PINSEL1_bit.P0_24 = 0;
@@ -686,6 +707,14 @@ void initOutputPorts(void)
     FIO0DIR_bit.P0_24  = 1;
     FIO0MASK_bit.P0_24 = 0;
     
+    FIO0SET_bit.P0_24 = 1; // HIGH
+}
+
+// настройка выходных ног управления
+void initOutputPorts(void)
+{
+    initHopper();
+
     // запрет банковского терминала - HIGH - запрет
     PINSEL1_bit.P0_25 = 0;
     PINMODE1_bit.P0_25 = 0;
@@ -697,8 +726,7 @@ void initOutputPorts(void)
     PINMODE3_bit.P1_31 = 0;
     FIO1DIR_bit.P1_31  = 1;
     FIO1MASK_bit.P1_31 = 0; 
-    
-    FIO0SET_bit.P0_24 = 1; // HIGH
+
     FIO0CLR_bit.P0_25 = 1; // LOW
     FIO1CLR_bit.P1_31 = 1; // LOW
 }

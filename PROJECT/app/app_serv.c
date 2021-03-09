@@ -144,39 +144,19 @@ void UserAppTask(void *p_arg)
 {
   CPU_INT32U accmoney;
   int event;
-#ifdef BOARD_CENTRAL_CFG
-  CPU_INT32U temp;
-#endif
   
 #ifdef BOARD_CENTRAL_CFG
   
   static CPU_INT08U fr_conn_ctr = 0;
-
-  {
-    CPU_INT32U m=0;
-    GetData(&AcceptedMoneyDesc, &m, 0, DATA_FLAG_SYSTEM_INDEX);     
-    if (m)
-    {
-         EnabledChannelsNum = 0;
-         for (CPU_INT08U i=0; i<CHANNELS_NUM; i++)
-         {
-            CPU_INT32U en = 0;
-            GetData(&EnableChannelDesc, &en, i, DATA_FLAG_DIRECT_INDEX);
-            if (en) {EnabledChannelsNum++;}
-         }
-         UserMenuState = USER_STATE_ACCEPT_MONEY;
-    }
-  }
   
   int testMoney = 0;
   incassation = 0;
   was_critical_error = 0;
-  
-  GetData(&IncasSendFlagDesc, &temp, 0, DATA_FLAG_SYSTEM_INDEX);
-  if (temp == INCAS_SEND_FLAG)
-  {
-      PostModemTask(MODEM_TASK_SEND_INCAS);
-  }
+
+  // при старте включим прием денег отовсюду - если что не так нас поправ€т
+  if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffff, ADDR_FL);
+  CoinEnable();
+  BankEnable();
 #endif
   
   // количество жетонов под выдачу
@@ -187,6 +167,8 @@ void UserAppTask(void *p_arg)
   CPU_INT32U hopperOn = 0;
   // 1 - прин€ли деньги
   CPU_INT32U MoneyIn = 0;
+  // кнопка включена
+  CPU_INT32U led_on = 0;
   
   while (1)
     {
@@ -218,12 +200,6 @@ void UserAppTask(void *p_arg)
 
               // сервер ошибок
               ErrorServer();
-                
-              // дальше только в рабочем режиме
-              if (GetMode() != MODE_WORK)
-              {
-                  break;
-              }
                 
               // если есть ошибки, не работаем
               if (TstCriticalErrors()) 
@@ -264,10 +240,12 @@ void UserAppTask(void *p_arg)
     
                   if(accmoney >= HopperCost)  // набрали денег на жетон - можно зажечь кнопку
                   {
+                      led_on = 1;
                       LED_OK_ON();
                   }
                   else
                   {
+                      led_on = 0;
                       LED_OK_OFF();
                   }
                   
@@ -353,6 +331,8 @@ void UserAppTask(void *p_arg)
               ReInitMenu();
               SaveEventRecord(0, JOURNAL_EVENT_CHANGE_MODE, GetMode());
               if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffff, ADDR_FL);
+              CoinEnable();
+              BankEnable();
               break;
             case EVENT_COIN_INSERTED:
               {
@@ -543,15 +523,16 @@ void UserAppTask(void *p_arg)
               
             // нажали внешнюю кнопку
             case EVENT_KEY_USER_START:
-              if (GetMode() != MODE_WORK) break;
               
-              // нажали кнопку - выдадим деньги
-              PostUserEvent(EVENT_GIVE_COIN);
+              if(led_on)
+              {
+                  // нажали кнопку, если можно нажимать - выдадим деньги
+                  PostUserEvent(EVENT_GIVE_COIN);
+              }
             break;
             
             // задача работы с хоппером
             case EVENT_GIVE_COIN:
-              if (GetMode() != MODE_WORK) break;
               
               if (TstCriticalErrors()) 
               {
@@ -564,10 +545,6 @@ void UserAppTask(void *p_arg)
               if (IsValidatorConnected()) CC_CmdBillType(0x000000, 0x000000, ADDR_FL);
               CoinDisable();
               BankDisable();
-
-              // --------------------------
-              // находимс€ в рабочем режиме
-              // --------------------------
               
               // здесь управл€ем хоппером--
               {
@@ -633,8 +610,6 @@ void UserAppTask(void *p_arg)
               break;
             case EVENT_ERROR_HOPPER_ON:
               {
-                  if (GetMode() != MODE_WORK) break;
-                  
                   // »гнорируем ошибки хоппера?
                   CPU_INT32U DisableHopperErrors = 0;
                   GetData(&DisableHopperErrorsDesc, &DisableHopperErrors, 0, DATA_FLAG_SYSTEM_INDEX);
@@ -653,17 +628,13 @@ void UserAppTask(void *p_arg)
               }
               break;
             case EVENT_ERROR_HOPPER_OFF:
-              {
-                  if (GetMode() != MODE_WORK) break;
-                  
+              { 
                   // сигнал —Ќя“»я ошибки хоппера
                   ClrErrorFlag(ERROR_HOPPER);
               }
               break;
            case EVENT_NOMONEY_HOPPER_ON:
               {
-                  if (GetMode() != MODE_WORK) break;
-                  
                   // »гнорируем ошибки хоппера?
                   CPU_INT32U DisableHopperErrors = 0;
                   GetData(&DisableHopperErrorsDesc, &DisableHopperErrors, 0, DATA_FLAG_SYSTEM_INDEX);
@@ -682,9 +653,7 @@ void UserAppTask(void *p_arg)
               }
               break;
            case EVENT_NOMONEY_HOPPER_OFF:
-              {
-                  if (GetMode() != MODE_WORK) break;
-                  
+              {                  
                   if(TstErrorFlag(ERROR_NO_MONEY_HOPPER))
                   {
                       // сигнал —Ќя“»я отсутстви€ денег в хоппере
@@ -694,8 +663,6 @@ void UserAppTask(void *p_arg)
               }
               break;              
             case EVENT_PRINT_CHECK:
-              
-              if (GetMode() != MODE_WORK) break;
               
               if (TstCriticalErrors()) 
               {
@@ -740,6 +707,7 @@ void UserAppTask(void *p_arg)
                           OSTimeDly(1000);
                       }
                       
+                      led_on = 0;
                       LED_OK_OFF();
                   }
                     
@@ -773,6 +741,7 @@ void UserAppTask(void *p_arg)
                           OSTimeDly(1000);
                       }
                       
+                      led_on = 0;
                       LED_OK_OFF();
                   }
                    
@@ -792,7 +761,7 @@ void UserAppTask(void *p_arg)
 #endif
            case EVENT_HOPPER_EXTRACTED:
              {
-                  if (GetMode() != MODE_WORK || !hopperOn || !CountCoin)
+                  if (!hopperOn || !CountCoin)
                   {
                       // что-то пошло не так - останавливаем выдачу
                       FIO0SET_bit.P0_24 = 1;
@@ -983,25 +952,14 @@ void PostUserEvent(int event)
 
 void InitUserMenu(void)
 {
-  for (int i = 0; i < CHANNELS_NUM; i++)
-  {
-    CPU_INT32U en = 0;
-    GetData(&EnableChannelDesc, &en, i, DATA_FLAG_DIRECT_INDEX);
-    if (en)
-    {
-        ChannelsState[i] = CHANNEL_STATE_FREE;
-    }
-    else
-    {
-        ChannelsState[i] = CHANNEL_STATE_DISABLED;
-    }
-  }
 }
 
 void UserPrintMoneyMenu(void)
 {
     char buf[32];
     CPU_INT32U accmoney;
+
+    if (GetMode() != MODE_WORK) return;
 
     strcpy(buf, " ");
     PrintUserMenuStr(buf, 0);
@@ -1022,7 +980,9 @@ void UserPrintMoneyMenu(void)
 void UserPrintErrorMenu(void)
 {
   char buf[32];
-  
+
+  if (GetMode() != MODE_WORK) return;
+
   if (TstErrorFlag(ERROR_VALIDATOR_CONN) || TstCriticalValidatorErrors())
     {
       sprintf(buf, "ќЎ»Ѕ ј");
@@ -1116,6 +1076,8 @@ void WorkServer(void)
 
 void UserPrintCoinOut(CPU_INT32U coin)
 {
+    if (GetMode() != MODE_WORK) return;
+    
     char buf[32];
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 0);
@@ -1129,6 +1091,8 @@ void UserPrintCoinOut(CPU_INT32U coin)
 
 void UserPrintPrintBillMenu(void)
 {
+    if (GetMode() != MODE_WORK) return;
+    
     char buf[32];
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 0);
@@ -1142,6 +1106,8 @@ void UserPrintPrintBillMenu(void)
 
 void UserPrintThanksMenu(void)
 {
+  if (GetMode() != MODE_WORK) return;
+  
   char buf[32];
   sprintf(buf, " ");
   PrintUserMenuStr(buf, 0);
@@ -1161,6 +1127,8 @@ int ChannelBusy(CPU_INT08U ch)
             
 void UserPrintFirstMenu(void)
 {
+    if (GetMode() != MODE_WORK) return;
+
     char buf[32];
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 0);

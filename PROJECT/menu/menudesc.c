@@ -9,6 +9,7 @@
 #include "time.h"
 #include "mode.h"
 #include "version.h"
+#include "ftp_app.h"
 
 char FlagForPrintReport=0;
 
@@ -1955,6 +1956,15 @@ void PrintEventJournalRecord(TEventRecord *record)
         {
             sprintf(str_EventData, "");
         }
+      else if (record->event == JOURNAL_EVENT_FTP_SEND)
+      {
+          CPU_INT32U flags = record->data >> 1;
+          if ((flags & FTP_FLAG_SEND_COUNTERS | FTP_FLAG_SEND_LOGS) == (FTP_FLAG_SEND_COUNTERS | FTP_FLAG_SEND_LOGS)) strcpy(str_EventData, "стат.+журн.");
+          else if (flags & FTP_FLAG_SEND_COUNTERS) strcpy(str_EventData, "стат.");
+          else if (flags & FTP_FLAG_SEND_LOGS) strcpy(str_EventData, "журнал");
+          if ((record->data & 0x01) == 0) strcpy(&str_EventData[strlen(str_EventData)], " успешно");
+          else strcpy(&str_EventData[strlen(str_EventData)], " ошибка");
+      }
       else
       {
           GetDataItem(&JournalErrorNumberDesc0, (CPU_INT08U*)str_EventNumber, record->event);

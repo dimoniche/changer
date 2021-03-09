@@ -48,6 +48,9 @@ void  main (void)
 {
     BSP_IntDisAll();                                            /* Disable all interrupts until we are ready to accept them */
 
+    // сразу инициализируем ноги хоппера - что бы хоппер не заметил поднятия ноги
+    initHopper();
+    
     OSInit();                                                   /* Initialize "uC/OS-II, The Real-Time Kernel"              */
 
     OSTaskCreate(AppTaskStart, (void *)0, (OS_STK *)&AppTaskStartStk[APP_TASK_START_STK_SIZE-1], APP_TASK_START_PRIO);
@@ -80,9 +83,9 @@ static  void  AppTaskStart (void *p_arg)
 
     BSP_Init();                                                 /* Initialize BSP functions                                 */
 
-    // сразу инициализируем входные ноги
+    // сразу инициализируем остальные входные ноги
     initOutputPorts();
-  
+    
 #if OS_TASK_STAT_EN > 0
     OSStatInit();                                               /* Determine CPU capacity                                   */
 #endif

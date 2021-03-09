@@ -564,7 +564,7 @@ static  void  GPIO_Init (void)
 {
     IO0DIR     =  0;
     IO1DIR     =  0;
-    FIO0DIR    =  0;
+    FIO0DIR    =  0x1000000; // хоппер уже настроили
     FIO1DIR    =  0;
     FIO2DIR    =  0;
     FIO3DIR    =  0;
