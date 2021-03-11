@@ -200,7 +200,10 @@ void UserAppTask(void *p_arg)
 
               // сервер ошибок
               ErrorServer();
-                
+              
+              // FTP
+              FtpCheckTimeToSend(SystemTime);
+              
               // если есть ошибки, не работаем
               if (TstCriticalErrors()) 
               {
