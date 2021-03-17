@@ -272,7 +272,7 @@ void UserAppTask(void *p_arg)
                   if (hopperOn && (labs(OSTimeGet() - coin_timestamp) > 1000UL * HopperStopEngine))
                   {
                       // хоппер включен и пришло время остановить хоппер
-                      FIO0SET_bit.P0_24 = 1;
+                      FIO0CLR_bit.P0_24 = 1;
                       hopperOn = 0;
                   }
                   
@@ -575,9 +575,9 @@ void UserAppTask(void *p_arg)
                         // режим Elolution - управляем выдачей жетонов импульсами
                         for(int j = 0; j < CountCoin; j++)
                         {
-                           FIO0CLR_bit.P0_24 = 1;
-                           OSTimeDly(50);
                            FIO0SET_bit.P0_24 = 1;
+                           OSTimeDly(50);
+                           FIO0CLR_bit.P0_24 = 1;
                            OSTimeDly(50);
                         }
                         
@@ -764,7 +764,7 @@ void UserAppTask(void *p_arg)
                   if (!hopperOn || !CountCoin)
                   {
                       // что-то пошло не так - останавливаем выдачу
-                      FIO0SET_bit.P0_24 = 1;
+                      FIO0CLR_bit.P0_24 = 1;
                       break;
                   }
 
@@ -785,7 +785,7 @@ void UserAppTask(void *p_arg)
                       if (coin >= CountCoin)
                       {
                           // все выдали - останавливаем выдачу
-                          FIO0SET_bit.P0_24 = 1;
+                          FIO0CLR_bit.P0_24 = 1;
                           
                           // жетоны выдали
                           CountCoin = 0;
