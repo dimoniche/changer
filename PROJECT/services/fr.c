@@ -741,13 +741,19 @@ repeat_sell1:
         }
         
         GetData(&HopperCostDesc, &price, 0, DATA_FLAG_SYSTEM_INDEX);
-        price *= 100;
-        count = (cash / price) * 1000;
+     
         if (ext)
         {
-            count *= 1000; // для расширенной операции 6 знаков после запятой
+            // для расширенной операции 6 знаков после запятой
+            count = ((CPU_INT64U)((CPU_INT64U)((CPU_INT64U)money * 1000000) / price));
         }
-            
+        else
+        {
+            count = ((CPU_INT64U)((CPU_INT64U)((CPU_INT64U)money * 1000) / price));
+        }
+        
+        price *= 100;
+        
         if (((ext == 0) && (FiscMakeSell(DEFAULT_PASS, &count, &price, 0, &tax[0], service_name, &err) != FISC_OK))
             || ((ext) && (FiscMakeSellV2(DEFAULT_PASS, &count, &price, 0, &tax[0], subj, service_name, &err) != FISC_OK))
            )
@@ -884,7 +890,7 @@ repeat_close:
 
     if(online)
     {
-     if(((ext) && (FiscCloseBillV2Online(DEFAULT_PASS, &cash, tax[0], "Спасибо за покупку!!!", &err) != FISC_OK)))
+      if(((ext) && (FiscCloseBillV2Online(DEFAULT_PASS, &cash, tax[0], "Спасибо за покупку!!!", &err) != FISC_OK)))
       {
           if (err)
           {

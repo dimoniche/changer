@@ -1666,8 +1666,8 @@ void OnEnterReportsPanel(void)
   FlagForPrintReport = 0;
 }
 
-const TMenuLineArray arr_ReportMenuArray[] = {&line_ReportMenu_0, &line_ReportMenu_1, &line_ReportMenu_2, &line_ReportMenu_3, &line_ReportMenu_4, NULL};
-const TMenuPanel ReportMenuPanel[] = {arr_ReportMenuArray, OnEnterReportsPanel, 5, MENU_PANEL_STANDARD};
+const TMenuLineArray arr_ReportMenuArray[] = {&line_ReportMenu_0, &line_ReportMenu_1, &line_ReportMenu_2, /*&line_ReportMenu_3,*/ &line_ReportMenu_4, NULL};
+const TMenuPanel ReportMenuPanel[] = {arr_ReportMenuArray, OnEnterReportsPanel, 4, MENU_PANEL_STANDARD};
 
 /***********************************
   лемч оевюрэ X-нрверю
