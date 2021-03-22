@@ -61,8 +61,8 @@ void FtpCheckTimeToSend(CPU_INT32U systime)
         }
         else if (((rtc_curr.hour % interval) == (rtc_hhmm.hour % interval)) && (rtc_curr.min == rtc_hhmm.min) && (systime - last_time >= 60))
         {
-            // если совпал интервал с периодом в течение суток -> отправляем счетчики
-            time_to_ftp |= FTP_FLAG_SEND_COUNTERS;
+            // если совпал интервал с периодом в течение суток -> отправляем всё
+            time_to_ftp = FTP_FLAG_SEND_COUNTERS | FTP_FLAG_SEND_LOGS;
         }
     }
 }
