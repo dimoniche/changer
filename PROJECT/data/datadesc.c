@@ -2245,8 +2245,8 @@ void OnChangeEventJournalIndex(void)
 {
   TEventRecord record;
 
-  if (EventJournalIndex == 0xffffffff) EventJournalIndex = JOURNAL_EVENTS_COUNT - 1;
-  else if (EventJournalIndex > JOURNAL_EVENTS_COUNT - 1) EventJournalIndex = 0;
+  if (EventJournalIndex == 0xffffffff) EventJournalIndex = EVENT_RECORDS_COUNT - 1;
+  else if (EventJournalIndex > EVENT_RECORDS_COUNT - 1) EventJournalIndex = 0;
 
   GetEventRecord(&record, EventJournalIndex);
   PrintEventJournalRecord(&record);
