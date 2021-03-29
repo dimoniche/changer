@@ -1927,6 +1927,10 @@ void PrintEventJournalRecord(TEventRecord *record)
         {
           sprintf(str_EventData, " ");
         }
+      else if (record->event == JOURNAL_EVENT_PRINT_BILL_ONLINE)
+        {
+          sprintf(str_EventData, " ");
+        }
       else if (record->event == JOURNAL_EVENT_PRINT_Z)
         {
           sprintf(str_EventData, "");
@@ -1998,6 +2002,10 @@ void PrintEventJournalRecordFtp(TEventRecord *record, char *str_event, char *str
       else if (record->event == JOURNAL_EVENT_PRINT_BILL)
         {
           sprintf(str_data, " ");
+        }
+      else if (record->event == JOURNAL_EVENT_PRINT_BILL_ONLINE)
+        {
+          sprintf(str_EventData, " ");
         }
       else if (record->event == JOURNAL_EVENT_PRINT_Z)
         {

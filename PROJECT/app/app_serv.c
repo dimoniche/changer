@@ -169,7 +169,8 @@ void UserAppTask(void *p_arg)
   CPU_INT32U MoneyIn = 0;
   // кнопка включена
   CPU_INT32U led_on = 0;
-  
+  CPU_INT32U fiscal_enable = 0;
+
   while (1)
     {
       if (GetUserEvent(&event))
@@ -186,16 +187,20 @@ void UserAppTask(void *p_arg)
               // рабочий сервер - счетчики, состояния и т.п.
               WorkServer();
 
-              // проверим фискальник, если он отвалился
-              if ((++fr_conn_ctr % 10) == 0)
+              GetData(&EnableFiscalDesc, &fiscal_enable, 0, DATA_FLAG_SYSTEM_INDEX);
+
+              if(!fiscal_enable)
               {
-                 if ((FiscalConnState == FISCAL_NOCONN) || (TstCriticalFiscalError()))
-                 {
-                    if (ConnectFiscalFast() == 0)
-                    {
-                        CheckFiscalStatus();
-                    }
-                 }
+                  FiscalConnState = FISCAL_NOCONN;
+              }
+              
+              // проверим фискальник, всегда его проверяем
+              if ((++fr_conn_ctr % 5) == 0)
+              {
+                  if (ConnectFiscalFast() == 0)
+                  {
+                      CheckFiscalStatus();
+                  }
               }
 
               // сервер ошибок
