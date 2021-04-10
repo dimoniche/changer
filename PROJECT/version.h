@@ -1,7 +1,7 @@
 #ifndef _VERSION_H_
 #define _VERSION_H_
 
-#define   DEVICE_FW_VERSION   "00.11"
+#define   DEVICE_FW_VERSION   "00.12"
 
 
 #endif // #ifndef _VERSION_H_

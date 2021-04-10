@@ -194,12 +194,15 @@ void UserAppTask(void *p_arg)
                   FiscalConnState = FISCAL_NOCONN;
               }
               
-              // проверим фискальник, всегда его проверяем
-              if ((++fr_conn_ctr % 5) == 0)
+              // проверим фискальник, если он отвалился 
+              if ((++fr_conn_ctr % 10) == 0)
               {
-                  if (ConnectFiscalFast() == 0)
+                  if ((FiscalConnState == FISCAL_NOCONN) || (TstCriticalFiscalError()))
                   {
-                      CheckFiscalStatus();
+                    if (ConnectFiscalFast() == 0)
+                    {
+                        CheckFiscalStatus();
+                    }
                   }
               }
 
@@ -248,6 +251,9 @@ void UserAppTask(void *p_arg)
     
                   if(accmoney >= HopperCost)  // набрали денег на жетон - можно зажечь кнопку
                   {
+                      // проверим необходимость закрытия смены, может ошибок каких
+                      CheckFiscalStatus();
+                      
                       led_on = 1;
                       LED_OK_ON();
                   }
