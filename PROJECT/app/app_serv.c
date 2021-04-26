@@ -340,6 +340,9 @@ void UserAppTask(void *p_arg)
             case EVENT_INCASSATION_FINISH:
               incassation = 0;
               GoToPreviousMenu();
+              
+              // включаем прием купюр после инкассации
+              if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffffff, ADDR_FL);
               break;
             case EVENT_MODE_CHANGE:
               ReInitMenu();
