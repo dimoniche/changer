@@ -254,13 +254,13 @@ void UserAppTask(void *p_arg)
                       // проверим необходимость закрытия смены, может ошибок каких
                       CheckFiscalStatus();
                       
+                      if(!led_on) LED_OK_ON();
                       led_on = 1;
-                      LED_OK_ON();
                   }
                   else
                   {
+                      if(led_on) LED_OK_OFF();
                       led_on = 0;
-                      LED_OK_OFF();
                   }
                   
                   // посмотрим сколько еще можно держать кредит
@@ -898,23 +898,9 @@ void UserStartupFunc(void)
   InitRTC();
 
   // сделаем запись о включении
-  SaveEventRecord(0, JOURNAL_EVENT_DEVICE_ON, GetTimeSec());
-
-  //CPU_INT32U enable;
-  //GetData(&EnableModemDesc, &enable, 0, DATA_FLAG_SYSTEM_INDEX);  
-  //SetData(&EnableCoinDesc, &enable, 0, DATA_FLAG_SYSTEM_INDEX);  
+  SaveEventRecord(0, JOURNAL_EVENT_DEVICE_ON, GetTimeSec()); 
   
-  // инициализация модема
-#ifdef MODEM_ENABLE
-  if (InitModem() != 0)
-  {
-    SetErrorFlag(ERROR_MODEM_CONN);
-  }
-  else
-#endif
-  {
-    ClrErrorFlag(ERROR_MODEM_CONN);
-  }
+  ClrErrorFlag(ERROR_MODEM_CONN);
 
   // запустим монетник
   InitCoin();
@@ -927,12 +913,6 @@ void UserStartupFunc(void)
       UserQuery = OSQCreate(&UserTbl[0], USER_QUERY_LEN);
       OSTaskCreate(UserAppTask, (void *)0, (OS_STK *)&UserTaskStk[USER_TASK_STK_SIZE-1], USER_TASK_PRIO);
     }
-
-  InitConsole();
-  
-#ifdef BOARD_CENTRAL_CFG
-  InitHostApp();
-#endif
 
 #ifdef CONFIG_FTP_CLIENT_ENABLE
   InitFTPApp();  

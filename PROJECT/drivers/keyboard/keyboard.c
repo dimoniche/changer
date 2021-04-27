@@ -95,7 +95,7 @@ void  KbrdTask(void *p_arg)
     {
       unsigned long state;
       
-      OSTimeDly(27);
+      OSTimeDly(17);
 
       state = 0;      
       KBRD_SCAN_LINE1();
@@ -127,12 +127,6 @@ void  KbrdTask(void *p_arg)
                     {
                       OSQPost(KbrdQuery, (void *)i);
                       PostUserEvent(EVENT_KEY_EMPTY+i); // пользователю тоже постим
-                      
-                      if(EVENT_KEY_EMPTY+i == EVENT_KEY_CANSEL)
-                      {
-                        long j = 0;
-                        j++;
-                      }
                     }
                 }
             }
