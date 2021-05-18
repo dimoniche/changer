@@ -50,6 +50,7 @@ int TstCriticalErrors(void)
   OS_CPU_SR  cpu_sr = 0;
   #endif
   CPU_INT32U ignore_fiscal = 0;
+  CPU_INT32U ignore_hopper = 0;
 
   GetData(&DisableFiscalErrorsDesc, &ignore_fiscal, 0, DATA_FLAG_SYSTEM_INDEX);     
 
@@ -66,10 +67,16 @@ int TstCriticalErrors(void)
     }
     */
   }
-  
+
   errors |= TstErrorFlag(ERROR_VALIDATOR_CONN);
-  errors |= TstErrorFlag(ERROR_HOPPER);
-  errors |= TstErrorFlag(ERROR_NO_MONEY_HOPPER);
+
+  GetData(&DisableHopperErrorsDesc, &ignore_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
+  
+  if (!ignore_hopper)
+  {
+    errors |= TstErrorFlag(ERROR_HOPPER);
+    errors |= TstErrorFlag(ERROR_NO_MONEY_HOPPER);
+  }
   
   OS_EXIT_CRITICAL();
   if (errors) return 1;
