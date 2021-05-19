@@ -221,6 +221,13 @@ void UserAppTask(void *p_arg)
                   // выключим прием денег
                   if (was_critical_error == 0)
                   {
+                      if(MoneyIn)
+                      {
+                          // если есть внесенные ранее деньги - выдадим монеты
+                          PostUserEvent(EVENT_GIVE_COIN);
+                          MoneyIn = 0;
+                      }
+
                       if (IsValidatorConnected()) CC_CmdBillType(0x000000, 0x000000, ADDR_FL);
                       CoinDisable();
                       BankDisable();
@@ -548,12 +555,12 @@ void UserAppTask(void *p_arg)
             // задача работы с хоппером
             case EVENT_GIVE_COIN:
               
-              if (TstCriticalErrors()) 
-              {
-                UserPrintErrorMenu(); 
-                RefreshMenu(); 
-                break;
-              }
+//              if (TstCriticalErrors()) 
+//              {
+//                UserPrintErrorMenu(); 
+//                RefreshMenu(); 
+//                break;
+//              }
               
               // запретим прием денег - печатаем чек и выдаем монеты
               if (IsValidatorConnected()) CC_CmdBillType(0x000000, 0x000000, ADDR_FL);
@@ -680,9 +687,27 @@ void UserAppTask(void *p_arg)
               
               if (TstCriticalErrors()) 
               {
-                UserPrintErrorMenu(); 
-                RefreshMenu(); 
-                break;
+                  // чеки печатать нельзя - хоть обнулим полученные деньги за выданные монеты и нарастим счетчики
+                  CPU_INT32U accmoney = GetAcceptedMoney();
+                  if (accmoney > 0)
+                  {
+                      IncCounter(ChannelsPayedTime[RecentChannel], accmoney);
+                      SetAcceptedMoney(0);
+                  }
+                  
+                  accmoney = GetAcceptedBankMoney();
+                  if (accmoney > 0)
+                  {
+                      IncCounter(ChannelsPayedTime[RecentChannel], accmoney);
+                      SetAcceptedBankMoney(0);
+                  }
+
+                  led_on = 0;
+                  LED_OK_OFF();
+
+                  UserPrintErrorMenu(); 
+                  RefreshMenu(); 
+                  break;
               }
               
               // --------------------------
