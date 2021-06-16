@@ -3798,6 +3798,16 @@ TDataDescStruct const HopperPauseLenDesc = {
 /*************************************
   режим хоппера
 *************************************/
+void OnChangeHopperRegime()
+{
+    #if OS_CRITICAL_METHOD == 3
+    OS_CPU_SR  cpu_sr = 0;
+    #endif
+    OS_ENTER_CRITICAL();
+    InitInputPorts();
+    OS_EXIT_CRITICAL();
+}
+
 TRangeValueULONG const RegimeHopperRange = {0, 1};
 CPU_INT08U const RegimeHopperName[] = "Режим";
 CPU_INT08U const RegimeHopper_str0[] = "Elolution";
@@ -3813,7 +3823,7 @@ TDataDescStruct const RegimeHopperDesc = {
   0,        // указатель на десриптор индекса массива
   (void*)offsetof(TFramMap, DeviceConfig.hopperRegime),            // указатель на переменную или адрес FRAM
   (void*)&RegimeHopperRange,     // указатель на границы параметра
-  NULL,                     // функция по изменению
+  OnChangeHopperRegime,          // функция по изменению
   sizeof(CPU_INT32U),       // смещение между элементами в массиве
   RegimeHopperName,       // указатель на строку названия параметра
   DATA_IS_INDEX,            // признак индексного параметра (список строк)

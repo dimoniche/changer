@@ -262,6 +262,7 @@ extern TDataDescStruct const TaxSystemDesc;
 
 extern void OnChangeBankPulseLen();
 extern void OnChangeHopperPulseLen();
+extern void OnChangeHopperRegime();
 
 extern TDataDescStruct const BankPerPulseDesc;
 extern TDataDescStruct const BankPulseLenDesc;

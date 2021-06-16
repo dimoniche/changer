@@ -60,6 +60,9 @@ CPU_INT32U period_bank;
 CPU_INT32U period_signal;
 CPU_INT32U period_hopper;
 
+// режим хоппера
+CPU_INT32U regime_hopper = 0;
+
 void SetCoinPulseParam(CPU_INT32U pulse, CPU_INT32U pause)
 {
   #if OS_CRITICAL_METHOD == 3
@@ -123,7 +126,6 @@ void CoinTask(void *p_arg)
 {
   CPU_INT32U enable_coin;
   CPU_INT32U bank_enable;
-  CPU_INT32U regime_hopper;
   
   CPU_INT32U last_coin_count = GetCoinCount();
   CPU_INT32U last_coin_time = OSTimeGet();
@@ -138,7 +140,6 @@ void CoinTask(void *p_arg)
 
   GetData(&EnableCoinDesc, &enable_coin, 0, DATA_FLAG_SYSTEM_INDEX);  
   GetData(&EnableBankDesc, &bank_enable, 0, DATA_FLAG_SYSTEM_INDEX);
-  GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
  
   while(1)
     {
@@ -147,7 +148,6 @@ void CoinTask(void *p_arg)
           last_settings_time = OSTimeGet();
           GetData(&EnableCoinDesc, &enable_coin, 0, DATA_FLAG_SYSTEM_INDEX);
           GetData(&EnableBankDesc, &bank_enable, 0, DATA_FLAG_SYSTEM_INDEX);
-          GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
       }
             
       OSTimeDly(1);
@@ -507,22 +507,30 @@ CPU_INT32U input_register()
   {
      SETBIT(input, 0);
   }
-  // 1 бит
+  // 1 бит - бановский терминал
   if (FIO0PIN_bit.P0_26)
   {
      SETBIT(input, 1);
   }
-  // 2 бит
-  if (FIO1PIN_bit.P1_25)
+  
+  if(regime_hopper)
   {
-     SETBIT(input, 2);
+      // 2 бит - импульсы от хоппера в режиме Cube
+      if (FIO1PIN_bit.P1_23)
+      {
+         SETBIT(input, 2);
+      }
   }
-  // 3 бит
-  if (FIO1PIN_bit.P1_23)
+  else
   {
-     SETBIT(input, 3);
+      // 3 бит - уровень общей ошибки от хоппера в обычном режиме
+      if (FIO1PIN_bit.P1_23)
+      {
+         SETBIT(input, 3);
+      }
   }
-  // 4 бит
+
+  // 4 бит - ошибка хоппера - нет денег
   if (FIO1PIN_bit.P1_24)
   {
      SETBIT(input, 4);
@@ -593,7 +601,7 @@ void InputCapture_ISR(void)
   // хоппер в режиме импульсов
   if(TSTBIT(input_event, 2))
   {
-    if ((!FIO1PIN_bit.P1_25 && hopperLevel) || (FIO1PIN_bit.P1_25 && !hopperLevel))
+    if ((!FIO1PIN_bit.P1_23 && hopperLevel) || (FIO1PIN_bit.P1_23 && !hopperLevel))
       { // пришел задний фронт
         CPU_INT32U cr=T3CR;
         cr -= period_hopper;
@@ -651,14 +659,16 @@ extern CPU_INT32U  BSP_CPU_PclkFreq (CPU_INT08U  pclk);
 /*
 P0.23	MK_P9	импульсный выход монетоприемника
 P0.26   MK_P6   импульсный выход банковского терминала
-P1.25   MK_P39  импульсный выход хоппера
 
-P1.23   MK_P37  Security Output с хоппером все в порядке - LOW
+P1.23   MK_P37  Security Output с хоппером все в порядке - LOW, в режиме Cube - импульсный выход хоппера, считаем импульсы
 P1.24   MK_P38  Низкий уровень монет. Есть монеты - сигнал LOW.
 
 */
 void InitInputPorts()
 {
+    // установим глобальный режим работы хоппера
+    GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
+
     // монетоприемник
     PINSEL1_bit.P0_23 = 0;
     if(cashLevel)PINMODE1_bit.P0_23 = 3;
@@ -673,18 +683,23 @@ void InitInputPorts()
     FIO0DIR_bit.P0_26  = 0;
     FIO0MASK_bit.P0_26 = 0;
     
-    // хоппер в режиме импульсов
-    PINSEL3_bit.P1_25 = 0;
-    if(hopperLevel)PINMODE3_bit.P1_25 = 3;
-    else PINMODE3_bit.P1_25 = 0;
-    FIO1DIR_bit.P1_25  = 0;
-    FIO1MASK_bit.P1_25 = 0;
-    
-    // сигнал состояния хоппера
-    PINSEL3_bit.P1_23 = 0;
-    PINMODE3_bit.P1_23 = 0;
-    FIO1DIR_bit.P1_23  = 0;
-    FIO1MASK_bit.P1_23 = 0;
+    if(regime_hopper)
+    {
+        // хоппер в режиме импульсов - режим Cube - режим управления уровнем
+        PINSEL3_bit.P1_23 = 0;
+        if(hopperLevel)PINMODE3_bit.P1_23 = 3;
+        else PINMODE3_bit.P1_23 = 0;
+        FIO1DIR_bit.P1_23  = 0;
+        FIO1MASK_bit.P1_23 = 0;
+    }
+    else
+    {
+        // сигнал состояния хоппера - режим управления импульсами
+        PINSEL3_bit.P1_23 = 0;
+        PINMODE3_bit.P1_23 = 0;
+        FIO1DIR_bit.P1_23  = 0;
+        FIO1MASK_bit.P1_23 = 0;
+    }
     
     // сигнал наличия монет в хоппере
     PINSEL3_bit.P1_24 = 0;
@@ -748,7 +763,7 @@ void  InitImpInput (void)
     OnChangeCashPulseLen();
     OnChangeBankPulseLen();
     OnChangeHopperPulseLen();
-     
+
     OS_ENTER_CRITICAL();
     
     // назначим все ножки
