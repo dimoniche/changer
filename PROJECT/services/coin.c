@@ -41,13 +41,13 @@ static char pend_hopper_counter = 0;
 static CPU_INT32U pend_hopper_timestamp;
 
 static CPU_INT32U signal_error_hopper_pulse = 1000;
-static char pend_upsignal_error_hopper_counter;
-static char pend_downsignal_error_hopper_counter;
+static char pend_upsignal_error_hopper_counter = 0;
+static char pend_downsignal_error_hopper_counter = 0;
 static CPU_INT32U pend_signal_error_hopper_timestamp;
 
 static CPU_INT32U signal_nomoney_hopper_pulse = 1000;
-static char pend_upsignal_nomoney_hopper_counter;
-static char pend_downsignal_nomoney_hopper_counter;
+static char pend_upsignal_nomoney_hopper_counter = 0;
+static char pend_downsignal_nomoney_hopper_counter = 0;
 static CPU_INT32U pend_signal_nomoney_hopper_timestamp;
 
 static CPU_INT32U cashLevel;
@@ -140,7 +140,10 @@ void CoinTask(void *p_arg)
 
   GetData(&EnableCoinDesc, &enable_coin, 0, DATA_FLAG_SYSTEM_INDEX);  
   GetData(&EnableBankDesc, &bank_enable, 0, DATA_FLAG_SYSTEM_INDEX);
- 
+
+  // установим глобальный режим работы хоппера
+  GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
+
   while(1)
     {
       if (OSTimeGet() - last_settings_time > 1000)
@@ -309,24 +312,27 @@ void CoinTask(void *p_arg)
       
       OS_ENTER_CRITICAL();
 
-      if (pend_upsignal_error_hopper_counter)
+      if (regime_hopper)
       {
-        if (OSTimeGet() - pend_signal_error_hopper_timestamp > signal_error_hopper_pulse)
-        {
-          // сигнал ошибки снят
-          PostUserEvent(EVENT_ERROR_HOPPER_ON);
-          pend_upsignal_error_hopper_counter = 0;
-        }
-      }
+          if (pend_upsignal_error_hopper_counter)
+          {
+              if (OSTimeGet() - pend_signal_error_hopper_timestamp > signal_error_hopper_pulse)
+              {
+                // сигнал ошибки снят
+                PostUserEvent(EVENT_ERROR_HOPPER_ON);
+                pend_upsignal_error_hopper_counter = 0;
+              }
+          }
       
-      if (pend_downsignal_error_hopper_counter)
-      {
-        if (OSTimeGet() - pend_signal_error_hopper_timestamp > signal_error_hopper_pulse)
-        {
-          // сигнал ошибки появился
-          PostUserEvent(EVENT_ERROR_HOPPER_OFF);
-          pend_downsignal_error_hopper_counter = 0;
-        }
+          if (pend_downsignal_error_hopper_counter)
+          {
+              if (OSTimeGet() - pend_signal_error_hopper_timestamp > signal_error_hopper_pulse)
+              {
+                // сигнал ошибки появился
+                PostUserEvent(EVENT_ERROR_HOPPER_OFF);
+                pend_downsignal_error_hopper_counter = 0;
+              }
+          }
       }
 
       if (pend_upsignal_nomoney_hopper_counter)
