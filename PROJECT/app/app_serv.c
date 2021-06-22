@@ -806,8 +806,8 @@ void UserAppTask(void *p_arg)
                   if (!hopperOn || !CountCoin)
                   {
                       // что-то пошло не так - останавливаем выдачу
-                      FIO0CLR_bit.P0_24 = 1;
-                      break;
+                      //FIO0CLR_bit.P0_24 = 1;
+                      //break;
                   }
 
                   // импульсы от хоппера в режиме Cube 
@@ -822,7 +822,7 @@ void UserAppTask(void *p_arg)
                       coin += GetAcceptedCoin();
                       
                       // нету жетонов - выход
-                      if (!coin) break;
+                      //if (!coin) break;
 
                       if (coin >= CountCoin)
                       {

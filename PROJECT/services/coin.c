@@ -289,14 +289,23 @@ void CoinTask(void *p_arg)
               
           if (GetHopperCount())
           {
-              if (last_hopper_count != GetHopperCount())
+              if (last_hopper_count == GetHopperCount())
               {
-                  // событие от хоппера шлем сразу - чтобы успеть все вовремя остановить
-                  PostUserEvent(EVENT_HOPPER_EXTRACTED);
-                  
-                  // может быть придется и здесь останавливать хоппер
-                  last_hopper_count = GetHopperCount();
+                  if (labs(OSTimeGet() - last_hopper_time) > 50)
+                  {
+                      // событие от хоппера шлем почти сразу - чтобы успеть все вовремя остановить
+                      PostUserEvent(EVENT_HOPPER_EXTRACTED);
+                  }
               }
+              else
+              {
+                  last_hopper_count = GetHopperCount();
+                  last_hopper_time = OSTimeGet();   
+              }
+          }
+          else
+          {
+              last_hopper_time = OSTimeGet();
           }
       }
       else
