@@ -91,6 +91,10 @@ typedef struct
   char  FtpLogin[16];
   char  FtpPass[16];
 #endif
-  
+
+  // линия выданных жетонов
+  CPU_INT32U FRAM_AcceptedCoin;
+  CPU_INT32U crc_AcceptedCoin;
+
 }TFramMap;
 

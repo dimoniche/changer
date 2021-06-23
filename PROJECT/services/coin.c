@@ -102,8 +102,8 @@ void SetHopperPulseParam(CPU_INT32U pulse, CPU_INT32U pause)
   OS_CPU_SR  cpu_sr = 0;
   #endif
   OS_ENTER_CRITICAL();
-  bank_pulse = pulse * 1;
-  bank_pause = pause;
+  hopper_pulse = pulse * 1;
+  hopper_pause = pause;
   OS_EXIT_CRITICAL();
 }
 
@@ -151,6 +151,9 @@ void CoinTask(void *p_arg)
           last_settings_time = OSTimeGet();
           GetData(&EnableCoinDesc, &enable_coin, 0, DATA_FLAG_SYSTEM_INDEX);
           GetData(&EnableBankDesc, &bank_enable, 0, DATA_FLAG_SYSTEM_INDEX);
+
+          // установим глобальный режим работы хоппера
+          GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
       }
             
       OSTimeDly(1);
@@ -291,7 +294,7 @@ void CoinTask(void *p_arg)
           {
               if (last_hopper_count == GetHopperCount())
               {
-                  if (labs(OSTimeGet() - last_hopper_time) > 50)
+                  if (labs(OSTimeGet() - last_hopper_time) > 500)
                   {
                       // событие от хоппера шлем почти сразу - чтобы успеть все вовремя остановить
                       PostUserEvent(EVENT_HOPPER_EXTRACTED);

@@ -1625,6 +1625,8 @@ void OnChangeInitByDefault(void)
   char name[32] = "Услуги автомойки\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
   WriteArrayFram(offsetof(TFramMap, manual_service_flag), 4, (unsigned char*)&flag);
   WriteArrayFram(offsetof(TFramMap, manual_service_name), 32, (unsigned char*)&name);
+  
+  
 }
 
 
@@ -3102,7 +3104,7 @@ TDataDescStruct const AcceptedCoinDesc = {
   DATA_NO_ARRAY,            // признак массива
   0,                        // размер массива
   NULL,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, FRAM_AcceptedMoney),            // указатель на переменную или адрес FRAM
+  (void*)offsetof(TFramMap, FRAM_AcceptedCoin),            // указатель на переменную или адрес FRAM
   NULL,                     // указатель на границы параметра
   NULL,                     // функция по изменению
   0,                        // смещение между элементами в массиве
@@ -3123,7 +3125,7 @@ TDataDescStruct const AcceptedCoinCRC16Desc = {
   DATA_NO_ARRAY,            // признак массива
   0,                        // размер массива
   NULL,                     // указатель на десриптор индекса массива
-  (void*)offsetof(TFramMap, crc_AcceptedMoney),            // указатель на переменную или адрес FRAM
+  (void*)offsetof(TFramMap, crc_AcceptedCoin),            // указатель на переменную или адрес FRAM
   NULL,                     // указатель на границы параметра
   NULL,                     // функция по изменению
   0,                        // смещение между элементами в массиве
@@ -3742,7 +3744,7 @@ TDataDescStruct const HopperButtonStartDesc = {
 /*************************************
   Длина импульса входа хоппера в режиме Cube, мс
 *************************************/
-TRangeValueULONG const HopperPulseLenRange = {20, 250};
+TRangeValueULONG const HopperPulseLenRange = {20, 2000};
 CPU_INT08U const HopperPulseLenName[] = "Длина имп.,мс";
 
 void OnChangeHopperPulseLen()
@@ -3768,13 +3770,13 @@ TDataDescStruct const HopperPulseLenDesc = {
   DATA_NO_INDEX,            // признак индексного параметра (список строк)
   NULL,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  50                           
+  1000                           
 };
 
 /*************************************
   Длина паузы входа хоппера в режиме Cube, мс
 *************************************/
-TRangeValueULONG const HopperPauseLenRange = {20, 250};
+TRangeValueULONG const HopperPauseLenRange = {20, 2000};
 CPU_INT08U const HopperPauseLenName[] = "Пауза имп.,мс";
 
 TDataDescStruct const HopperPauseLenDesc = {

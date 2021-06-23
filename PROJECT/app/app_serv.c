@@ -829,6 +829,8 @@ void UserAppTask(void *p_arg)
                           // все выдали - останавливаем выдачу
                           FIO0CLR_bit.P0_24 = 1;
                           
+                          IncCounterCoinOut(CountCoin);
+
                           // жетоны выдали
                           CountCoin = 0;
                           // остановили выдачу
