@@ -60,6 +60,8 @@ CPU_INT32U period_bank;
 CPU_INT32U period_signal;
 CPU_INT32U period_hopper;
 
+CPU_INT32U firstHopperEvent = 1;
+
 // режим хоппера
 CPU_INT32U regime_hopper = 0;
 
@@ -281,34 +283,26 @@ void CoinTask(void *p_arg)
           OS_ENTER_CRITICAL();
           if (pend_hopper_counter)
           {
-              // импульсы инкрементируем только после выдержки паузы
-              if (OSTimeGet() - pend_hopper_timestamp > hopper_pause)
-              {
-                  pend_hopper_counter = 0;
-                  HopperImpCounter++;
-              }
+              pend_hopper_counter = 0;
+              
+              if(firstHopperEvent) { HopperImpCounter = 0; firstHopperEvent = 0; }
+              else HopperImpCounter++;
           }
           OS_EXIT_CRITICAL();
               
           if (GetHopperCount())
           {
-              if (last_hopper_count == GetHopperCount())
+              if (last_hopper_count < GetHopperCount())
               {
-                  if (labs(OSTimeGet() - last_hopper_time) > 500)
-                  {
-                      // событие от хоппера шлем почти сразу - чтобы успеть все вовремя остановить
-                      PostUserEvent(EVENT_HOPPER_EXTRACTED);
-                  }
-              }
-              else
-              {
+                  // событие от хоппера шлем почти сразу - чтобы успеть все вовремя остановить
+                  PostUserEvent(EVENT_HOPPER_EXTRACTED);
                   last_hopper_count = GetHopperCount();
-                  last_hopper_time = OSTimeGet();   
               }
           }
           else
           {
               last_hopper_time = OSTimeGet();
+              last_hopper_count = 0;
           }
       }
       else
@@ -619,21 +613,10 @@ void InputCapture_ISR(void)
   // хоппер в режиме импульсов
   if(TSTBIT(input_event, 2))
   {
-    if ((!FIO1PIN_bit.P1_23 && hopperLevel) || (FIO1PIN_bit.P1_23 && !hopperLevel))
-      { // пришел задний фронт
-        CPU_INT32U cr=T3CR;
-        cr -= period_hopper;
-        
-        if (cr > (hopper_pulse - COIN_IMP_SPAN))
-        {
-            pend_hopper_counter = 1;
-            pend_hopper_timestamp = OSTimeGet();
-        }
-      }
-    else
-      { // пришел передний фронт
-        period_hopper = T3CR;
-        pend_hopper_counter = 0;
+    if (FIO1PIN_bit.P1_23)
+      {   // пришел задний фронт
+          pend_hopper_counter = 1;
+          pend_hopper_timestamp = OSTimeGet();
       }
   }
   

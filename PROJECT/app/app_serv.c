@@ -292,6 +292,10 @@ void UserAppTask(void *p_arg)
                       // хоппер включен и пришло время остановить хоппер
                       FIO0CLR_bit.P0_24 = 1;
                       hopperOn = 0;
+                      
+                      // и сбросить деньги - все равно уже не выдадим - простим
+                      SetAcceptedMoney(0);
+                      SetAcceptedBankMoney(0);
                   }
                   
                   // выдаем монеты по кнопке?
@@ -827,6 +831,7 @@ void UserAppTask(void *p_arg)
                       if (coin >= CountCoin)
                       {
                           // все выдали - останавливаем выдачу
+                          //OSTimeDly(10);
                           FIO0CLR_bit.P0_24 = 1;
                           
                           IncCounterCoinOut(CountCoin);
@@ -864,8 +869,8 @@ void UserAppTask(void *p_arg)
              }
               break; 
            case EVENT_KEY_F1:
-              //testMoney = 10;
-              //PostUserEvent(EVENT_COIN_INSERTED);
+              //testMoney = 50;
+              PostUserEvent(EVENT_COIN_INSERTED);
               break;
            case EVENT_KEY_F2:
               //testMoney = 50;
