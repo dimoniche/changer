@@ -306,8 +306,11 @@ void UserAppTask(void *p_arg)
                   // правда через некоторый таймаут
                   if(MoneyIn && !hopperStartButton && (labs(OSTimeGet() - coin_out_timestamp) > 1000UL))
                   {
-                      PostUserEvent(EVENT_GIVE_COIN);
-                      MoneyIn = 0;
+                      if(accmoney >= HopperCost)  // если конечно набрали денег на жетон
+                      {
+                          PostUserEvent(EVENT_GIVE_COIN);
+                          MoneyIn = 0;
+                      }
                   }
               }
               
@@ -566,11 +569,6 @@ void UserAppTask(void *p_arg)
 //                break;
 //              }
               
-              // запретим прием денег - печатаем чек и выдаем монеты
-              if (IsValidatorConnected()) CC_CmdBillType(0x000000, 0x000000, ADDR_FL);
-              CoinDisable();
-              BankDisable();
-              
               // здесь управляем хоппером--
               {
                 GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
@@ -585,6 +583,11 @@ void UserAppTask(void *p_arg)
                 
                 if(accmoney >= HopperCost)
                 {
+                    // запретим прием денег - печатаем чек и выдаем монеты - только если достаточно денег на выдачу монеты
+                    if (IsValidatorConnected()) CC_CmdBillType(0x000000, 0x000000, ADDR_FL);
+                    CoinDisable();
+                    BankDisable();
+
                     CountCoin = accmoney / HopperCost;
                     
                     // напишем сколько выдадим жетонов
