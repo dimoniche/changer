@@ -169,6 +169,8 @@ void UserAppTask(void *p_arg)
   CPU_INT32U MoneyIn = 0;
   // кнопка включена
   CPU_INT32U led_on = 0;
+  // уже нажимали кнопку
+  CPU_INT32U press_button = 0;
   CPU_INT32U fiscal_enable = 0;
 
   while (1)
@@ -555,7 +557,8 @@ void UserAppTask(void *p_arg)
               if(led_on)
               {
                   // нажали кнопку, если можно нажимать - выдадим деньги
-                  PostUserEvent(EVENT_GIVE_COIN);
+                  if(!press_button) PostUserEvent(EVENT_GIVE_COIN);
+                  press_button = 1;
               }
             break;
             
@@ -713,6 +716,7 @@ void UserAppTask(void *p_arg)
                   }
 
                   led_on = 0;
+                  press_button = 0;
                   LED_OK_OFF();
 
                   UserPrintErrorMenu(); 
@@ -757,6 +761,7 @@ void UserAppTask(void *p_arg)
                       }
                       
                       led_on = 0;
+                      press_button = 0;
                       LED_OK_OFF();
                   }
                     
@@ -791,6 +796,7 @@ void UserAppTask(void *p_arg)
                       }
                       
                       led_on = 0;
+                      press_button = 0;
                       LED_OK_OFF();
                   }
                    
