@@ -96,5 +96,7 @@ typedef struct
   CPU_INT32U FRAM_AcceptedCoin;
   CPU_INT32U crc_AcceptedCoin;
 
+  // пауза перед остановкой мотора хоппера
+  CPU_INT32U  hopper_pause_engine_off;
 }TFramMap;
 

@@ -463,7 +463,25 @@ void UserAppTask(void *p_arg)
                     UserPrintMoneyMenu();  
                     RefreshMenu();
                 }
-                if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffffff, ADDR_FL);
+                
+                {
+                  // проверим нужно ли обратно включать купюрник на прием (прием выключается при генерации события)
+
+                  // стоимость жетона в хоппере
+                  CPU_INT32U HopperCost = 0;
+                  GetData(&HopperCostDesc, &HopperCost, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  CPU_INT32U accmoney = GetAcceptedMoney();
+                  accmoney += GetAcceptedBankMoney();
+                  accmoney += GetAcceptedRestMoney();
+                  
+                  if(accmoney < HopperCost)
+                  {
+                    // еще не набрали нужную сумму - включаем купюрник на прием
+                    if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffffff, ADDR_FL);
+                  }
+                }
+                
                 if (note)
                 {
                     SaveEventRecord(RecentChannel, JOURNAL_EVENT_MONEY_NOTE, note);
@@ -840,7 +858,18 @@ void UserAppTask(void *p_arg)
                       if (coin >= CountCoin)
                       {
                           // все выдали - останавливаем выдачу
-                          //OSTimeDly(10);
+                          {
+                            // подождем указанную паузу, тк мотор в хоппере чуть не доворачивает, после того как импульс от него пришел
+                            // поэтому ждем еще немного что бы монета выпала
+                            CPU_INT32U HopperPauseEngineOff = 0;
+                            GetData(&HopperPauseEngineOffDesc, &HopperPauseEngineOff, 0, DATA_FLAG_SYSTEM_INDEX);
+
+                            if(HopperPauseEngineOff > 0)
+                            {
+                              OSTimeDly(HopperPauseEngineOff);
+                            }
+                          }
+
                           FIO0CLR_bit.P0_24 = 1;
                           
                           IncCounterCoinOut(CountCoin);

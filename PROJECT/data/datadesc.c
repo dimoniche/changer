@@ -3794,7 +3794,31 @@ TDataDescStruct const HopperPauseLenDesc = {
   DATA_NO_INDEX,            // признак индексного параметра (список строк)
   NULL,                     // указатель на список строк для индексного параметра
   DATA_INIT_DISABLE,
-  20                           
+  20
+};
+
+/*************************************
+  Длина паузы остановки мотора в режиме Cube, мс
+*************************************/
+TRangeValueULONG const HopperPauseEngineOffRange = {0, 50};
+CPU_INT08U const HopperPauseEngineOffName[] = "Ост.мот.,мс";
+
+TDataDescStruct const HopperPauseEngineOffDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,             // размер массива
+  NULL,        // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, hopper_pause_engine_off),            // указатель на переменную или адрес FRAM
+  (void*)&HopperPauseEngineOffRange,     // указатель на границы параметра
+  NULL,                     // функция по изменению
+  0,       // смещение между элементами в массиве
+  HopperPauseEngineOffName,       // указатель на строку названия параметра
+  DATA_NO_INDEX,            // признак индексного параметра (список строк)
+  NULL,                     // указатель на список строк для индексного параметра
+  DATA_INIT_DISABLE,
+  0
 };
 
 /*************************************
@@ -4224,6 +4248,7 @@ const TDataDescArrayStruct AllDataArray[] =
     {&HopperSaveCreditDesc, "HopperSaveCreditDesc"},
     {&HopperButtonStartDesc, "HopperButtonStartDesc"},
     {&HopperPauseLenDesc, "HopperPauseLenDesc"},
+    {&HopperPauseEngineOffDesc, "HopperPauseEngineOffDesc"},
     {&HopperPulseLenDesc, "HopperPulseLenDesc"},
     {&RegimeHopperDesc, "RegimeHopperDesc"},
     

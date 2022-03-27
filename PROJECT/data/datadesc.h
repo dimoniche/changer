@@ -283,6 +283,7 @@ extern TDataDescStruct const HopperSaveCreditDesc;
 extern TDataDescStruct const HopperButtonStartDesc;
 extern TDataDescStruct const HopperPulseLenDesc;
 extern TDataDescStruct const HopperPauseLenDesc;
+extern TDataDescStruct const HopperPauseEngineOffDesc;
 extern TDataDescStruct const HopperLevelDesc;
 extern TDataDescStruct const RegimeHopperDesc;
 extern TDataDescStruct const DisableHopperErrorsDesc;
