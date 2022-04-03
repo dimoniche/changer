@@ -386,6 +386,31 @@ void UserAppTask(void *p_arg)
                 }
                 if (money) SaveEventRecord(RecentChannel, JOURNAL_EVENT_MONEY_COIN, money);
                 
+                {
+                  // проверим нужно ли обратно включать монетоприемник на прием (прием выключается при генерации события)
+
+                  // стоимость жетона в хоппере
+                  CPU_INT32U HopperCost = 0;
+                  GetData(&HopperCostDesc, &HopperCost, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  CPU_INT32U accmoney = GetAcceptedMoney();
+                  accmoney += GetAcceptedBankMoney();
+                  accmoney += GetAcceptedRestMoney();
+                  
+                  // выдаем монеты по кнопке?
+                  CPU_INT32U hopperStartButton = 0;
+                  GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  if(!hopperStartButton)
+                  {
+                      // выдача монет не по кнопке и набрали нужную сумму - денег больше не ждем - гасим прием
+                      if(accmoney >= HopperCost)
+                      {
+                          CoinDisable();
+                      }
+                  }
+                }
+
                 coin_out_timestamp = OSTimeGet();
                 MoneyIn = 1;
               }
@@ -409,7 +434,7 @@ void UserAppTask(void *p_arg)
                 if (money) SaveEventRecord(RecentChannel, JOURNAL_EVENT_MONEY_NOTE, money);
                 CPU_INT32U billnom_index = FindBillIndex(money);
                 if (billnom_index != 0xFFFFFFFF) IncBillnomCounter(billnom_index);
-                
+
                 coin_out_timestamp = OSTimeGet();
                 MoneyIn = 1;
               }
@@ -436,6 +461,31 @@ void UserAppTask(void *p_arg)
                 }
                 if (money) SaveEventRecord(RecentChannel, JOURNAL_EVENT_MONEY_BANK, money); 
                 
+                {
+                  // проверим нужно ли обратно включать банковский терминал на прием (прием выключается при генерации события)
+
+                  // стоимость жетона в хоппере
+                  CPU_INT32U HopperCost = 0;
+                  GetData(&HopperCostDesc, &HopperCost, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  CPU_INT32U accmoney = GetAcceptedMoney();
+                  accmoney += GetAcceptedBankMoney();
+                  accmoney += GetAcceptedRestMoney();
+                  
+                  // выдаем монеты по кнопке?
+                  CPU_INT32U hopperStartButton = 0;
+                  GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  if(!hopperStartButton)
+                  {
+                      // выдача монет не по кнопке и набрали нужную сумму - денег больше не ждем - гасим прием
+                      if(accmoney >= HopperCost)
+                      {
+                          BankDisable();
+                      }
+                  }
+                }
+
                 coin_out_timestamp = OSTimeGet();
                 MoneyIn = 1;
               }              
@@ -475,10 +525,23 @@ void UserAppTask(void *p_arg)
                   accmoney += GetAcceptedBankMoney();
                   accmoney += GetAcceptedRestMoney();
                   
-                  if(accmoney < HopperCost)
+                  // выдаем монеты по кнопке?
+                  CPU_INT32U hopperStartButton = 0;
+                  GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
+                  
+                  if(hopperStartButton)
                   {
-                    // еще не набрали нужную сумму - включаем купюрник на прием
-                    if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffffff, ADDR_FL);
+                      // выдача монет по кнопке - ждем еще денег
+                      if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffffff, ADDR_FL);
+                  }
+                  else 
+                  {
+                      // выдача монет автоматически
+                      if(accmoney < HopperCost)
+                      {
+                          // еще не набрали нужную сумму - включаем купюрник на прием
+                          if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffffff, ADDR_FL);
+                      }
                   }
                 }
                 
@@ -665,6 +728,8 @@ void UserAppTask(void *p_arg)
                   // Игнорируем ошибки хоппера?
                   CPU_INT32U DisableHopperErrors = 0;
                   GetData(&DisableHopperErrorsDesc, &DisableHopperErrors, 0, DATA_FLAG_SYSTEM_INDEX);
+                  // узнаем режим работы хоппера
+                  GetData(&RegimeHopperDesc, &regime_hopper, 0, DATA_FLAG_SYSTEM_INDEX);
                   
                   if(DisableHopperErrors)
                   {
@@ -672,6 +737,13 @@ void UserAppTask(void *p_arg)
                       break;
                   }
                   
+                  if(regime_hopper)
+                  {
+                      // в режиме хоппера Cube - датчика ошибки нет
+                      ClrErrorFlag(ERROR_HOPPER);
+                      break;
+                  }
+
                   if(!TstErrorFlag(ERROR_HOPPER))
                   {
                       // сигнал ошибки хоппера
