@@ -1622,11 +1622,9 @@ void OnChangeInitByDefault(void)
   InitByDefault = 0;
   
   CPU_INT08U flag[4] = {0xAA, 0x55, 0x81, 0xC3};
-  char name[32] = "Услуги автомойки\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+  char name[32] = "Услуги мойки самообслуживания\0\0\0";
   WriteArrayFram(offsetof(TFramMap, manual_service_flag), 4, (unsigned char*)&flag);
   WriteArrayFram(offsetof(TFramMap, manual_service_name), 32, (unsigned char*)&name);
-  
-  
 }
 
 
@@ -2943,11 +2941,12 @@ TDataDescStruct const CommandV2Desc = {
 /*************************************
   Название услуги
 *************************************/
-TRangeValueULONG const ServiceNameRange = {0, 1};
+TRangeValueULONG const ServiceNameRange = {0, 2};
 CPU_INT08U const ServiceNameName[] = "Товар";
 CPU_INT08U const ServiceNameList_str0[] = "Жетон";
 CPU_INT08U const ServiceNameList_str1[] = "Услуги мойки";
-CPU_INT08U const *ServiceNameList[] = {ServiceNameList_str0, ServiceNameList_str1};
+CPU_INT08U const ServiceNameList_str3[] = "Услуга туалет";
+CPU_INT08U const *ServiceNameList[] = {ServiceNameList_str0, ServiceNameList_str1, ServiceNameList_str3};
 
 void OnChangeServiceName(void)
 {

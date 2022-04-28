@@ -734,6 +734,11 @@ repeat_sell1:
                 static const char sss[] = "Услуги мойки самообслуживания";
                 strcpy(service_name, sss);
             }
+            else if (serv_index == 2)
+            {
+                static const char sss[] = "Услуга платный туалет";
+                strcpy(service_name, sss);
+            }
             else
             {
                 GetDataStr(&ServiceNameDesc, (CPU_INT08U*)service_name, 0, DATA_FLAG_SYSTEM_INDEX);
@@ -832,6 +837,11 @@ repeat_sell2:
             if (serv_index == 1)
             {
                 static const char sss[] = "Услуги мойки самообслуживания";
+                strcpy(service_name, sss);
+            }
+            else if (serv_index == 2)
+            {
+                static const char sss[] = "Услуга платный туалет";
                 strcpy(service_name, sss);
             }
             else

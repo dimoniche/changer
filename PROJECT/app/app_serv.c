@@ -1058,6 +1058,8 @@ void UserStartupFunc(void)
       UserQuery = OSQCreate(&UserTbl[0], USER_QUERY_LEN);
       OSTaskCreate(UserAppTask, (void *)0, (OS_STK *)&UserTaskStk[USER_TASK_STK_SIZE-1], USER_TASK_PRIO);
     }
+  
+  //InitConsole();
 
 #ifdef CONFIG_FTP_CLIENT_ENABLE
   InitFTPApp();  
