@@ -305,8 +305,8 @@ void UserAppTask(void *p_arg)
                   GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
                   
                   // если не по кнопке - на каждом внесении проверяем необходимость выдачи жетонов
-                  // правда через некоторый таймаут
-                  if(MoneyIn && !hopperStartButton && (labs(OSTimeGet() - coin_out_timestamp) > 1000UL))
+                  // тайм аут убрали - выдаем сразу
+                  if(MoneyIn && !hopperStartButton /*&& (labs(OSTimeGet() - coin_out_timestamp) > 1000UL)*/)
                   {
                       if(accmoney >= HopperCost)  // если конечно набрали денег на жетон
                       {
