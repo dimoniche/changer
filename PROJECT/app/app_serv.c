@@ -397,6 +397,9 @@ void UserAppTask(void *p_arg)
                   accmoney += GetAcceptedBankMoney();
                   accmoney += GetAcceptedRestMoney();
                   
+                  coin_out_timestamp = OSTimeGet();
+                  MoneyIn = 1;
+
                   // выдаем монеты по кнопке?
                   CPU_INT32U hopperStartButton = 0;
                   GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
@@ -407,12 +410,13 @@ void UserAppTask(void *p_arg)
                       if(accmoney >= HopperCost)
                       {
                           CoinDisable();
+                          
+                          // шлем сразу событие выдачи жетонов
+                          PostUserEvent(EVENT_GIVE_COIN);
+                          MoneyIn = 0;
                       }
                   }
                 }
-
-                coin_out_timestamp = OSTimeGet();
-                MoneyIn = 1;
               }
               break;
             case EVENT_CASH_INSERTED:
@@ -472,6 +476,9 @@ void UserAppTask(void *p_arg)
                   accmoney += GetAcceptedBankMoney();
                   accmoney += GetAcceptedRestMoney();
                   
+                  coin_out_timestamp = OSTimeGet();
+                  MoneyIn = 1;
+                
                   // выдаем монеты по кнопке?
                   CPU_INT32U hopperStartButton = 0;
                   GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
@@ -482,12 +489,13 @@ void UserAppTask(void *p_arg)
                       if(accmoney >= HopperCost)
                       {
                           BankDisable();
+
+                          // шлем сразу событие выдачи жетонов
+                          PostUserEvent(EVENT_GIVE_COIN);
+                          MoneyIn = 0;
                       }
                   }
                 }
-
-                coin_out_timestamp = OSTimeGet();
-                MoneyIn = 1;
               }              
             break;
             case EVENT_BILL_ESCROW:
@@ -524,7 +532,10 @@ void UserAppTask(void *p_arg)
                   CPU_INT32U accmoney = GetAcceptedMoney();
                   accmoney += GetAcceptedBankMoney();
                   accmoney += GetAcceptedRestMoney();
-                  
+
+                  coin_out_timestamp = OSTimeGet();
+                  MoneyIn = 1;
+
                   // выдаем монеты по кнопке?
                   CPU_INT32U hopperStartButton = 0;
                   GetData(&HopperButtonStartDesc, &hopperStartButton, 0, DATA_FLAG_SYSTEM_INDEX);
@@ -542,6 +553,12 @@ void UserAppTask(void *p_arg)
                           // еще не набрали нужную сумму - включаем купюрник на прием
                           if (IsValidatorConnected()) CC_CmdBillType(0xffffff, 0xffffffff, ADDR_FL);
                       }
+                      else
+                      {
+                          // шлем сразу событие выдачи жетонов, если накопили нужную сумму
+                          PostUserEvent(EVENT_GIVE_COIN);
+                          MoneyIn = 0;
+                      }
                   }
                 }
                 
@@ -550,9 +567,6 @@ void UserAppTask(void *p_arg)
                     SaveEventRecord(RecentChannel, JOURNAL_EVENT_MONEY_NOTE, note);
                     IncBillnomCounter(billnom_index);
                 }
-                
-                coin_out_timestamp = OSTimeGet();
-                MoneyIn = 1;
               }
               break;                  
 

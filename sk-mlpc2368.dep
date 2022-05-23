@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>3074326424</fileChecksum>
+  <fileChecksum>698829836</fileChecksum>
   <configuration>
     <name>Flash Central</name>
     <outputs>
@@ -366,6 +366,7 @@
       <file>$PROJ_DIR$\Flash Central\Exe\changer0_26.hex</file>
       <file>$PROJ_DIR$\Flash Central\Obj\os_sem.o</file>
       <file>$PROJ_DIR$\Flash Central\Exe\changer0_27.hex</file>
+      <file>$PROJ_DIR$\Flash Central\Exe\changer0_28.hex</file>
     </outputs>
     <file>
       <name>[ROOT_NODE]</name>
@@ -1507,10 +1508,6 @@
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 15 356 170 230 300 331 280 162 239 237 319 161 301 234 288 321 333 215 159 343 311 336 14 268 25 12 4 41 5 8 10 37 29 173 193 18 51 86 1 13 63 81 79 73 89 95 54 76 69 7 60 28 22 59 32 74 90 93 91 53 61 77 56 243 117 119</file>
-        </tool>
-        <tool>
           <name>ICCARM</name>
           <file> 15 356 170 230 300 307 331 280 162 239 237 319 161 301 234 288 321 333 215 159 343 311 336 14 268 25 12 4 41 5 8 10 37 29 173 193 18 51 86 1 13 63 81 79 73 89 95 54 76 69 7 60 28 22 59 32 74 90 93 91 53 61 77 56 243 117 119</file>
         </tool>
@@ -2173,7 +2170,7 @@
         </tool>
         <tool>
           <name>OBJCOPY</name>
-          <file> 359</file>
+          <file> 360</file>
         </tool>
       </outputs>
       <inputs>
