@@ -43,7 +43,7 @@ typedef int (*TextCallbackFunc)(char *str);
 
 
 extern int  InitModem(void);
-extern void ModemWriteStr(char const *str);
+//extern void ModemWriteStr(char const *str);
 extern int  ModemSendOKCommand(char *str, unsigned long timeout);
 extern int  ModemDeleteSMS(unsigned char index);
 extern int  ModemWriteSMS(char const* text, unsigned char *index);

@@ -7,6 +7,8 @@
 // запас измерения периода, плюс-минус
 #define COIN_IMP_SPAN 10 // мс/100
 
+extern volatile char event_nomoney_hopper;
+
 extern void InitCoin(void);
 extern CPU_INT32U GetCoinCount(void);
 extern CPU_INT32U GetResetCoinCount(void);

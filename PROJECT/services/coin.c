@@ -47,6 +47,7 @@ static CPU_INT32U pend_signal_error_hopper_timestamp;
 
 static CPU_INT32U signal_nomoney_hopper_pulse = 1000;
 static char pend_upsignal_nomoney_hopper_counter = 0;
+volatile char event_nomoney_hopper = 0;
 static char pend_downsignal_nomoney_hopper_counter = 0;
 static CPU_INT32U pend_signal_nomoney_hopper_timestamp;
 
@@ -347,6 +348,7 @@ void CoinTask(void *p_arg)
         {
           // деньги в хоппере кончились
           PostUserEvent(EVENT_NOMONEY_HOPPER_ON);
+          event_nomoney_hopper = 1;
           pend_upsignal_nomoney_hopper_counter = 0;
         }
       }
@@ -357,6 +359,7 @@ void CoinTask(void *p_arg)
         {
           // деньги в хоппере есть
           PostUserEvent(EVENT_NOMONEY_HOPPER_OFF);
+          event_nomoney_hopper = 0;
           pend_downsignal_nomoney_hopper_counter = 0;
         }
       }

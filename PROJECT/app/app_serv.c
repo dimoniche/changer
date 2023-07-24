@@ -701,6 +701,13 @@ void UserAppTask(void *p_arg)
                         // режим Elolution - управляем выдачей жетонов импульсами
                         for(int j = 0; j < CountCoin; j++)
                         {
+                           if(event_nomoney_hopper)
+                           {
+                             // no money event - exit
+                             event_nomoney_hopper = 0;
+                             break;
+                           }
+
                            FIO0SET_bit.P0_24 = 1;
                            OSTimeDly(50);
                            FIO0CLR_bit.P0_24 = 1;

@@ -5,3 +5,6 @@ Flash Central/Obj/app.o
 *.out
 *.pbd
 *.map
+/Flash Central/List
+/Flash Central/Obj
+/Flash Central/BrowseInfo
