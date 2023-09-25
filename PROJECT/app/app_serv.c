@@ -691,7 +691,8 @@ void UserAppTask(void *p_arg)
                     // напишем сколько выдадим жетонов
                     UserPrintCoinOut(CountCoin);
                     RefreshMenu();
-                    OSTimeDly(2000);
+
+                    //OSTimeDly(2000);
                     
                     if (CountCoin) SaveEventRecord(RecentChannel, JOURNAL_EVENT_COIN_OUT, CountCoin); 
 
@@ -1240,13 +1241,21 @@ void UserPrintCoinOut(CPU_INT32U coin)
 {
     if (GetMode() != MODE_WORK) return;
     
+    CPU_INT32U accmoney;
     char buf[32];
+
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 0);
-    sprintf(buf, "Получите жетоны");
-    PrintUserMenuStrNew(buf, 1);
-    sprintf(buf, "       %d", coin);
+    sprintf(buf, " ");
+    PrintUserMenuStr(buf, 1);
+
+    accmoney = GetAcceptedMoney();
+    accmoney += GetAcceptedBankMoney();
+    accmoney += GetAcceptedRestMoney();
+    
+    sprintf(buf, "Принято %d руб.", accmoney);
     PrintUserMenuStrNew(buf, 2);
+
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 3);
 }
