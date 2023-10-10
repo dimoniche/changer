@@ -319,7 +319,7 @@ void CoinTask(void *p_arg)
       
       OS_ENTER_CRITICAL();
 
-      if (regime_hopper)
+      if (!regime_hopper)
       {
           if (pend_upsignal_error_hopper_counter)
           {

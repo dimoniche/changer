@@ -691,7 +691,8 @@ void UserAppTask(void *p_arg)
                     // напишем сколько выдадим жетонов
                     UserPrintCoinOut(CountCoin);
                     RefreshMenu();
-                    OSTimeDly(2000);
+                    
+                    OSTimeDly(1000);
                     
                     if (CountCoin) SaveEventRecord(RecentChannel, JOURNAL_EVENT_COIN_OUT, CountCoin); 
 
