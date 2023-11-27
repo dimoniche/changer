@@ -306,14 +306,14 @@ void UserAppTask(void *p_arg)
                   
                   // если не по кнопке - на каждом внесении проверяем необходимость выдачи жетонов
                   // тайм аут убрали - выдаем сразу
-                  if(MoneyIn && !hopperStartButton /*&& (labs(OSTimeGet() - coin_out_timestamp) > 1000UL)*/)
-                  {
+                  //if(MoneyIn && !hopperStartButton /*&& (labs(OSTimeGet() - coin_out_timestamp) > 1000UL)*/)
+                  /*{
                       if(accmoney >= HopperCost)  // если конечно набрали денег на жетон
                       {
                           PostUserEvent(EVENT_GIVE_COIN);
                           MoneyIn = 0;
                       }
-                  }
+                  }*/
               }
               
               // принимаем деньги
@@ -370,7 +370,9 @@ void UserAppTask(void *p_arg)
                 CPU_INT32U money, accmoney;
                 GetData(&CoinPerPulseDesc, &cpp, 0, DATA_FLAG_SYSTEM_INDEX);
                 
-                money = cpp * GetResetCoinCount() + testMoney;
+                money = cpp * GetResetCoinCount();// + testMoney;
+                
+                if(money == 0) break;
                 
                 accmoney = GetAcceptedMoney();
                 accmoney += money;
@@ -449,7 +451,9 @@ void UserAppTask(void *p_arg)
                 CPU_INT32U money, accmoney;
                 GetData(&BankPerPulseDesc, &cpp, 0, DATA_FLAG_SYSTEM_INDEX);
                 
-                money = cpp * GetResetbankCount() + testMoney;
+                money = cpp * GetResetbankCount();// + testMoney;
+                
+                if(money == 0) break;
                 
                 accmoney = GetAcceptedBankMoney();
                 accmoney += money;
@@ -1002,7 +1006,7 @@ void UserAppTask(void *p_arg)
               break; 
            case EVENT_KEY_F1:
               //testMoney = 50;
-              PostUserEvent(EVENT_COIN_INSERTED);
+              //PostUserEvent(EVENT_COIN_INSERTED);
               break;
            case EVENT_KEY_F2:
               //testMoney = 50;

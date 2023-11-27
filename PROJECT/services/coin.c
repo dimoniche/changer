@@ -209,7 +209,7 @@ void CoinTask(void *p_arg)
 
           if (enable_coin && GetCoinCount())
           {
-              PostUserEvent(EVENT_COIN_INSERTED);
+              //PostUserEvent(EVENT_COIN_INSERTED);
           }
           else
           {
@@ -266,7 +266,7 @@ void CoinTask(void *p_arg)
 
           if (bank_enable && GetbankCount())
           {
-              PostUserEvent(EVENT_BANK_INSERTED);
+              //PostUserEvent(EVENT_BANK_INSERTED);
           }
           else
           {
