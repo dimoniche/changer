@@ -306,14 +306,14 @@ void UserAppTask(void *p_arg)
                   
                   // если не по кнопке - на каждом внесении проверяем необходимость выдачи жетонов
                   // тайм аут убрали - выдаем сразу
-                  if(MoneyIn && !hopperStartButton /*&& (labs(OSTimeGet() - coin_out_timestamp) > 1000UL)*/)
-                  {
+                  //if(MoneyIn && !hopperStartButton /*&& (labs(OSTimeGet() - coin_out_timestamp) > 1000UL)*/)
+                  /*{
                       if(accmoney >= HopperCost)  // если конечно набрали денег на жетон
                       {
                           PostUserEvent(EVENT_GIVE_COIN);
                           MoneyIn = 0;
                       }
-                  }
+                  }*/
               }
               
               // принимаем деньги
@@ -371,6 +371,8 @@ void UserAppTask(void *p_arg)
                 GetData(&CoinPerPulseDesc, &cpp, 0, DATA_FLAG_SYSTEM_INDEX);
                 
                 money = cpp * GetResetCoinCount();// + testMoney;
+                
+                if(money == 0) break;
                 
                 accmoney = GetAcceptedMoney();
                 accmoney += money;
@@ -450,6 +452,8 @@ void UserAppTask(void *p_arg)
                 GetData(&BankPerPulseDesc, &cpp, 0, DATA_FLAG_SYSTEM_INDEX);
                 
                 money = cpp * GetResetbankCount();// + testMoney;
+                
+                if(money == 0) break;
                 
                 accmoney = GetAcceptedBankMoney();
                 accmoney += money;
