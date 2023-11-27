@@ -370,7 +370,7 @@ void UserAppTask(void *p_arg)
                 CPU_INT32U money, accmoney;
                 GetData(&CoinPerPulseDesc, &cpp, 0, DATA_FLAG_SYSTEM_INDEX);
                 
-                money = cpp * GetResetCoinCount() + testMoney;
+                money = cpp * GetResetCoinCount();// + testMoney;
                 
                 accmoney = GetAcceptedMoney();
                 accmoney += money;
@@ -449,7 +449,7 @@ void UserAppTask(void *p_arg)
                 CPU_INT32U money, accmoney;
                 GetData(&BankPerPulseDesc, &cpp, 0, DATA_FLAG_SYSTEM_INDEX);
                 
-                money = cpp * GetResetbankCount() + testMoney;
+                money = cpp * GetResetbankCount();// + testMoney;
                 
                 accmoney = GetAcceptedBankMoney();
                 accmoney += money;
@@ -1002,7 +1002,7 @@ void UserAppTask(void *p_arg)
               break; 
            case EVENT_KEY_F1:
               //testMoney = 50;
-              PostUserEvent(EVENT_COIN_INSERTED);
+              //PostUserEvent(EVENT_COIN_INSERTED);
               break;
            case EVENT_KEY_F2:
               //testMoney = 50;
