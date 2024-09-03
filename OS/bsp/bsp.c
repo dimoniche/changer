@@ -464,10 +464,10 @@ static  void  PLL_Init (void)
     PLLFEED   =  0x55;
     CPU_CRITICAL_EXIT();
 
-    SCS      |=  DEF_BIT_00;                                    /* enable fast IO           */
     SCS      &= ~DEF_BIT_04;                                    /* OSCRANGE = 0, Main OSC is between 1 and 20 Mhz           */
     SCS      |=  DEF_BIT_05;                                    /* OSCEN = 1, Enable the main oscillator                    */
-
+    SCS      |=  DEF_BIT_00;  /* access to all ports as fast io */
+    
     while ((SCS &  DEF_BIT_06) == 0) {                          /* Wait until OSCSTAT is set (Main OSC ready to be used)    */
         ;
     }
@@ -564,7 +564,7 @@ static  void  GPIO_Init (void)
 {
     IO0DIR     =  0;
     IO1DIR     =  0;
-    FIO0DIR    =  0x1000000; // хоппер уже настроили
+    FIO0DIR    =  0;
     FIO1DIR    =  0;
     FIO2DIR    =  0;
     FIO3DIR    =  0;
