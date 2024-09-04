@@ -1,10 +1,7 @@
 #ifndef  __APP_CFG_H__
 #define  __APP_CFG_H__
 
-
-
-#define  uC_TCPIP_MODULE                 DEF_ENABLED
-
+//#define  uC_TCPIP_MODULE                 DEF_ENABLED
 
 /*
 *********************************************************************************************************
@@ -31,9 +28,15 @@
 */
 
 #define  APP_TASK_START_STK_SIZE             128
+#if uC_TCPIP_MODULE > 0
 #define  NET_OS_CFG_TMR_TASK_STK_SIZE        300
 #define  NET_OS_CFG_IF_RX_TASK_STK_SIZE      640
 #define  APP_TASK_PHY_STK_SIZE               640
+#else
+#define  NET_OS_CFG_TMR_TASK_STK_SIZE        128
+#define  NET_OS_CFG_IF_RX_TASK_STK_SIZE      128
+#define  APP_TASK_PHY_STK_SIZE               128
+#endif
 
 /*
 *********************************************************************************************************

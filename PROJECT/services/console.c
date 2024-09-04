@@ -6,6 +6,7 @@
 #include "fram_map.h"
 #include "app_serv.h"
 
+#if uC_TCPIP_MODULE > 0
 extern const TFramMap config_params;
 extern TFramMap *config_ram;
 
@@ -325,3 +326,4 @@ void InitConsole(void)
     OSTaskCreate(ConsoleTask, (void *)0, (OS_STK *)&ConsoleTaskStk[CONSOLE_TASK_STK_SIZE-1], CONSOLE_TASK_PRIO);
     OSTaskNameSet(CONSOLE_TASK_PRIO, "Console Task", &err);
 }
+#endif

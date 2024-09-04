@@ -1282,7 +1282,7 @@
                 <option>
                     <name>CCDefines</name>
                     <state>BOARD_CENTRAL_CFG</state>
-                    <state>CONFIG_FTP_CLIENT_ENABLE</state>
+                    <state>CONFIG_FTP_CLIENT_ENABLE1</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1726,7 +1726,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>changer1_32.hex</state>
+                    <state>changer1_33.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

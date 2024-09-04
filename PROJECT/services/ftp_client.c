@@ -5,7 +5,7 @@
 #include "time.h"
 #include "host_app.h"
 
-
+#if uC_TCPIP_MODULE > 0
 /**
  * @brief Removes all trailing whitespace from a string
  * @param[in,out] s Pointer to a NULL-terminated character string
@@ -873,3 +873,4 @@ int ftpChangeToParentDir(FtpClientContext *context)
    //Successful processing
    return 0;
 }
+#endif
