@@ -417,11 +417,13 @@ int GetDataStr(const TDataDescStruct* desc, CPU_INT08U* buf, CPU_INT32U index, C
     {
       sprintf((char*)buf, "%d,%02d", Val.Val32U / 100, Val.Val32U % 100);            
     }
+  #if uC_TCPIP_MODULE > 0
   else if (desc->Type == DATA_TYPE_IP_ADDR)
     {
       NET_ERR   err;
       NetASCII_IP_to_Str(Val.Val32U, (CPU_CHAR*)buf, DEF_NO, &err);
     }
+  #endif
   else if (desc->Type == DATA_TYPE_TIME_COUNT)
     {
       PrintSecToBigHourMinSec((char*)buf, Val.Val32U);

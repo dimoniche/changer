@@ -105,11 +105,9 @@
 *               (b) Queues          are implemented using counting semaphores.
 *********************************************************************************************************
 */
-
-                                                                /* -------------------- TASK STKs --------------------- */
+                                                               /* -------------------- TASK STKs --------------------- */
 static  OS_STK     NetOS_Tmr_TaskStk[NET_OS_CFG_TMR_TASK_STK_SIZE];
 static  OS_STK     NetOS_IF_RxTaskStk[NET_OS_CFG_IF_RX_TASK_STK_SIZE];
-
 
                                                                 /* --------------------- SIGNALS ---------------------- */
 static  OS_EVENT  *NetOS_InitSignalPtr;

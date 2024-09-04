@@ -2,6 +2,7 @@
 #include "app_serv.h"
 #include "host_app.h"
 
+#if uC_TCPIP_MODULE > 0
 //#define HOST_RUN_TASK_ENABLE
 
 #ifdef HOST_RUN_TASK_ENABLE
@@ -404,3 +405,4 @@ void InitHostApp()
     OSTaskNameSet(HOST_TASK_PRIO, "Host App Task", &err);
 #endif
 }
+#endif

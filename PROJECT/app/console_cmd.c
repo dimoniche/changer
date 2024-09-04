@@ -10,6 +10,7 @@
 
 TFramMap *config_ram;
 
+#if uC_TCPIP_MODULE > 0
 ///
 static int GetVersion(char *str_value)
 {
@@ -391,4 +392,4 @@ int GetParam(char *cmd, char *answer, uint16_t len)
     
     return -1;;
 }
-
+#endif

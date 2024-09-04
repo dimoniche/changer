@@ -4,6 +4,7 @@
 #include <includes.h>
 #include <stdint.h>
 
+#if uC_TCPIP_MODULE > 0
 #define FTP_CLIENT_DEFAULT_TIMEOUT 10000
 #define FTP_CLIENT_BUFFER_SIZE 512
 #define FTP_CLIENT_WRITE_TIMEOUT 5000
@@ -96,4 +97,5 @@ extern int ftpChangeWorkingDir(FtpClientContext *context, const char *path);
 extern int ftpMakeDir(FtpClientContext *context, const char *path);
 extern int ftpChangeToParentDir(FtpClientContext *context);
 
+#endif
 #endif

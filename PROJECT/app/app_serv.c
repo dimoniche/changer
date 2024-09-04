@@ -211,8 +211,10 @@ void UserAppTask(void *p_arg)
               // сервер ошибок
               ErrorServer();
               
+              #ifdef CONFIG_FTP_CLIENT_ENABLE
               // FTP
               FtpCheckTimeToSend(SystemTime);
+              #endif
               
               // если есть ошибки, не работаем
               if (TstCriticalErrors()) 

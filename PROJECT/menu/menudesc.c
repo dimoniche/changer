@@ -554,7 +554,11 @@ const TMenuLine line_SettingsMenu_9 = {
 };
 #endif
 
-const TMenuLineArray arr_SettingsMenuArray[] = {&line_SettingsMenu_0, &line_SettingsMenu_2, &line_SettingsMenu_8, &line_SettingsMenu_9, &line_SettingsMenu_5, &line_SettingsMenu_3, &line_SettingsMenu_6, NULL};
+const TMenuLineArray arr_SettingsMenuArray[] = {&line_SettingsMenu_0, &line_SettingsMenu_2, &line_SettingsMenu_8, 
+#ifdef CONFIG_FTP_CLIENT_ENABLE
+&line_SettingsMenu_9, 
+#endif
+&line_SettingsMenu_5, &line_SettingsMenu_3, &line_SettingsMenu_6, NULL};
 const TMenuPanel SettingsMenuPanel[] = {arr_SettingsMenuArray, NULL, 7, MENU_PANEL_STANDARD};
 
 

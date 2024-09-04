@@ -3542,7 +3542,9 @@ void OnChangeIpMask()
     CPU_INT32U ip, mask;
     GetData(&IpAddrDesc, &ip, 0, DATA_FLAG_SYSTEM_INDEX);  
     GetData(&NetMaskDesc, &mask, 0, DATA_FLAG_SYSTEM_INDEX);  
+    #if uC_TCPIP_MODULE > 0
     NetIP_CfgAddrThisHost(ip, mask);
+    #endif
 }
     
 CPU_INT08U const IpAddrName[] = "IP";
@@ -3596,7 +3598,9 @@ void OnChangeGateway()
 {
     CPU_INT32U gw;
     GetData(&GatewayDesc, &gw, 0, DATA_FLAG_SYSTEM_INDEX);  
+    #if uC_TCPIP_MODULE > 0
     NetIP_CfgAddrDfltGateway(gw);
+    #endif
 }
     
 CPU_INT08U const GatewayName[] = "GW";
