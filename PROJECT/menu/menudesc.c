@@ -1258,8 +1258,15 @@ const TMenuLine line_HopperMenu_9 = {
   NULL                                // панель для перехода
 };
 
-const TMenuLineArray arr_HopperMenuArray[] = {&line_HopperMenu_0, &line_HopperMenu_1, &line_HopperMenu_2, &line_HopperMenu_3, &line_HopperMenu_4, &line_HopperMenu_5, &line_HopperMenu_6, &line_HopperMenu_7, &line_HopperMenu_8, &line_HopperMenu_9, NULL};
-const TMenuPanel HopperSetupPanel[] = {arr_HopperMenuArray, NULL, 10, MENU_PANEL_STANDARD};
+const TMenuLine line_HopperMenu_10 = {
+  MENU_LINE_SHOW_DESC,                // тип пункта меню
+  0,                                  // доп. флаги  
+  (void*)&HopperIsCoinDesc,           // указатель на текстовую строку или дескриптор
+  NULL                                // панель для перехода
+};
+
+const TMenuLineArray arr_HopperMenuArray[] = {&line_HopperMenu_0, &line_HopperMenu_1, &line_HopperMenu_2, &line_HopperMenu_3, &line_HopperMenu_4, &line_HopperMenu_5, &line_HopperMenu_6, &line_HopperMenu_7, &line_HopperMenu_8, &line_HopperMenu_9, &line_HopperMenu_10, NULL};
+const TMenuPanel HopperSetupPanel[] = {arr_HopperMenuArray, NULL, 11, MENU_PANEL_STANDARD};
 
 /***********************************
   МЕНЮ НАСТРОЙКА МОДЕМА

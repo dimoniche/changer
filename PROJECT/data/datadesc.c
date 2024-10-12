@@ -3669,6 +3669,33 @@ TDataDescStruct const HopperCostDesc = {
 };
 
 /*************************************
+  “ип вывода монеты-жетоны
+*************************************/
+CPU_INT08U const HopperIsCoinName[] = "Ќадпись выд.";
+TRangeValueULONG const HopperIsCoinRange = {0, 1};
+CPU_INT08U const HopperIsCoinList_str0[] = "жетон";
+CPU_INT08U const HopperIsCoinList_str1[] = "монета";
+CPU_INT08U const *HopperIsCoinList[] = {HopperIsCoinList_str0, HopperIsCoinList_str1};
+
+TDataDescStruct const HopperIsCoinDesc = {
+  DATA_DESC_EDIT,           // тип дескриптора
+  DATA_TYPE_ULONG,          // тип параметра
+  DATA_LOC_FRAM,            // расположение параметра
+  DATA_NO_ARRAY,            // признак массива
+  0,                        // размер массива
+  NULL,                     // указатель на десриптор индекса массива
+  (void*)offsetof(TFramMap, DeviceConfig.hopperIsCoin),            // указатель на переменную или адрес FRAM
+  (void*)&HopperIsCoinRange,     // указатель на границы параметра
+  NULL,                     // функци€ по изменению
+  0,       // смещение между элементами в массиве
+  HopperIsCoinName,         // указатель на строку названи€ параметра
+  DATA_IS_INDEX,            // признак индексного параметра (список строк)
+  HopperIsCoinList,         // указатель на список строк дл€ индексного параметра
+  DATA_INIT_DISABLE,
+  0
+};
+
+/*************************************
   остановка мотора хоппера, сек
 *************************************/
 CPU_INT08U const HopperStopEngineName[] = "ќстанов,сек";
@@ -4254,7 +4281,8 @@ const TDataDescArrayStruct AllDataArray[] =
     {&HopperPauseEngineOffDesc, "HopperPauseEngineOffDesc"},
     {&HopperPulseLenDesc, "HopperPulseLenDesc"},
     {&RegimeHopperDesc, "RegimeHopperDesc"},
-    
+    {&HopperIsCoinDesc, "HopperIsCoinDesc"},
+
     {&PrintModeDesc, "PrintModeDesc"},
     {&PrintTimeoutAfterDesc, "PrintTimeoutAfterDesc"},
 

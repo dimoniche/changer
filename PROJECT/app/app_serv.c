@@ -1247,10 +1247,13 @@ void UserPrintCoinOut(CPU_INT32U coin)
 {
     if (GetMode() != MODE_WORK) return;
     
+    CPU_INT32U isCoin = 0;
+    GetData(&HopperIsCoinDesc, &isCoin, 0, DATA_FLAG_SYSTEM_INDEX);
+
     char buf[32];
     sprintf(buf, " ");
     PrintUserMenuStr(buf, 0);
-    sprintf(buf, "Получите жетоны");
+    sprintf(buf, "Получите %s", isCoin ? "монеты" : "жетоны");
     PrintUserMenuStrNew(buf, 1);
     sprintf(buf, "       %d", coin);
     PrintUserMenuStrNew(buf, 2);
