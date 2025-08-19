@@ -281,7 +281,7 @@ int ValidatorConnect(void)
   }
   
   // разрешим прием
-  if (!CC_CmdBillType(0xffffff, 0xffffffff, ADDR_FL)) return -3;
+  if (!CC_CmdBillType(0x00000000, 0x00000000, ADDR_FL)) return -3;
   
   VConnStat = VCONN_STATUS_CONN;
   

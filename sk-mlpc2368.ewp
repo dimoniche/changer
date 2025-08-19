@@ -1726,7 +1726,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>changer0_33.hex</state>
+                    <state>changer0_34.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1744,7 +1744,7 @@
             <data>
                 <extensions></extensions>
                 <cmdline></cmdline>
-                <hasPrio>32</hasPrio>
+                <hasPrio>1</hasPrio>
                 <buildSequence>inputOutputBased</buildSequence>
             </data>
         </settings>
